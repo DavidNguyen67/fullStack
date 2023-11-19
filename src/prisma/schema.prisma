@@ -9,22 +9,73 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model User {
   id        Int      @id @default(autoincrement())
-  email     String?  @unique
+  email     String   @unique
+  password  String
   name      String
   address   String?
   gender    String
-  roleId    Int
+  typeRole  String
+  keyRole   String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
-
-// model Post {
-//   id        Int     @id @default(autoincrement())
-//   title     String
-//   content   String?
-//   published Boolean @default(false)
-//   author    User    @relation(fields: [authorId], references: [id])
-//   authorId  Int
-// }
+model AllCode {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value_en  String
+  value_vi  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model Bookings {
+  id        Int      @id @default(autoincrement())
+  statusId  Int      
+  doctorId  Int
+  patientId Int
+  date      DateTime @db.DateTime() 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model Histories {
+  id        Int      @id @default(autoincrement())
+  patientId Int
+  doctorId  Int
+  des       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model Clinics {
+  id        Int      @id @default(autoincrement())
+  address   String
+  des       String?
+  img       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model Schedule {
+  id            Int      @id @default(autoincrement())
+  currentNumber Int
+  maxNumber     Int
+  date          DateTime @db.DateTime()
+  doctorId      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model Specialties {
+  id        Int      @id @default(autoincrement())
+  des       String?
+  img       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model Doctor_Clinic_Specialties {
+  id           Int     @id @default(autoincrement())
+  doctorId     Int
+  clinicId     Int
+  specialtyId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}

@@ -1,13 +1,21 @@
 import { PrismaClient } from '@prisma/client';
-import { HealthCheckError } from '@nestjs/terminus';
 const prisma = new PrismaClient();
 
 async function main() {
   try {
-    await this.prismaService.$queryRaw`SELECT 1`;
-    console.log('Connected to prisma');
-  } catch (e) {
-    throw new HealthCheckError('Prisma check failed', e);
+    const user = await prisma.user.create({
+      data: {
+        email: 'admin@gmail.com',
+        password: 'admin',
+        name: 'admin',
+        gender: 'male',
+        typeRole: 'Role',
+        keyRole: 'R1',
+      },
+    });
+    console.log(user);
+  } catch (error) {
+    console.log(error);
   }
 }
 
