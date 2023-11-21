@@ -5,9 +5,11 @@ CREATE TABLE `User` (
     `password` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
     `gender` VARCHAR(191) NOT NULL,
-    `typeRole` VARCHAR(191) NOT NULL,
-    `keyRole` VARCHAR(191) NOT NULL,
+    `typeId` VARCHAR(191) NOT NULL,
+    `positionId` VARCHAR(191) NOT NULL,
+    `avatar` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -34,7 +36,7 @@ CREATE TABLE `Bookings` (
     `statusId` INTEGER NOT NULL,
     `doctorId` INTEGER NOT NULL,
     `patientId` INTEGER NOT NULL,
-    `date` TIMESTAMP NOT NULL,
+    `date` DATETIME NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -47,6 +49,7 @@ CREATE TABLE `Histories` (
     `patientId` INTEGER NOT NULL,
     `doctorId` INTEGER NOT NULL,
     `des` VARCHAR(191) NULL,
+    `file` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -56,6 +59,7 @@ CREATE TABLE `Histories` (
 -- CreateTable
 CREATE TABLE `Clinics` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
     `des` VARCHAR(191) NULL,
     `img` VARCHAR(191) NULL,
@@ -70,7 +74,7 @@ CREATE TABLE `Schedule` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `currentNumber` INTEGER NOT NULL,
     `maxNumber` INTEGER NOT NULL,
-    `date` TIMESTAMP NOT NULL,
+    `date` DATETIME NOT NULL,
     `doctorId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
