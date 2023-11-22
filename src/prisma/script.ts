@@ -3,16 +3,16 @@ const prisma = new PrismaClient();
 
 async function main() {
   try {
-    const data = {
-      email: 'admin@gmail.com',
-      password: 'admin',
-      name: 'admin',
-      gender: 'male',
-      typeId: 'Role',
-      positionId: 'R1',
-    };
-    const user = await prisma.user.create({ data });
-    console.log(user);
+    await prisma.user.create({
+      data: {
+        email: 'admin@gmail.com',
+        password: 'admin',
+        name: 'admin',
+        gender: 'male',
+        typeId: 'Role',
+        positionId: 'R1',
+      },
+    });
   } catch (error) {
     console.log(error);
   }

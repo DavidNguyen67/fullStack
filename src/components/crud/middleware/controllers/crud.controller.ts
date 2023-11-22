@@ -1,19 +1,22 @@
-import { Controller, Get, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, UsePipes } from '@nestjs/common';
 import { CrudPipe } from '../pipe/crud.pipe';
-import { Request } from 'express';
-import { ReqDec } from '../../custom/ReqDec';
-import { CrudGuard } from '../guards/crud.guard';
 import { CrudService } from '../services/crud.service';
-
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 @Controller('/api/v1/')
 export class CrudController {
   constructor(private crudService: CrudService) {}
 
   @Get()
+  async create() {
+    console.log('this is controller');
+    return await prisma.user.findMany({});
+  }
+
+  @Post()
   @UsePipes(new CrudPipe())
-  @UseGuards(new CrudGuard())
-  async create(@ReqDec() req: Request) {
-    // this.crudService.createUser()
-    return console.log('this is controller');
+  async login() {
+    console.log('this is controller');
+    return await prisma.user.findMany({});
   }
 }

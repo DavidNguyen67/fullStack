@@ -1,15 +1,23 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './middleware/controllers/app.controller';
 import { AppService } from './middleware/services/app.service';
 import { ConfigModule } from '@nestjs/config';
 import { CrudModule } from '../crud/crud.module';
+import { APP_PIPE } from '@nestjs/core';
 
-ConfigModule.forRoot({
-  envFilePath: './.env',
-});
+// ConfigModule.forRoot({
+//   envFilePath: './.env',
+// });
 @Module({
   imports: [ConfigModule.forRoot(), CrudModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+    ,
+    AppService,
+  ],
 })
 export class AppModule {}
