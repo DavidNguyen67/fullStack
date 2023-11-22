@@ -2,16 +2,15 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import LoginForm from '../components/authForm/LoginForm';
 import SignUpForm from '../components/authForm/SignUpForm';
+import Home from '../components/home/Home';
 
 class RoutePrivacy extends React.Component {
   render(): React.ReactNode {
-    const colFormProps = {
-      width: `col-10 col-md-8 col-lg-6`,
-    };
     return (
       <Routes>
-        <Route path="/login" element={<LoginForm {...colFormProps} />} />
-        <Route path="/register" element={<SignUpForm {...colFormProps} />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/register" element={<SignUpForm />} />
       </Routes>
     );
   }

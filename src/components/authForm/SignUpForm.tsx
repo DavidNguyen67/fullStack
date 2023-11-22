@@ -16,7 +16,7 @@ import {
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
 import { NavLink } from 'react-router-dom';
-class SignUpForm extends React.Component<{ width: string }> {
+class SignUpForm extends React.Component {
   state = {
     value: '',
   };
