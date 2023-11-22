@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './components/app/app.module';
 import { env } from 'process';
-import { CrudGuard } from './components/crud/middleware/guards/crud.guard';
+// import { CrudGuard } from './components/crud/middleware/guards/crud.guard';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
@@ -12,7 +12,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  app.useGlobalGuards(new CrudGuard());
+  // app.useGlobalGuards(new CrudGuard());
   await app.listen(env.PORT || 3001);
 }
 bootstrap();
