@@ -20,9 +20,9 @@ import {
   fillEmailLogin,
   login,
 } from '../../redux/actions/authActions';
-import { Navigate } from 'react-router-dom';
+import { withRouter } from '../../utils/hoc/withRouter';
 
-interface AuthActions {
+interface AuthInfo {
   fillPasswordLogin: (payload: string) => void;
   fillEmailLogin: (payload: string) => void;
   login: () => void;
@@ -30,13 +30,16 @@ interface AuthActions {
     email: string;
     password: string;
   };
+  router: {
+    navigate: (url: string) => void;
+  };
 }
 
-class LoginForm extends React.Component<AuthActions> {
+class LoginForm extends React.Component<AuthInfo> {
   handleSubmitAuthForm = (): void => {
     if (this.props.auth.email && this.props.auth.password) {
       this.props.login();
-      <Navigate to="/" replace={false} />;
+      this.props.router.navigate('/');
     }
   };
   handleFillPasswordForm = (event: any): void => {
@@ -195,4 +198,6 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(LoginForm)
+);
