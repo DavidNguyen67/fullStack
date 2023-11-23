@@ -6,7 +6,6 @@ export class CrudGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    console.log('This is guard');
     return true;
   }
 }

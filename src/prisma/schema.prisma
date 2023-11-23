@@ -17,7 +17,7 @@ model User {
   name       String
   address    String?
   phone      String?
-  gender     String
+  gender     String   @default("male")
   typeId     String
   positionId String
   avatar     String?
