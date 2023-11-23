@@ -1,44 +1,101 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  decreaseCounter,
-  increaseCounter,
-} from '../../redux/actions/counterActions';
+import './../../style/table.scss';
+import { loadUsers } from '../../redux/actions/CRUD';
+import { IUser } from '../../interfaces/User.interface';
+import { Button, Pagination, Typography } from '@mui/material';
+import ModeIcon from '@mui/icons-material/Mode';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Table } from 'react-bootstrap';
 
-interface HomeProps {
-  count: number;
-  increaseCounter: () => void;
-  decreaseCounter: () => void;
+interface Props {
+  data: IUser[];
+  fetchUsers: () => Promise<object[]>;
 }
 
-class Home extends React.Component<HomeProps> {
-  render(): React.ReactNode {
-    const { count, increaseCounter, decreaseCounter } = this.props;
+// class Home extends React.Component {
+class Home extends React.Component<Props> {
+  state = {
+    page: 2,
+  };
 
+  handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    this.setState({ ...this.state, page: value });
+  };
+
+  componentDidMount = async () => {
+    await this.props.fetchUsers();
+  };
+  render(): React.ReactNode {
     return (
       <>
-        <div className="App">
-          <div>Count: {count}</div>
-
-          <button onClick={increaseCounter}>Increase Count</button>
-
-          <button onClick={decreaseCounter}>Decrease Count</button>
-        </div>
+        <Table responsive id="customers">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Gender</th>
+              <th>Address</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.props.data.length > 0 &&
+              this.props.data.map((data, index) => (
+                <tr key={data.id}>
+                  <td>{index + 1}</td>
+                  <td>{data.email}</td>
+                  <td>{data.name}</td>
+                  <td>{data.gender}</td>
+                  <td>{data.address || 'Unknown'}</td>
+                  <td>
+                    <div className="d-flex">
+                      <Button variant="outlined" color="success">
+                        <ModeIcon color="warning" />
+                        Update
+                      </Button>
+                      <div className="mx-2"></div>
+                      <Button variant="outlined" color="error">
+                        <DeleteIcon color="info" />
+                        Delete
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </Table>
+        <Typography>Page: {this.state.page}</Typography>
+        <Pagination
+          count={10}
+          showFirstButton
+          showLastButton
+          onChange={this.handleChange}
+        />
       </>
     );
   }
 }
 
 const mapStateToProps = (state: any) => {
+  const { data } = state.CRUD_Reducers;
+  // console.log(state.CRUD_Reducers);
+  // console.log(data);
+
+  /**
+   *! Async login in redux used with class Component typescript need to fixed
+   *! Class Component used without hook can not be async function
+   */
+
   return {
-    count: state.counter.count,
+    data,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    increaseCounter: () => dispatch(increaseCounter()),
-    decreaseCounter: () => dispatch(decreaseCounter()),
+    fetchUsers: () => dispatch(loadUsers()),
   };
 };
 

@@ -4,3 +4,11 @@ export const DECREMENT = 'DECREMENT';
 export const FILL_EMAIL_LOGIN = 'FILL_EMAIL_LOGIN';
 export const FILL_PASSWORD_LOGIN = 'FILL_PASSWORD_LOGIN';
 export const LOGIN = 'LOGIN';
+
+export const CREATE_USER = 'CREATE_USER';
+export const READ_USER = 'READ_USER';
+export const UPDATE_USER = 'UPDATE_USER';
+export const DELETE_USER = 'DELETE_USER';
+export const LOAD_USERS_LOADING = 'LOAD_USERS_LOADING';
+export const LOAD_USERS_SUCCESS = 'LOAD_USERS_SUCCESS';
+export const LOAD_USERS_ERROR = 'LOAD_USERS_ERROR';

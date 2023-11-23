@@ -21,6 +21,7 @@ import {
   login,
 } from '../../redux/actions/authActions';
 import { withRouter } from '../../utils/hoc/withRouter';
+import { toast } from 'react-toastify';
 
 interface AuthInfo {
   fillPasswordLogin: (payload: string) => void;
@@ -40,6 +41,15 @@ class LoginForm extends React.Component<AuthInfo> {
     if (this.props.auth.email && this.props.auth.password) {
       this.props.login();
       this.props.router.navigate('/');
+      toast('🦄 Wow so easy!', {
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
     }
   };
   handleFillPasswordForm = (event: any): void => {
