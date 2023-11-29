@@ -24,4 +24,10 @@
     color: white;
     width: fit-content;
   }
+
+  .truncate-text {
+    max-height: 3.6em; /* Approximately 2 lines of text */
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

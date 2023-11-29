@@ -28,7 +28,6 @@ class SignUpForm extends React.Component {
   render(): React.ReactNode {
     return (
       <>
-        <div className="my-4"></div>
         <Grid container spacing={2} sx={{ flexGrow: 1 }}>
           <Grid xs={10} md={6} lg={4} sx={{ margin: 'auto' }}>
             <MDBValidation>

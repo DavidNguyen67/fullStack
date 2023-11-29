@@ -5,6 +5,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import RoutePrivacy from '../../routes/RoutePrivacy';
 import { ToastContainer } from 'react-toastify';
 import DrawerAppBar from '../appbar/Appbar';
+import { Toaster } from 'react-hot-toast';
 class App extends React.Component {
   render() {
     return (
@@ -33,6 +34,7 @@ class App extends React.Component {
             </Col>
           </Row>
         </Container>
+        <Toaster position="top-center" reverseOrder={true} />
       </>
     );
   }

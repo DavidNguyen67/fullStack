@@ -1,16 +1,33 @@
+import { DELETE_USER_ERROR, SELECTED_USERS } from '../types/index';
 import {
+  DELETE_USER_LOADING,
+  DELETE_USER_SUCCESS,
   LOAD_USERS_ERROR,
   LOAD_USERS_LOADING,
   LOAD_USERS_SUCCESS,
 } from '../types';
 
-const initialState = {
+const initialState: {
+  data: any[];
+  loading: boolean;
+  error: any;
+  selected: number[];
+} = {
   data: [],
   loading: false,
   error: '',
+  selected: [],
 };
 const CRUD_Reducers = (state = initialState, action: any) => {
   switch (action.type) {
+    case SELECTED_USERS: {
+      return {
+        ...state,
+        selected: state.selected.includes(action.payload)
+          ? state.selected.filter((select) => select !== action.payload)
+          : [...state.selected, action.payload],
+      };
+    }
     case LOAD_USERS_LOADING: {
       return {
         ...state,
@@ -26,6 +43,27 @@ const CRUD_Reducers = (state = initialState, action: any) => {
       };
     }
     case LOAD_USERS_ERROR: {
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+    }
+    case DELETE_USER_LOADING: {
+      return {
+        ...state,
+        loading: true,
+        error: '',
+      };
+    }
+    case DELETE_USER_SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        selected: [],
+      };
+    }
+    case DELETE_USER_ERROR: {
       return {
         ...state,
         loading: false,
