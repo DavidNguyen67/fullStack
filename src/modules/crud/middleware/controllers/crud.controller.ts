@@ -1,32 +1,22 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Query, UsePipes } from '@nestjs/common';
 import { CrudService } from '../services/crud.service';
-import { PrismaClient } from '@prisma/client';
-import exclude from 'src/utils/excludeFields/exclude';
+import { CrudPipe } from '../pipe/crud.pipe';
 
-const prisma = new PrismaClient();
 @Controller('/api/v1/')
 export class CrudController {
   constructor(private crudService: CrudService) {}
 
   @Get('read')
-  async create(@Query('take') take: string) {
-    const totalPage = Math.ceil(
-      (await prisma.user.count()) / parseInt(take, 10),
-    );
-
-    const users = await prisma.user.findMany({
-      skip: parseInt(take) * 2,
-      take: parseInt(take),
-    });
-    return {
-      data: users.map((user) => exclude(user, ['password'])),
-      totalPage,
-    };
+  @UsePipes(CrudPipe)
+  async readUsers(@Query() reqQuery: { page: number; take: number }) {
+    const { page, take } = reqQuery;
+    const skip = (page - 1) * take;
+    return await this.crudService.fetchUser(take, skip, page);
   }
+  @Delete('delete')
+  async deleteUsers(@Body() reqBody: any) {
+    console.log(reqBody);
 
-  @Post()
-  async login() {
-    console.log('this is controller');
-    return await prisma.user.findMany({});
+    return await this.crudService.deleteUsersService(reqBody);
   }
 }
