@@ -3,7 +3,15 @@ import { connect } from 'react-redux';
 import './../../style/table.scss';
 import { loadUsers, selectedUser } from '../../redux/actions/CRUD';
 import { IUser } from '../../interfaces/User.interface';
-import { Checkbox, Pagination, Typography } from '@mui/material';
+import {
+  Checkbox,
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  Pagination,
+  Select,
+  Typography,
+} from '@mui/material';
 import { Table } from 'react-bootstrap';
 import DeleteModal from '../modals/deleteModal';
 import { UpdateModal } from '../modals';
@@ -24,31 +32,53 @@ interface Props {
 class Home extends React.Component<Props> {
   state: {
     page: number;
+    take: number;
   } = {
     page: 1,
+    take: 5,
   };
 
   handleChange = async (
     event: React.ChangeEvent<unknown>,
     value: number = 1
   ) => {
-    await this.props.fetchUsers({ page: value, take: 5 });
+    await this.props.fetchUsers({ page: value, take: this.state.take });
     this.setState({ ...this.state, page: value });
   };
   handleClickSelect = (userId: number) => {
     this.props.selectedUser(userId);
   };
+  handleChangeStateTake = (event: any) => {
+    this.setState({ ...this.state, take: event.target.value });
+  };
 
   componentDidMount = async () => {
-    await this.props.fetchUsers({ page: this.state.page, take: 5 });
+    await this.props.fetchUsers({
+      page: this.state.page,
+      take: this.state.take,
+    });
+  };
+  componentDidUpdate = async (
+    prevProps: Readonly<Props>,
+    prevState: any,
+    snapshot?: any
+  ) => {
+    if (
+      prevState.page !== this.state.page ||
+      prevState.take !== this.state.take
+    )
+      await this.props.fetchUsers({
+        page: this.state.page,
+        take: this.state.take,
+      });
   };
   render(): React.ReactNode {
     return (
       <>
         <div className="d-flex justify-content-end">
-          <UpdateModal />
+          <UpdateModal page={this.state.page} take={this.state.take} />
           <div className="mx-2"></div>
-          <DeleteModal />
+          <DeleteModal page={this.state.page} take={this.state.take} />
         </div>
         <div className="my-2"></div>
         <Table responsive id="customers">
@@ -83,22 +113,22 @@ class Home extends React.Component<Props> {
                 <tr key={data.id}>
                   <td>{this.props.data && this.props.data.skip + index + 1}</td>
                   <td>
-                    <Typography variant="subtitle1" className="truncate-text">
+                    <Typography variant="subtitle2" className="truncate-text">
                       {data.email}
                     </Typography>
                   </td>
                   <td>
-                    <Typography variant="subtitle1" className="truncate-text">
+                    <Typography variant="subtitle2" className="truncate-text">
                       {data.name}
                     </Typography>
                   </td>
                   <td>
-                    <Typography variant="subtitle1" className="truncate-text">
+                    <Typography variant="subtitle2" className="truncate-text">
                       {data.gender}
                     </Typography>
                   </td>
                   <td>
-                    <Typography variant="subtitle1" className="truncate-text">
+                    <Typography variant="subtitle2" className="truncate-text">
                       {data.address || 'unknown'}
                     </Typography>
                   </td>
@@ -115,13 +145,32 @@ class Home extends React.Component<Props> {
               ))}
           </tbody>
         </Table>
-        <Typography>Page: {this.state.page}</Typography>
-        <Pagination
-          count={this.props.data && this.props.data.totalPage}
-          showFirstButton
-          showLastButton
-          onChange={this.handleChange}
-        />
+        <div className="d-flex align-content-center justify-content-center">
+          <Typography>Page: {this.state.page}</Typography>
+          <Pagination
+            count={this.props.data && this.props.data.totalPage}
+            showFirstButton
+            showLastButton
+            onChange={this.handleChange}
+          />
+          <FormControl
+            sx={{ m: 1, minWidth: 120, marginLeft: 'auto' }}
+            size="small"
+          >
+            <Select
+              value={this.state.take}
+              onChange={this.handleChangeStateTake}
+              displayEmpty
+              inputProps={{ 'aria-label': 'Without label' }}
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={30}>30</MenuItem>
+            </Select>
+            <FormHelperText>Row per page</FormHelperText>
+          </FormControl>
+        </div>
       </>
     );
   }

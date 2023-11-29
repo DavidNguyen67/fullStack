@@ -13,6 +13,7 @@ function DeleteModal(props: InputWrapperProps) {
   const dispatch = useAppDispatch();
 
   const showToastForSubmitChange = () => {
+    toast.dismiss();
     if (selected.length < 1) {
       toast.error(`Please select at least one user`, {
         duration: 3000,
@@ -20,7 +21,6 @@ function DeleteModal(props: InputWrapperProps) {
       return;
     }
     toast((t: any) => {
-      // toast.dismiss();
       t.duration = 5000;
       const toastDismiss = (toastId: any) => {
         toast.dismiss(toastId);
@@ -38,7 +38,12 @@ function DeleteModal(props: InputWrapperProps) {
                 color="success"
                 variant="outlined"
                 onClick={() => {
-                  dispatch(deleteUsers(selected));
+                  dispatch(
+                    deleteUsers(selected, {
+                      take: props.take,
+                      page: props.page,
+                    })
+                  );
                   toastDismiss(t.id);
                 }}
               >
