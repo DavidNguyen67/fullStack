@@ -8,15 +8,17 @@ export class CrudController {
 
   @Get('read')
   @UsePipes(CrudPipe)
-  async readUsers(@Query() reqQuery: { page: number; take: number }) {
-    const { page, take } = reqQuery;
+  async readUsers(
+    @Query() reqQuery: { page: number; take: number; id?: number },
+  ) {
+    const { page, take, id } = reqQuery;
+    if (id) return await this.crudService.fetchUser(id);
+
     const skip = (page - 1) * take;
-    return await this.crudService.fetchUser(take, skip, page);
+    return await this.crudService.fetchUsers(take, skip, page);
   }
   @Delete('delete')
   async deleteUsers(@Body() reqBody: any) {
-    console.log(reqBody);
-
     return await this.crudService.deleteUsersService(reqBody);
   }
 }

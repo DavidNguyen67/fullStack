@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import exclude from 'src/utils/excludeFields/exclude';
 
-interface FetchUserResponse {
-  data: User[];
-  totalPage: number;
-}
+// interface FetchUserResponse {
+//   data: User[];
+//   totalPage: number;
+// }
 
 @Injectable()
 export class CrudService {
@@ -15,7 +15,7 @@ export class CrudService {
     this.prisma = new PrismaClient();
   }
 
-  async fetchUser(take: number, skip: number, page: number) {
+  async fetchUsers(take: number, skip: number, page: number) {
     try {
       const [users, totalUsersCount] = await Promise.all([
         this.prisma.user.findMany({
@@ -35,6 +35,16 @@ export class CrudService {
         skip,
         page,
       };
+    } catch (error) {
+      return { error: 'Failed to fetch users' };
+    }
+  }
+
+  async fetchUser(id: number) {
+    try {
+      const user = await this.prisma.user.findFirst({ where: { id: id } });
+      const modifiedUser = exclude(user, ['password']);
+      return { user: modifiedUser };
     } catch (error) {
       return { error: 'Failed to fetch users' };
     }

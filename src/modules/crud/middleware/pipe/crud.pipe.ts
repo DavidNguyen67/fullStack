@@ -6,7 +6,11 @@ import {
 
 @Injectable()
 export class CrudPipe implements PipeTransform {
-  transform(value?: { page: number | string; take: number | string }) {
+  transform(value?: {
+    page: number | string;
+    take: number | string;
+    id: number | string;
+  }) {
     try {
       if (typeof value?.page === 'string') {
         const parsedPage = parseInt(value.page, 10);
@@ -23,6 +27,14 @@ export class CrudPipe implements PipeTransform {
           value.take = parsedTake;
         } else {
           throw new InternalServerErrorException('Invalid take value');
+        }
+      }
+      if (typeof value?.id === 'string') {
+        const parsedId = parseInt(value.id, 10);
+        if (!isNaN(parsedId)) {
+          value.id = parsedId;
+        } else {
+          throw new InternalServerErrorException('Invalid id value');
         }
       }
 
