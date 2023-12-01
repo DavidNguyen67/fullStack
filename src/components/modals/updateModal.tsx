@@ -53,7 +53,7 @@ function UpdateModal(props: InputWrapperProps) {
             size="small"
             fullWidth
             required
-            value={dataUser && dataUser.user && dataUser.user.email}
+            value={dataUser?.user?.email}
             disabled
           />
           <div className="my-2"></div>
@@ -64,12 +64,12 @@ function UpdateModal(props: InputWrapperProps) {
               id="demo-select-small"
               // value={this.state.value}
               label="Gender"
-              value={dataUser && dataUser.user && dataUser.user.gender}
+              defaultValue={dataUser?.user?.gender}
               // onChange={this.handleChange}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              <MenuItem value={'female'}>Female</MenuItem>
+              <MenuItem value={'male'}>Male</MenuItem>
+              <MenuItem value={'other'}>Other</MenuItem>
             </Select>
           </FormControl>
           <div className="my-2"></div>
@@ -78,7 +78,7 @@ function UpdateModal(props: InputWrapperProps) {
             variant="outlined"
             size="small"
             fullWidth
-            value={dataUser && dataUser.user && dataUser.user.name}
+            value={dataUser?.user?.name}
           />
           <div className="my-2"></div>
           <TextField
@@ -86,7 +86,7 @@ function UpdateModal(props: InputWrapperProps) {
             variant="outlined"
             size="small"
             fullWidth
-            value={dataUser && dataUser.user && dataUser.user.address}
+            value={dataUser?.user?.address}
           />
           <div className="my-2"></div>
           <div className="d-flex">
@@ -95,13 +95,9 @@ function UpdateModal(props: InputWrapperProps) {
               <Select
                 labelId="demo-select-small-label"
                 id="demo-select-small"
-                value={dataUser && dataUser.user && dataUser.user.typeId}
+                defaultValue={dataUser?.user?.typeId}
                 label="TypeId"
-                // onChange={this.handleChange}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
                 <MenuItem value={30}>Thirty</MenuItem>
@@ -112,14 +108,9 @@ function UpdateModal(props: InputWrapperProps) {
               <Select
                 labelId="demo-select-small-label"
                 id="demo-select-small"
-                // value={this.state.value}
-                value={dataUser && dataUser.user && dataUser.user.positionId}
+                defaultValue={dataUser?.user?.positionId}
                 label="PositionId"
-                // onChange={this.handleChange}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
                 <MenuItem value={30}>Thirty</MenuItem>
@@ -132,7 +123,7 @@ function UpdateModal(props: InputWrapperProps) {
             variant="outlined"
             size="small"
             fullWidth
-            value={dataUser && dataUser.user && dataUser.user.avatar}
+            value={dataUser?.user?.avatar}
           />
           <div className="my-4"></div>
           <Button variant="outlined" className="w-100">

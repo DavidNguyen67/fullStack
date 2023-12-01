@@ -1,0 +1,91 @@
+.button-Slide {
+  border: 0;
+  background-color: white;
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  border-color: rgb(181, 231, 237);
+  box-shadow: rgb(201, 236, 240) 2px 2px 5px;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  border-radius: 8px;
+  border-width: 1px;
+  border-color: rgb(181, 231, 237);
+  background-color: rgb(255, 255, 255);
+  transition-duration: 0s;
+}
+.button-Slide.left {
+  transform: translate(-50%, -50%);
+}
+.button-Slide.right {
+  transform: translate(50%, -50%);
+}
+#mySlider {
+  .slide-img {
+    width: 100%;
+    border-radius: 50px;
+  }
+}
+.DotGroup {
+  transition: none;
+  transition: all 0.2s linear;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  transform: translateX(-50%);
+  button {
+    padding: 4px;
+    border: 0;
+    border-radius: 50px;
+    margin: 0 12px;
+    transition: background-color 0.5s ease;
+    background-color: rgb(255, 220, 117);
+    // top: 50%;
+    // transform: translateY(-50%);
+  }
+  button.carousel__dot--selected {
+    padding: 6px;
+    background-color: rgb(255, 196, 25);
+  }
+  .carousel__slide-focus-ring {
+    display: none;
+    border: none !important;
+    outline: none !important;
+  }
+  *:focus {
+    display: none;
+    border: none !important;
+    outline: none !important;
+  }
+}
+
+/* Disable focus ring for pure-react-carousel */
+.PureCarousel {
+  /* Prevent focus outline */
+  outline: none;
+}
+
+/* If you want to hide the outline only for focused elements within the carousel */
+.PureCarousel:focus {
+  outline: none;
+}
+.card-slide {
+  padding: 20px 24px 0;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  margin: 4px 8px;
+}
+.slide-img-children {
+  border-radius: 12px !important;
+
+  .slide-img {
+    width: 100%;
+    border-radius: 8px;
+  }
+}

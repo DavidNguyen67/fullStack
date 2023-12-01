@@ -2,6 +2,7 @@
 @import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 @import '@fortawesome/fontawesome-free/css/all.min.css';
 @import 'react-toastify/dist/ReactToastify.css';
+/* @import 'swiper/css'; */
 
 body {
   margin: 0;
@@ -18,5 +19,5 @@ code {
     monospace;
 }
 * {
-  transition: all 0.2s linear;
+  /* transition: all 0.2s linear; */
 }

@@ -18,7 +18,7 @@ import {
 import { NavLink } from 'react-router-dom';
 class SignUpForm extends React.Component {
   state = {
-    value: '',
+    value: 'female',
   };
   handleChange = (event: any) => {
     this.setState({ value: event.target.value });
@@ -71,16 +71,13 @@ class SignUpForm extends React.Component {
                     <Select
                       labelId="demo-select-small-label"
                       id="demo-select-small"
-                      value={this.state.value}
+                      defaultValue={this.state.value}
                       label="Gender"
                       onChange={this.handleChange}
                     >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
+                      <MenuItem value={'female'}>Female</MenuItem>
+                      <MenuItem value={'male'}>Male</MenuItem>
+                      <MenuItem value={'other'}>Other</MenuItem>
                     </Select>
                   </FormControl>
                   <div className="my-2"></div>
@@ -131,13 +128,11 @@ class SignUpForm extends React.Component {
                         value={this.state.value}
                         label="PositionId"
                         onChange={this.handleChange}
+                        defaultValue="R1"
                       >
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        <MenuItem value={'R1'}>R1</MenuItem>
+                        <MenuItem value={'R2'}>R2</MenuItem>
+                        <MenuItem value={'R3'}>R3</MenuItem>
                       </Select>
                     </FormControl>
                   </div>

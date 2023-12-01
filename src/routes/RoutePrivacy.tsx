@@ -3,12 +3,18 @@ import { Route, Routes } from 'react-router-dom';
 import LoginForm from '../components/authForm/LoginForm';
 import SignUpForm from '../components/authForm/SignUpForm';
 import Home from '../components/home/Home';
+import WelcomePage from '../components/introductory/WelcomePage';
+// import { lazy } from 'react';
 
+// const WelcomePage = lazy(
+//   () => import('../components/introductory/WelcomePage')
+// );
 class RoutePrivacy extends React.Component {
   render(): React.ReactNode {
     return (
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<SignUpForm />} />
       </Routes>

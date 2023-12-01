@@ -1,0 +1,32 @@
+.container-img {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+  .brgImg {
+    padding-top: 40%;
+    background: url(./../assets/img/brg.jpg) no-repeat;
+    background-size: cover;
+  }
+}
+
+.container-items {
+  .items {
+    overflow: hidden;
+    border-radius: 16px;
+    // padding-top: 15%;
+    background: url(./../assets/img/items.png) no-repeat;
+    background-size: cover;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 0px;
+    .img-items {
+      width: 10%;
+      @media screen and (min-width: 992px) {
+        width: 15%;
+      }
+    }
+  }
+}
