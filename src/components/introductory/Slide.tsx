@@ -44,7 +44,7 @@ export default class SlideComponent extends React.Component {
           lockOnWindowScroll
           tag="div"
           // style={{ outline: 'none' }}
-          className="col-12 col-lg-9 m-auto position-relative "
+          className="col-12 col-lg-9 m-auto position-relative"
         >
           <Slider id="mySlider" style={{ outline: 'none' }}>
             {slides.length > 0 &&
@@ -54,6 +54,8 @@ export default class SlideComponent extends React.Component {
                     src={slide}
                     hasMasterSpinner={false}
                     className="slide-img"
+                    tag="div"
+                    isBgImage
                   />
                 </Slide>
               ))}

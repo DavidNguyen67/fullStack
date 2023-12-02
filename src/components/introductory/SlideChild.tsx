@@ -12,35 +12,16 @@ import {
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import slide1 from './../../assets/img/child1.jpg';
-import slide2 from './../../assets/img/child2.jpg';
-import slide3 from './../../assets/img/child3.jpg';
-import slide4 from './../../assets/img/child4.jpg';
-import slide5 from './../../assets/img/child5.jpg';
-import slide6 from './../../assets/img/child6.jpg';
-import slide7 from './../../assets/img/child7.jpg';
-import slide8 from './../../assets/img/child8.jpg';
-import slide9 from './../../assets/img/child9.jpg';
 
 import './../../style/slide.scss';
 import { Button, Card, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import { NumberLiteralType } from 'typescript';
 
-const slides = [
-  slide1,
-  slide2,
-  slide3,
-  slide4,
-  slide5,
-  slide6,
-  slide7,
-  slide8,
-  slide9,
-];
-interface Component<P = {}, S = {}> extends ComponentLifecycle<P, S> {}
+// interface Component<P = {}, S = {}> extends ComponentLifecycle<P, S> {}
 
 export default class SlideChild extends React.Component<
-  {},
+  { slides: any[] },
   { width: number; height: number }
 > {
   constructor(props: any) {
@@ -83,20 +64,16 @@ export default class SlideChild extends React.Component<
 
         <CarouselProvider
           naturalSlideWidth={70}
-          naturalSlideHeight={50}
-          totalSlides={
-            this.state.width < 576
-              ? slides.length
-              : this.state.width < 768
-              ? slides.length / 2
-              : slides.length / 3
-          }
+          naturalSlideHeight={55}
+          totalSlides={this.props.slides.length}
           infinite={true}
           isPlaying={true}
           interval={4000}
           touchEnabled={false}
-          dragEnabled={false}
+          // dragEnabled={false}
+          dragStep={3}
           lockOnWindowScroll
+          step={3}
           tag="div"
           // style={{ outline: 'none' }}
           visibleSlides={
@@ -105,8 +82,8 @@ export default class SlideChild extends React.Component<
           className="col-12 col-lg-12 m-auto position-relative"
         >
           <Slider id="mySlider" style={{ outline: 'none' }}>
-            {slides.length > 0 &&
-              slides.map((slide, index) => (
+            {this.props.slides.length > 0 &&
+              this.props.slides.map((slide, index) => (
                 <Slide index={index} key={slide}>
                   <div className="card-slide">
                     <NavLink to="/" className="text-black">
@@ -114,8 +91,10 @@ export default class SlideChild extends React.Component<
                         src={slide}
                         hasMasterSpinner={false}
                         className="slide-img slide-img-children"
+                        isBgImage
+                        tag="div"
                       />
-                      <Typography variant="h6" align="center" className="mt-2">
+                      <Typography variant="h6" align="center" className="py-2">
                         <strong>Co xuong khop</strong>
                       </Typography>
                     </NavLink>

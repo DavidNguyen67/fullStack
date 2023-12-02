@@ -28,6 +28,10 @@
   .slide-img {
     width: 100%;
     border-radius: 50px;
+    padding-top: 50%;
+    background-size: contain !important;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }
 .DotGroup {
@@ -83,7 +87,10 @@
 }
 .slide-img-children {
   border-radius: 12px !important;
-
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain !important;
+  padding-top: 60%;
   .slide-img {
     width: 100%;
     border-radius: 8px;
