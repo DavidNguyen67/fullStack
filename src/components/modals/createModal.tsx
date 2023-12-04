@@ -49,7 +49,7 @@ function Example() {
   const handleSubmit = async () => {
     // console.log(avatar);
     // ! form now send data to server should be declare in FormData
-    // ! it support file upload
+    // ! it support file upload and string not number
     const formData = new FormData();
     formData.append('email', email);
     formData.append('password', password);
