@@ -26,7 +26,7 @@ import { toast } from 'react-toastify';
 interface AuthInfo {
   fillPasswordLogin: (payload: string) => void;
   fillEmailLogin: (payload: string) => void;
-  login: () => void;
+  login: (payload: any) => void;
   auth: {
     email: string;
     password: string;
@@ -37,20 +37,33 @@ interface AuthInfo {
 }
 
 class LoginForm extends React.Component<AuthInfo> {
-  handleSubmitAuthForm = (): void => {
-    if (this.props.auth.email && this.props.auth.password) {
-      this.props.login();
-      this.props.router.navigate('/');
-      toast('🦄 Wow so easy!', {
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-      });
+  handleSubmitAuthForm = (event?: any): void => {
+    const submit = () => {
+      if (this.props.auth.email && this.props.auth.password) {
+        const data = {
+          email: this.props.auth.email,
+          password: this.props.auth.password,
+        };
+        this.props.login(data);
+
+        this.props.router.navigate('/');
+        toast('🦄 Wow so easy!', {
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+        });
+      }
+    };
+    console.log(event.keyCode);
+    if (event && event.keyCode && event.keyCode === 13) {
+      submit();
+      return;
     }
+    // submit();
   };
   handleFillPasswordForm = (event: any): void => {
     this.props.fillPasswordLogin(event.target.value.trim());
@@ -67,7 +80,10 @@ class LoginForm extends React.Component<AuthInfo> {
               className="bg-white my-5 mx-auto"
               style={{ borderRadius: '1rem', maxWidth: '500px' }}
             >
-              <MDBCardBody className="p-5 w-100 d-flex flex-column">
+              <MDBCardBody
+                className="p-5 w-100 d-flex flex-column"
+                onKeyDown={this.handleSubmitAuthForm}
+              >
                 <Typography variant="h2" className="fw-bold mb-2 text-center">
                   Sign In
                 </Typography>
@@ -204,7 +220,7 @@ const mapDispatchToProps = (dispatch: any) => {
     fillPasswordLogin: (payload: string) =>
       dispatch(fillPasswordLogin(payload)),
     fillEmailLogin: (payload: string) => dispatch(fillEmailLogin(payload)),
-    login: () => dispatch(login()),
+    login: (payload: any) => dispatch(login(payload)),
   };
 };
 

@@ -4,7 +4,6 @@ import {
   Slider,
   Slide,
   Image,
-  Dot,
   DotGroup,
   ButtonBack,
   ButtonNext,
@@ -14,9 +13,8 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import './../../style/slide.scss';
-import { Button, Card, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
-import { NumberLiteralType } from 'typescript';
 
 // interface Component<P = {}, S = {}> extends ComponentLifecycle<P, S> {}
 

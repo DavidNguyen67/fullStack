@@ -14,6 +14,7 @@ import {
   LOAD_USER_ERROR,
   LOAD_USER_LOADING,
   LOAD_USER_SUCCESS,
+  LOAD_USER_CLEAR_DATA,
 } from '../types';
 // export const fetch = () => {
 //   return {
@@ -25,6 +26,11 @@ export const selectedUser = (payload: number): object => {
   return {
     type: SELECTED_USERS,
     payload,
+  };
+};
+export const clearUser = () => {
+  return {
+    type: LOAD_USER_CLEAR_DATA,
   };
 };
 

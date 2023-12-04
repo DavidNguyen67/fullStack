@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import { Table } from 'react-bootstrap';
 import DeleteModal from '../modals/deleteModal';
-import { UpdateModal } from '../modals';
+// import { UpdateModal } from '../modals';
 import { NavLink } from 'react-router-dom';
-
+import Example from '../modals/createModal';
 interface Props {
   data: {
     data: IUser[];
@@ -76,7 +76,8 @@ class Home extends React.Component<Props> {
     return (
       <>
         <div className="d-flex justify-content-end">
-          <UpdateModal page={this.state.page} take={this.state.take} />
+          {/* <UpdateModal page={this.state.page} take={this.state.take} /> */}
+          <Example />
           <div className="mx-2"></div>
           <DeleteModal page={this.state.page} take={this.state.take} />
         </div>

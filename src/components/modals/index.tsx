@@ -1,4 +1,4 @@
-import UpdateModal from './updateModal';
+// import UpdateModal from './updateModal';
 import DeleteModal from './deleteModal';
 export const style = {
   position: 'absolute' as 'absolute',
@@ -18,4 +18,5 @@ export interface InputWrapperProps {
   page: number;
 }
 
-export { UpdateModal, DeleteModal };
+export { DeleteModal };
+// export { UpdateModal, DeleteModal };

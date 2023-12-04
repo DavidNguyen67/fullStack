@@ -1,4 +1,8 @@
-import { DELETE_USER_ERROR, SELECTED_USERS } from '../types/index';
+import {
+  DELETE_USER_ERROR,
+  LOAD_USER_CLEAR_DATA,
+  SELECTED_USERS,
+} from '../types/index';
 import {
   DELETE_USER_LOADING,
   DELETE_USER_SUCCESS,
@@ -31,6 +35,12 @@ const CRUD_Reducers = (state = initialState, action: any) => {
         selected: state.selected.includes(action.payload)
           ? state.selected.filter((select) => select !== action.payload)
           : [...state.selected, action.payload],
+      };
+    }
+    case LOAD_USER_CLEAR_DATA: {
+      return {
+        ...state,
+        dataUser: {},
       };
     }
     case LOAD_USERS_LOADING: {
