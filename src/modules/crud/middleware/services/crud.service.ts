@@ -78,9 +78,15 @@ export class CrudService {
   async uploadFile(files: Array<Express.Multer.File>) {
     // const base64Data = base64_encode(files);
     // const bufferData = base64Data.map((data) => Buffer.from(data, 'base64')); // Convert base64 string to Buffer
-    const bufferData = files.map((file) => file.buffer);
+    // const bufferData = files.map((file) => file.buffer);
     return await this.prisma.testFileUpload.createMany({
-      data: bufferData.map((buffer) => ({ avatar: buffer })),
+      data: files.map((file) => ({ avatar: file.buffer })),
     });
+  }
+  async downloadFile() {
+    const response = await this.prisma.testFileUpload.findMany({
+      select: { avatar: true },
+    });
+    return response;
   }
 }

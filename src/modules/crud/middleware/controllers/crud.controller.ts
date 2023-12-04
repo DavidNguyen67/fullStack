@@ -43,7 +43,10 @@ export class CrudController {
   @UseInterceptors(FilesInterceptor('files'))
   @Bind(UploadedFiles())
   uploadFileTest(files) {
-    console.log(files);
     return this.crudService.uploadFile(files);
+  }
+  @Get('/download')
+  downloadFileTest() {
+    return this.crudService.downloadFile();
   }
 }
