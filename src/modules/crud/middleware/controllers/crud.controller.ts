@@ -1,6 +1,18 @@
-import { Body, Controller, Delete, Get, Query, UsePipes } from '@nestjs/common';
+import {
+  Bind,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { CrudService } from '../services/crud.service';
 import { CrudPipe } from '../pipe/crud.pipe';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('/api/v1/')
 export class CrudController {
@@ -17,8 +29,21 @@ export class CrudController {
     const skip = (page - 1) * take;
     return await this.crudService.fetchUsers(take, skip, page);
   }
+
   @Delete('delete')
   async deleteUsers(@Body() reqBody: any) {
     return await this.crudService.deleteUsersService(reqBody);
+  }
+  @Post('create')
+  uploadFile(@Body() reqBody: any) {
+    this.crudService.createUser(reqBody);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FilesInterceptor('files'))
+  @Bind(UploadedFiles())
+  uploadFileTest(files) {
+    console.log(files);
+    return this.crudService.uploadFile(files);
   }
 }

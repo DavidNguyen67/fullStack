@@ -4,6 +4,7 @@ import { AppService } from './middleware/services/app.service';
 import { ConfigModule } from '@nestjs/config';
 import { CrudModule } from '../crud/crud.module';
 import { APP_PIPE } from '@nestjs/core';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { APP_PIPE } from '@nestjs/core';
       envFilePath: './.env',
     }),
     CrudModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

@@ -14,13 +14,13 @@ model User {
   id         Int      @id @default(autoincrement())
   email      String   @unique
   password   String
-  name       String
+  name       String?
   address    String?
   phone      String?
   gender     String   @default("male")
-  typeId     String
-  positionId String
-  avatar     String?
+  typeId     String   @default("R1")
+  positionId String   @default("C1")
+  avatar     Bytes?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
 }
@@ -82,4 +82,8 @@ model Doctor_Clinic_Specialties {
   specialtyId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+}
+model TestFileUpload {
+  id         Int     @id @default(autoincrement())
+  avatar     Bytes?
 }

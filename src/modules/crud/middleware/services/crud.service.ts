@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import exclude from 'src/utils/excludeFields/exclude';
-
 // interface FetchUserResponse {
 //   data: User[];
 //   totalPage: number;
 // }
+// const base64_encode = (files: Array<Express.Multer.File>) =>
+// files.map((file: Express.Multer.File) => file.buffer.toString('base64'));
+//  file.buffer.toString('base64');
 
 @Injectable()
 export class CrudService {
@@ -63,5 +65,22 @@ export class CrudService {
     } catch (error) {
       return { error: 'Failed to delete users' };
     }
+  }
+
+  async createUser(user: User) {
+    const data = user;
+    await this.prisma.user.create({
+      data,
+    });
+    console.log(user);
+  }
+
+  async uploadFile(files: Array<Express.Multer.File>) {
+    // const base64Data = base64_encode(files);
+    // const bufferData = base64Data.map((data) => Buffer.from(data, 'base64')); // Convert base64 string to Buffer
+    const bufferData = files.map((file) => file.buffer);
+    return await this.prisma.testFileUpload.createMany({
+      data: bufferData.map((buffer) => ({ avatar: buffer })),
+    });
   }
 }
