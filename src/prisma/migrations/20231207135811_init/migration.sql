@@ -18,8 +18,8 @@ CREATE TABLE `Role` (
     `role_name` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
     `permissions_id` INTEGER NOT NULL,
+    `user_id` INTEGER NOT NULL,
 
-    UNIQUE INDEX `Role_permissions_id_key`(`permissions_id`),
     PRIMARY KEY (`role_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -41,7 +41,7 @@ CREATE TABLE `Staff` (
     `phone` VARCHAR(191) NULL,
     `active` BOOLEAN NOT NULL DEFAULT true,
     `store_id` INTEGER NOT NULL,
-    `manager_id` INTEGER NULL DEFAULT 1,
+    `manager_id` INTEGER NULL,
     `avatar` LONGBLOB NULL,
     `user_id` INTEGER NOT NULL,
 
@@ -148,10 +148,10 @@ CREATE TABLE `Brand` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `Role`(`role_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Role` ADD CONSTRAINT `Role_permissions_id_fkey` FOREIGN KEY (`permissions_id`) REFERENCES `Permission`(`permission_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Permission` ADD CONSTRAINT `Permission_permission_id_fkey` FOREIGN KEY (`permission_id`) REFERENCES `Role`(`permissions_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Role` ADD CONSTRAINT `Role_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Staff` ADD CONSTRAINT `Staff_manager_id_fkey` FOREIGN KEY (`manager_id`) REFERENCES `Staff`(`staff_id`) ON DELETE SET NULL ON UPDATE CASCADE;

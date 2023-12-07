@@ -14,25 +14,26 @@ model User {
   password String
   active   Boolean   @default(true)
   role_id  Int
-  role     Role      @relation(fields: [role_id], references: [role_id])
   customer Customer? @relation("CustomerAccount")
   staff    Staff?    @relation("StaffAccount")
+  Role     Role[]
 }
 
 model Role {
-  role_id        Int          @id @default(autoincrement())
+  role_id        Int        @id @default(autoincrement())
   role_name      String
   description    String?
-  users          User[]
-  permissions_id Int          @unique
-  permissions    Permission[] @relation("RolePermissions")
+  permissions_id Int
+  user_id        Int
+  permissions    Permission @relation(fields: [permissions_id], references: [permission_id])
+  user           User       @relation(fields: [user_id], references: [user_id])
 }
 
 model Permission {
   permission_id   Int    @id @default(autoincrement())
   permission_name String
   url             String
-  roles           Role   @relation("RolePermissions", fields: [permission_id], references: [permissions_id])
+  role            Role[]
 }
 
 model Staff {
@@ -43,7 +44,7 @@ model Staff {
   phone      String?
   active     Boolean @default(true)
   store_id   Int
-  manager_id Int?    @default(1)
+  manager_id Int?    
   avatar     Bytes?
   user_id    Int     @unique
   manager    Staff?  @relation("ManagedBy", fields: [manager_id], references: [staff_id])
