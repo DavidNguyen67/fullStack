@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { baseRouteBackEnd, fetchRoute } from '../../../../../routes';
+import { baseRouteBackEnd, fetchRoute } from './../../../nameRoutes';
 
 @Controller(baseRouteBackEnd)
 export class AppController {

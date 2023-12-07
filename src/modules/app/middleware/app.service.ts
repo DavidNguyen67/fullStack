@@ -8,9 +8,9 @@ export class AppService {
     return 'Hello World!';
   }
   async checkData() {
-    return await this.prisma.staff.findMany({
+    return await this.prisma.product.findMany({
       include: {
-        worksAt: true,
+        orders: {},
       },
     });
   }
