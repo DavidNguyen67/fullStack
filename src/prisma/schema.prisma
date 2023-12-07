@@ -7,6 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  user_id  Int       @id @default(autoincrement())
+  username String    @unique
+  email    String    @unique
+  password String
+  active   Boolean   @default(true)
+  role_id  Int
+  role     Role      @relation(fields: [role_id], references: [role_id])
+  customer Customer? @relation("CustomerAccount")
+  staff    Staff?    @relation("StaffAccount")
+}
+
+model Role {
+  role_id        Int          @id @default(autoincrement())
+  role_name      String
+  description    String?
+  users          User[]
+  permissions_id Int          @unique
+  permissions    Permission[] @relation("RolePermissions")
+}
+
+model Permission {
+  permission_id   Int    @id @default(autoincrement())
+  permission_name String
+  url             String
+  roles           Role   @relation("RolePermissions", fields: [permission_id], references: [permissions_id])
+}
+
 model Staff {
   staff_id   Int     @id @default(autoincrement())
   first_name String
@@ -17,10 +45,12 @@ model Staff {
   store_id   Int
   manager_id Int?    @default(1)
   avatar     Bytes?
+  user_id    Int     @unique
   manager    Staff?  @relation("ManagedBy", fields: [manager_id], references: [staff_id])
   employees  Staff[] @relation("ManagedBy")
   worksAt    Store?  @relation("StaffWorkingAt", fields: [store_id], references: [store_id])
   orders     Order[] @relation("StaffHandlingOrders")
+  user       User    @relation("StaffAccount", fields: [user_id], references: [user_id])
 }
 
 model Store {
@@ -62,6 +92,7 @@ model Customer {
   zip_code    String
   avatar      Bytes?
   orders      Order[] @relation("CustomerOrders")
+  user        User?   @relation("CustomerAccount", fields: [customer_id], references: [user_id])
 }
 
 model Order {

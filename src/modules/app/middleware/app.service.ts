@@ -8,9 +8,14 @@ export class AppService {
     return 'Hello World!';
   }
   async checkData() {
-    return await this.prisma.product.findMany({
+    return await this.prisma.staff.findMany({
+      where: {
+        employees: {
+          some: {},
+        },
+      },
       include: {
-        orders: {},
+        manager: {},
       },
     });
   }

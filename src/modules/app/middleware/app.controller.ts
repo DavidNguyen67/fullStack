@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { baseRouteBackEnd, fetchRoute } from './../../../nameRoutes';
+import * as routes from './../../../nameRoutes';
 
-@Controller(baseRouteBackEnd)
+@Controller(routes.baseRoute)
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
@@ -10,7 +10,7 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-  @Get(fetchRoute)
+  @Get(routes.staffFetchAll)
   getData() {
     return this.appService.checkData();
   }
