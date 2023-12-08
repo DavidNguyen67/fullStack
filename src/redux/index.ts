@@ -1,0 +1,20 @@
+import { legacy_createStore as createStore } from 'redux';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { combineReducers } from 'redux';
+import locatesReducer from './reducers/locates.reducer';
+import counterReducer from './reducers/counter.reducer';
+
+type RootState = ReturnType<typeof store.getState>;
+type AppDispatch = typeof store.dispatch;
+
+const rootReducer = combineReducers({
+  counter: counterReducer,
+  locate: locatesReducer,
+});
+const store = createStore(rootReducer);
+
+export type keyRootReducers = ReturnType<typeof rootReducer>;
+export const useAppDispatch: () => AppDispatch = useDispatch;
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+export default store;
