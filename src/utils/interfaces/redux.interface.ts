@@ -11,3 +11,12 @@ export interface LocateState {
   lang: Record<string, string> | Record<string, MessageFormatElement[]>;
   locale: string;
 }
+
+export interface ChangeLanAction {
+  type: string;
+  payload: string;
+}
+
+export interface themeReducer {
+  isDarkTheme: boolean;
+}

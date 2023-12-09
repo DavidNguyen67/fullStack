@@ -1,7 +1,9 @@
-import { Lang } from '../type';
+import { LocateState } from '../../utils/interfaces/redux.interface';
+import { CHANGE_LANGUAGE } from '../type';
 
-export const changeLang = (typeLang: Lang) => {
+export const changeLang = (payload: LocateState) => {
   return {
-    type: typeLang,
+    type: CHANGE_LANGUAGE,
+    payload: payload,
   };
 };
