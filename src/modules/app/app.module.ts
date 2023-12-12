@@ -5,12 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from 'src/config/configuration';
 import databaseConfig from 'src/config/database.config';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { EventsModule } from '../events/events.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration, databaseConfig],
     }),
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

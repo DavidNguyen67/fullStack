@@ -37,21 +37,22 @@ model Permission {
 }
 
 model Staff {
-  staff_id   Int     @id @default(autoincrement())
+  staff_id   Int       @id @default(autoincrement())
   first_name String
   last_name  String
   email      String
   phone      String?
-  active     Boolean @default(true)
+  active     Boolean   @default(true)
   store_id   Int
-  manager_id Int?    
+  manager_id Int?
   avatar     Bytes?
-  user_id    Int     @unique
-  manager    Staff?  @relation("ManagedBy", fields: [manager_id], references: [staff_id])
-  employees  Staff[] @relation("ManagedBy")
-  worksAt    Store?  @relation("StaffWorkingAt", fields: [store_id], references: [store_id])
-  orders     Order[] @relation("StaffHandlingOrders")
-  user       User    @relation("StaffAccount", fields: [user_id], references: [user_id])
+  user_id    Int       @unique
+  manager    Staff?    @relation("ManagedBy", fields: [manager_id], references: [staff_id])
+  employees  Staff[]   @relation("ManagedBy")
+  worksAt    Store?    @relation("StaffWorkingAt", fields: [store_id], references: [store_id])
+  orders     Order[]   @relation("StaffHandlingOrders")
+  user       User      @relation("StaffAccount", fields: [user_id], references: [user_id])
+  topStaff   TopStaff? @relation("TopStaff")
 }
 
 model Store {
@@ -145,4 +146,16 @@ model Brand {
   brand_name String
   image      Bytes?
   products   Product[] @relation("ProductBrand")
+}
+
+model Events {
+  events_id   Int    @id @default(autoincrement())
+  events_name String
+  image       Bytes?
+}
+
+model TopStaff {
+  TopStaff_id Int   @id @default(autoincrement())
+  staff_Id    Int   @unique
+  staff       Staff @relation("TopStaff", fields: [staff_Id], references: [staff_id])
 }
