@@ -6,9 +6,12 @@ import {
   pathElements,
 } from '../../utils/templatePathRoutes';
 import { Container, Row } from 'react-bootstrap';
+import { createBrowserHistory } from 'history';
+import { useEffect, useRef } from 'react';
 
 const Web = () => {
   const mergedPath = pathDropDownElements.concat(pathElements);
+
   return (
     <>
       <MenuBar />

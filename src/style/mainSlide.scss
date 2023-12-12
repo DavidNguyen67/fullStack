@@ -1,0 +1,40 @@
+.mainSlide {
+  .slide-img {
+    background-position: center top;
+    // background-size: contain !important;
+    background-repeat: no-repeat;
+  }
+  .slideContainer {
+    border-radius: 12px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+      rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+      rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  }
+  .dotGroup {
+    transition: none;
+    transition: all 0.2s linear;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    display: flex;
+    transform: translateX(-50%);
+
+    button {
+      border: none;
+      padding: 4px;
+      position: relative;
+      margin: 0 4px;
+      border-radius: 50px;
+      background-color: rgb(255, 220, 117);
+      transition: background-color 0.3s ease;
+    }
+    button.carousel__dot--selected {
+      padding: 8px;
+      background-color: yellow;
+      background-color: rgb(255, 196, 25);
+    }
+  }
+  .carousel__slide-focus-ring {
+    display: none !important;
+  }
+}
