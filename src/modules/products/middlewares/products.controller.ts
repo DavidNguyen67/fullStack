@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpStatus,
@@ -6,24 +7,29 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
+import {
+  baseRoute,
+  productsCreate,
+  productsFetchAll,
+  productsFetchOne,
+} from 'src/utils/routes';
+import { ProductsService } from './products.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import * as routes from '../../../utils/routes';
-import { EventsService } from './events.service';
 import { globalRes } from 'src/utils/response.interface';
 
-@Controller(routes.baseRoute)
-export class EventsController {
-  constructor(private eventsService: EventsService) {}
-  @Post(routes.EventsCreate)
+@Controller(baseRoute)
+export class ProductsController {
+  constructor(private productsService: ProductsService) {}
+
+  @Post(productsCreate)
   @UseInterceptors(FilesInterceptor('files'))
   async uploadFile(
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<globalRes> {
-    // console.log(dataImgBuffers);
     try {
       const dataImgBuffers = files.map((file) => file.buffer);
       return {
-        data: await this.eventsService.storeImages(dataImgBuffers),
+        data: await this.productsService.storeImages(dataImgBuffers),
         statusCode: HttpStatus.CREATED,
       };
     } catch (error) {
@@ -35,11 +41,29 @@ export class EventsController {
       };
     }
   }
-  @Get(routes.EventsFetchAll)
-  async getFile(): Promise<globalRes> {
+
+  @Get(productsFetchAll)
+  async getFiles(): Promise<globalRes> {
     try {
       return {
-        data: await this.eventsService.streamingImages(),
+        data: await this.productsService.streamingImages(),
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      console.log(error);
+
+      return {
+        error: error,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
+    }
+  }
+
+  @Get(productsFetchOne)
+  async getFile(@Body('id') product_id: number): Promise<globalRes> {
+    try {
+      return {
+        data: await this.productsService.streamingImage(product_id),
         statusCode: HttpStatus.OK,
       };
     } catch (error) {

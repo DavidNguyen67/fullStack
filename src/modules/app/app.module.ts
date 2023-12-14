@@ -6,6 +6,7 @@ import configuration from 'src/config/configuration';
 import databaseConfig from 'src/config/database.config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EventsModule } from '../events/events.module';
+import { ProductsModule } from '../products/products.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { EventsModule } from '../events/events.module';
       load: [configuration, databaseConfig],
     }),
     EventsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
