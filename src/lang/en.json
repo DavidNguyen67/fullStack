@@ -19,6 +19,7 @@
   "menu.dropdown.forPatient": "For Patient",
   "menu.dropdown.forDoctor": "For Doctor",
 
+  "atHome.title": "Test at home",
   "menu.settings": "Settings",
   "menu.logout": "Logout",
   "error.generic": "An error occurred. Please try again later.",

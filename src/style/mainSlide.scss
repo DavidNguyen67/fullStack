@@ -1,6 +1,6 @@
 .mainSlide {
   .slide-img {
-    background-position: center top;
+    background-position: center;
     // background-size: contain !important;
     background-repeat: no-repeat;
   }
@@ -34,7 +34,32 @@
       background-color: rgb(255, 196, 25);
     }
   }
-  .carousel__slide-focus-ring {
-    display: none !important;
+}
+.carousel__slide-focus-ring {
+  display: none !important;
+}
+.internalServerError-Container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  .internalServerError-img {
+    padding-top: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center top;
+    width: 100%;
   }
+}
+.card-slide {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  margin: 4px 8px;
+  height: 100%;
+  padding: 20px 12px 36px;
+}
+.slide-img-child {
+  padding-top: 40%;
 }

@@ -1,4 +1,5 @@
 import { MessageFormatElement } from 'react-intl';
+import { ImageResponse } from './resImg.interface';
 
 export interface Action {
   type: string;
@@ -19,4 +20,14 @@ export interface ChangeLanAction {
 
 export interface themeReducer {
   isDarkTheme: boolean;
+}
+
+export interface SlideState {
+  slides: ImageResponse[];
+  error: any;
+  isLoading: boolean;
+}
+export interface propsSlideChild {
+  title: string;
+  slides?: ImageResponse[];
 }

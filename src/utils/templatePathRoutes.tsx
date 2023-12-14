@@ -1,6 +1,7 @@
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import Home from '../components/home/Home';
+import AtHome from '../components/home/atHome/AtHome';
 interface pathElementObject {
   path: string;
   icon?: any;
@@ -12,6 +13,7 @@ interface pathElementObject {
 export const pathElements: pathElementObject[] = [
   {
     path: 'atHome',
+    components: <AtHome />,
   },
   {
     path: 'atHospital',

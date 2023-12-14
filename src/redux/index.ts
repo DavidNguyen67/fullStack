@@ -4,7 +4,8 @@ import { combineReducers } from 'redux';
 import locatesReducer from './reducers/locates.reducer';
 import counterReducer from './reducers/counter.reducer';
 import { thunk } from 'redux-thunk';
-import themeReducer from './reducers/theme.reducer';
+import slidesReducer from './reducers/slides.reducer';
+import slideAtHomeReducer from './reducers/slideAtHome.reducer';
 import('@formatjs/intl-locale/polyfill');
 // import '@formatjs/intl-locale/vn';
 type RootState = ReturnType<typeof store.getState>;
@@ -14,6 +15,8 @@ const rootReducer = combineReducers({
   counter: counterReducer,
   locate: locatesReducer,
   // theme: themeReducer,
+  slide: slidesReducer,
+  slideAtHome: slideAtHomeReducer,
 });
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
