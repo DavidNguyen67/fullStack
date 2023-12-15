@@ -6,15 +6,19 @@ import { exclude } from 'src/utils/excludeFields';
 export class AuthService {
   constructor(private prisma: PrismaService) {}
 
-  async loginService(email: string, password: string) {
-    const user = await this.prisma.user.findFirst({
-      where: { email },
-    });
+  async loginService(username: string, password: string) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { email: username },
+      });
 
-    if (user && password === user.password) {
-      return exclude(user, ['password', 'createAt', 'updateAt']) || user;
+      if (user && password === user.password) {
+        return exclude(user, ['password', 'createAt', 'updateAt']) || user;
+      }
+
+      throw new UnauthorizedException('Wrong password or username');
+    } catch (error) {
+      throw new UnauthorizedException('Error logging in');
     }
-
-    throw new UnauthorizedException('Wrong password or email');
   }
 }

@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
 import * as routes from './../../../utils/routes';
 import { LoginInterface } from 'src/utils/interfaces';
 import { AuthPipe } from './auth.pipe';
-import { globalRes } from 'src/utils/response.interface';
+import { GlobalRes } from 'src/utils/response.interface';
 
 @Controller(routes.baseRoute)
 export class AuthController {
@@ -24,11 +24,11 @@ export class AuthController {
   @UsePipes(new AuthPipe())
   async loginController(
     @Body(AuthPipe) dataLogin: LoginInterface,
-  ): Promise<globalRes> {
-    const { email, password } = dataLogin;
+  ): Promise<GlobalRes> {
+    const { username, password } = dataLogin;
     return {
       statusCode: HttpStatus.OK,
-      data: await this.authService.loginService(email, password),
+      data: await this.authService.loginService(username, password),
       error: null,
     };
   }

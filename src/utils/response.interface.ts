@@ -1,4 +1,4 @@
-export interface globalRes {
+export interface GlobalRes {
   statusCode: number;
   data?: any;
   message?: string;

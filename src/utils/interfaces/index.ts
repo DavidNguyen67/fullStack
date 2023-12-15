@@ -8,6 +8,9 @@ export interface EnvironmentVariables {
 }
 
 export interface LoginInterface {
-  email: string;
+  username: string;
   password: string;
+}
+export interface FetchUserInterface {
+  id: string | string[];
 }
