@@ -62,16 +62,16 @@ class App extends Component {
             </span>
 
             <ToastContainer
-              className="toast-container"
-              toastClassName="toast-item"
-              bodyClassName="toast-item-body"
-              autoClose={false}
-              hideProgressBar={true}
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss={false}
+              draggable
               pauseOnHover={false}
-              pauseOnFocusLoss={true}
-              closeOnClick={false}
-              draggable={false}
-              closeButton={<CustomToastCloseButton />}
+              theme="light"
             />
           </div>
         </Router>
@@ -83,7 +83,7 @@ class App extends Component {
 const mapStateToProps = (state) => {
   return {
     started: state.app.started,
-    isLoggedIn: state.admin.isLoggedIn,
+    isLoggedIn: state.user.isLoggedIn,
   };
 };
 
