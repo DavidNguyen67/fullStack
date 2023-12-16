@@ -14,3 +14,4 @@ export interface LoginInterface {
 export interface FetchUserInterface {
   id: string | string[];
 }
+export interface DeleteUserInterface extends FetchUserInterface {}

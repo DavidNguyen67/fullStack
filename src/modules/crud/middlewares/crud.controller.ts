@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Post,
@@ -10,10 +11,10 @@ import {
 } from '@nestjs/common';
 import * as routes from './../../../utils/routes';
 import { CrudService } from './crud.service';
-import { FetchUserInterface } from 'src/utils/interfaces';
+import { DeleteUserInterface, FetchUserInterface } from 'src/utils/interfaces';
 import { GlobalRes } from 'src/utils/response.interface';
-import { fetchingPipe } from './pipes/fetching.pipe';
-import { fetchingGuard } from './guards/fetching.guard';
+import { convertAnyStringArrToNumArrPipe } from './pipes/convertAnyStringArrToNumArr.pipe';
+import { isHasIdInQueryOrBodyGuard } from './guards/isHasIdInBody.guard';
 import { creatingGuard } from './guards/creating.guard';
 import { CreateUserDtos } from 'src/utils/dto/User.dto';
 // import { CreatingPipe } from './pipes/creating.pipe';
@@ -24,18 +25,25 @@ export class CrudController {
 
   @Get(routes.getAllUsers)
   // ! Guard in here is not used correctly as itself
-  @UseGuards(fetchingGuard)
+  @UseGuards(isHasIdInQueryOrBodyGuard)
   async fetchUsers(
-    @Query(fetchingPipe) req: FetchUserInterface,
+    @Query(convertAnyStringArrToNumArrPipe) query: FetchUserInterface,
   ): Promise<GlobalRes> {
-    const { id } = req;
+    const id = query?.id;
     let data = null;
-    if (Array.isArray(id))
-      data = await this.crudService.fetchUser(id.map(Number));
-    if (id === 'all') data = await this.crudService.fetchUsers();
+
+    if (id && id.length > 0) {
+      if (Array.isArray(id))
+        data = await this.crudService.fetchUser(id.map(Number));
+      if (id === 'all') data = await this.crudService.fetchUsers();
+      return {
+        statusCode: HttpStatus.OK,
+        data,
+      };
+    }
     return {
-      statusCode: HttpStatus.OK,
-      data,
+      statusCode: HttpStatus.NOT_FOUND,
+      message: 'Missing or invalid query parameters',
     };
   }
 
@@ -49,6 +57,24 @@ export class CrudController {
     return {
       statusCode: HttpStatus.OK,
       data: await this.crudService.createUsers(data || body),
+    };
+  }
+
+  @Delete(routes.deleteUsers)
+  @UseGuards(isHasIdInQueryOrBodyGuard)
+  async deleteUsers(
+    @Body(convertAnyStringArrToNumArrPipe) req: DeleteUserInterface,
+  ) {
+    const ids: any = req?.id;
+    if (ids && ids.length > 0) {
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.crudService.deleteUsers(ids.map(Number)),
+      };
+    }
+    return {
+      statusCode: HttpStatus.NOT_FOUND,
+      message: 'Missing or invalid query parameters',
     };
   }
 }

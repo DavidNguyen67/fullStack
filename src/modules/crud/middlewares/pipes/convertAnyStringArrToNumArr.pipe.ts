@@ -6,17 +6,17 @@ import {
 } from '@nestjs/common';
 
 @Injectable()
-export class fetchingPipe implements PipeTransform {
+export class convertAnyStringArrToNumArrPipe implements PipeTransform {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform(value: any, metadata: ArgumentMetadata) {
     try {
       const { id } = value;
+      if (id) {
+        if (typeof id === 'string') {
+          if (id.toLocaleLowerCase().trim() === 'all') {
+            return { ...value, id: 'all' };
+          }
 
-      if (typeof id === 'string') {
-        if (id.toLocaleLowerCase().trim() === 'all') {
-          return { ...value, id: 'all' };
-        }
-        if (id) {
           const uniqueValues = [
             ...new Set(
               id
@@ -28,8 +28,9 @@ export class fetchingPipe implements PipeTransform {
           return { ...value, id: uniqueValues };
         }
       }
-    } catch (error) {
       throw new BadRequestException('Missing parameter');
+    } catch (error) {
+      console.log(error);
     }
   }
 }

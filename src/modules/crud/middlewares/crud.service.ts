@@ -16,12 +16,13 @@ export class CrudService {
   async fetchUsers() {
     try {
       const users = await this.prisma.user.findMany({});
+      if (users.length < 0) throw new NotFoundException('Not found users');
+
       return users.map(
         (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
       );
     } catch (error) {
-      console.log(error);
-      throw new NotFoundException('Error fetching users');
+      return error;
     }
   }
 
@@ -41,8 +42,7 @@ export class CrudService {
         (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
       );
     } catch (error) {
-      console.log(error);
-      throw new NotFoundException('Error fetching user');
+      return error;
     }
   }
 
@@ -57,7 +57,7 @@ export class CrudService {
       });
       return !!users;
     } catch (error) {
-      throw new InternalServerErrorException('Error checking email existence');
+      return error;
     }
   }
 
@@ -90,6 +90,24 @@ export class CrudService {
         );
       }
       throw new InternalServerErrorException('Error creating user(s)');
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async deleteUsers(userId: number[]) {
+    try {
+      const user = await this.prisma.user.deleteMany({
+        where: {
+          id: {
+            in: userId,
+          },
+        },
+      });
+      if (!user || user.count === 0)
+        throw new NotFoundException('User not found');
+
+      return user.count;
     } catch (error) {
       return error;
     }
