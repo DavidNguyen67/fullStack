@@ -5,8 +5,9 @@ import {
   Get,
   HttpStatus,
   Post,
+  Put,
   Query,
-  UseGuards,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import * as routes from './../../../utils/routes';
@@ -14,10 +15,10 @@ import { CrudService } from './crud.service';
 import { DeleteUserInterface, FetchUserInterface } from 'src/utils/interfaces';
 import { GlobalRes } from 'src/utils/response.interface';
 import { convertAnyStringArrToNumArrPipe } from './pipes/convertAnyStringArrToNumArr.pipe';
-import { isHasIdInQueryOrBodyGuard } from './guards/isHasIdInBody.guard';
-import { creatingGuard } from './guards/creating.guard';
-import { CreateUserDtos } from 'src/utils/dto/User.dto';
-// import { CreatingPipe } from './pipes/creating.pipe';
+import { CreateUserDtos, UpdateUserDtos } from 'src/utils/dto/User.dto';
+import { IsHasDataInQueryOrBodyPipe } from './pipes/IsHasDataInQueryOrBody.pipe';
+import { processUserData } from 'src/utils/function';
+import { excludeIdFieldPipe } from './pipes/creating.pipe';
 
 @Controller(routes.baseRoute)
 export class CrudController {
@@ -25,10 +26,8 @@ export class CrudController {
 
   @Get(routes.getAllUsers)
   // ! Guard in here is not used correctly as itself
-  @UseGuards(isHasIdInQueryOrBodyGuard)
-  async fetchUsers(
-    @Query(convertAnyStringArrToNumArrPipe) query: FetchUserInterface,
-  ): Promise<GlobalRes> {
+  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  async fetchUsers(@Query() query: FetchUserInterface): Promise<GlobalRes> {
     const id = query?.id;
     let data = null;
 
@@ -48,12 +47,15 @@ export class CrudController {
   }
 
   @Post(routes.createUsers)
-  @UseGuards(creatingGuard)
+  @UsePipes(excludeIdFieldPipe)
   async createUsers(
     @Body(new ValidationPipe({ transform: true }))
     body: CreateUserDtos,
-  ) {
+  ): Promise<GlobalRes> {
     const { data }: any = body;
+
+    console.log(body);
+
     return {
       statusCode: HttpStatus.OK,
       data: await this.crudService.createUsers(data || body),
@@ -61,10 +63,8 @@ export class CrudController {
   }
 
   @Delete(routes.deleteUsers)
-  @UseGuards(isHasIdInQueryOrBodyGuard)
-  async deleteUsers(
-    @Body(convertAnyStringArrToNumArrPipe) req: DeleteUserInterface,
-  ) {
+  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  async deleteUsers(@Body() req: DeleteUserInterface): Promise<GlobalRes> {
     const ids: any = req?.id;
     if (ids && ids.length > 0) {
       return {
@@ -76,5 +76,49 @@ export class CrudController {
       statusCode: HttpStatus.NOT_FOUND,
       message: 'Missing or invalid query parameters',
     };
+  }
+
+  @Put(routes.updateUsers)
+  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  async updateUsers(
+    @Body(new ValidationPipe({ transform: true })) body: UpdateUserDtos | any,
+  ): Promise<GlobalRes> {
+    const { ids, payload } = processUserData(body);
+
+    if (ids.length === payload.length) {
+      let totalSuccessRecord = 0;
+      for (let i = 0; i < payload.length; i++) {
+        const response = await this.crudService.updateUsers(
+          [ids[i]],
+          payload[i],
+        );
+        response && (totalSuccessRecord += response);
+      }
+      if (totalSuccessRecord)
+        return {
+          statusCode: HttpStatus.OK,
+          data: totalSuccessRecord,
+        };
+    }
+    if (payload.length === 1 && ids.length > 0) {
+      if (payload[0].email) {
+        return {
+          statusCode: HttpStatus.CONFLICT,
+          message: 'Email attribute cannot be updateMany',
+        };
+      }
+      console.log(ids);
+
+      const response = await this.crudService.updateUsers(ids, payload[0]);
+      return {
+        statusCode: HttpStatus.OK,
+        data: response,
+      };
+    }
+    return {
+      statusCode: HttpStatus.BAD_REQUEST,
+      message: 'Invalid data received',
+    };
+    // this.crudService.updateUsers(body);
   }
 }

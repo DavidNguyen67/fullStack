@@ -8,8 +8,12 @@ import {
 @Injectable()
 export class convertAnyStringArrToNumArrPipe implements PipeTransform {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transform(value: any, metadata: ArgumentMetadata) {
+  transform(value: any, metadata: ArgumentMetadata): any {
     try {
+      if (Array.isArray(value)) {
+        const result = value.filter((val) => val.id);
+        if (result.length > 0) return result;
+      }
       const { id } = value;
       if (id) {
         if (typeof id === 'string') {
@@ -28,7 +32,9 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
           return { ...value, id: uniqueValues };
         }
       }
-      throw new BadRequestException('Missing parameter');
+      throw new BadRequestException(
+        'Missing parameter from convertAnyStringArrToNumArrPipe',
+      );
     } catch (error) {
       console.log(error);
     }

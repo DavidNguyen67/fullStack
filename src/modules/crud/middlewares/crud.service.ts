@@ -1,13 +1,13 @@
 import {
-  HttpException,
-  HttpStatus,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { exclude } from 'src/utils/excludeFields';
+import { UpdateUserDto } from 'src/utils/dto/User.dto';
+import { exclude } from 'src/utils/function';
 
 @Injectable()
 export class CrudService {
@@ -83,12 +83,7 @@ export class CrudService {
         return createdUsers;
       }
 
-      if (invalidUsers.length > 0) {
-        throw new HttpException(
-          'Conflict: Some data already exists',
-          HttpStatus.CONFLICT,
-        );
-      }
+      if (invalidUsers.length > 0) throw new ConflictException();
       throw new InternalServerErrorException('Error creating user(s)');
     } catch (error) {
       return error;
@@ -111,5 +106,24 @@ export class CrudService {
     } catch (error) {
       return error;
     }
+  }
+
+  async updateUsers(userId: number[], payload: UpdateUserDto) {
+    if (!payload.email || !(await this.isExistEmail(payload.email))) {
+      try {
+        const user = await this.prisma.user.updateMany({
+          data: payload,
+          where: {
+            id: {
+              in: userId,
+            },
+          },
+        });
+        if (user && user.count > 0) return user.count;
+        throw new NotFoundException('User not found');
+      } catch (error) {
+        return error;
+      }
+    } else throw new ConflictException();
   }
 }
