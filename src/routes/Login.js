@@ -56,8 +56,7 @@ class Login extends Component {
 
     if (username && password) {
       try {
-        const response = await handleLogin(username, password)
-        console.log(this.props);
+        const response = await handleLogin(username, password);
         if (response) {
           this.props.userLoginSuccess(response.data);
           toast.success('Successfully logged in');

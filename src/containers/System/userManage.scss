@@ -27,3 +27,29 @@
     color: white;
   }
 }
+.modal-user-container {
+  .model-user-body {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    .input-container {
+      display: flex;
+      width: 48%;
+      flex-direction: column;
+      input {
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        height: 30px;
+        outline: none;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
+  }
+  button.close {
+    background-color: transparent;
+    border: transparent;
+    color: white;
+    font-size: large;
+  }
+}
