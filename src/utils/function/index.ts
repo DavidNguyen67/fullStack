@@ -12,7 +12,6 @@ export const processUserData = (body) => {
   const filteredPayload = body.reduce(
     (acc, data) => {
       const id = Number(data.id);
-      console.log(id);
 
       const filteredData = exclude(data, ['id']);
       acc.ids = [...acc.ids, id];

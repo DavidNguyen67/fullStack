@@ -53,9 +53,6 @@ export class CrudController {
     body: CreateUserDtos,
   ): Promise<GlobalRes> {
     const { data }: any = body;
-
-    console.log(body);
-
     return {
       statusCode: HttpStatus.OK,
       data: await this.crudService.createUsers(data || body),
@@ -64,8 +61,9 @@ export class CrudController {
 
   @Delete(routes.deleteUsers)
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
-  async deleteUsers(@Body() req: DeleteUserInterface): Promise<GlobalRes> {
-    const ids: any = req?.id;
+  async deleteUsers(@Query() query: DeleteUserInterface): Promise<GlobalRes> {
+    const ids: any = query?.id;
+
     if (ids && ids.length > 0) {
       return {
         statusCode: HttpStatus.OK,
@@ -74,7 +72,7 @@ export class CrudController {
     }
     return {
       statusCode: HttpStatus.NOT_FOUND,
-      message: 'Missing or invalid query parameters',
+      message: 'Missing or invalid body parameters',
     };
   }
 
@@ -107,8 +105,6 @@ export class CrudController {
           message: 'Email attribute cannot be updateMany',
         };
       }
-      console.log(ids);
-
       const response = await this.crudService.updateUsers(ids, payload[0]);
       return {
         statusCode: HttpStatus.OK,
