@@ -4,12 +4,18 @@ import { connect } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import './userManage.scss';
 import validator from 'validator';
+import { toast } from 'react-toastify';
 
+const CREATE = 'CREATE';
+const DELETE = 'DELETE';
+const UPDATE = 'UPDATE';
+const UPDATE_MANY = 'UPDATE_MANY';
 class ModalUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
       // modal: this.props.isOpen,
+      id: null,
       email: '',
       password: '',
       firstName: '',
@@ -21,7 +27,21 @@ class ModalUser extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.dataUser !== prevProps.dataUser) {
+      if (
+        this.props.typeModel === CREATE ||
+        this.props.typeModel === UPDATE_MANY
+      ) {
+        this.setState({
+          email: '',
+          password: '',
+          firstName: '',
+          lastName: '',
+          address: '',
+        });
+        return;
+      }
       this.setState({
+        id: this.props.dataUser?.id,
         email: this.props.dataUser?.email,
         password: this.props.dataUser?.password,
         firstName: this.props.dataUser?.firstName,
@@ -38,32 +58,56 @@ class ModalUser extends Component {
     });
   };
 
-  isValidState = () => {
-    if (
-      this.state.email &&
-      this.state.password &&
-      this.state.firstName &&
-      this.state.lastName
-    ) {
-      return (
-        validator.isEmail(this.state.email) &&
-        validator.isAlpha(this.state.firstName) &&
-        validator.isAlpha(this.state.lastName)
-      );
+  handleActionUser = async () => {
+    switch (this.props?.typeModel) {
+      case CREATE:
+        if (
+          this.state.email &&
+          this.state.password &&
+          this.state.firstName &&
+          this.state.lastName
+        )
+          validator.isEmail(this.state.email) &&
+            validator.isAlpha(this.state.firstName) &&
+            validator.isAlpha(this.state.lastName) &&
+            (await this.props.createUser(this.state));
+        else toast.error('Some fields are not allowed');
+        break;
+      case DELETE:
+        await this.props.deleteUser(this.state.id?.toString());
+        break;
+      case UPDATE:
+        let payload = null;
+        if (this.state.email === this.props.dataUser?.email) {
+          function exclude(user, keys) {
+            return Object.fromEntries(
+              Object.entries(user).filter(([key]) => !keys.includes(key))
+            );
+          }
+          payload = exclude(this.state, ['email']);
+        }
+        if (!Array.isArray(payload)) payload = [payload];
+        await this.props.updateUser(payload);
+        break;
+      case UPDATE_MANY:
+        Object.keys(this.state).forEach(
+          (key) => !this.state[key] && delete this.state[key]
+        );
+        if (this.state.email) {
+          toast.error('Email cannot be bulk update');
+          return this.props.toggle();
+        }
+        let data = [];
+        this.props.selected?.forEach((element) => {
+          data = [...data, { id: element }];
+        });
+        data[data.length - 1] = { ...data[data.length - 1], ...this.state };
+        await this.props.updateUser(data);
+        break;
+      default:
+        break;
     }
-  };
-  handleAddNewUser = async (event) => {
-    if (this.isValidState()) {
-      await this.props.createUser(this.state);
-      this.setState({
-        email: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        address: '',
-      });
-      return this.props.toggle();
-    }
+    return this.props.toggle();
   };
 
   render() {
@@ -78,7 +122,7 @@ class ModalUser extends Component {
           <ModalHeader toggle={this.props.toggle}>Modal title</ModalHeader>
           <ModalBody
             onKeyPress={(event) => {
-              return event.which === 13 && this.handleAddNewUser();
+              return event.which === 13 && this.handleActionUser();
             }}
           >
             <div className="model-user-body">
@@ -133,7 +177,7 @@ class ModalUser extends Component {
             <Button
               color="primary"
               className="px-2"
-              onClick={this.handleAddNewUser}
+              onClick={this.handleActionUser}
             >
               Do Something
             </Button>

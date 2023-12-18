@@ -13,8 +13,6 @@ export const deleteUsers = async (id) => {
 };
 
 export const updateUsers = async (payload) => {
-  console.log(payload);
-  return;
   return await instance.put(`edit-users`, payload);
 };
 

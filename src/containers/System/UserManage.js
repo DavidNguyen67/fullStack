@@ -105,6 +105,10 @@ class UserManage extends Component {
         response.data?.status || response.statusCode,
         response.data?.message || 'Success'
       );
+      this.setState({
+        ...this.state,
+        selected: [],
+      });
     };
     if (this.state.selected.length > 1) {
       toast(
@@ -143,7 +147,10 @@ class UserManage extends Component {
 
   deleteFunc = async (id) => {
     const response = await deleteUsers(id);
-    await this.fetchUsers();
+    if (Math.floor(response.data?.status || response.statusCode / 100) === 2) {
+      await this.fetchUsers();
+    }
+    console.log('Rn here');
     this.handleToastBaseOnStatusCode(
       response.data?.status || response.statusCode,
       response.data?.message || 'Success'
@@ -155,7 +162,7 @@ class UserManage extends Component {
     await this.fetchUsers();
     this.handleToastBaseOnStatusCode(
       response.data?.status || response.statusCode,
-      response.data?.message || 'Success'
+      response.data?.message || (response.data > 0 && 'Success')
     );
   };
 
@@ -179,6 +186,13 @@ class UserManage extends Component {
     toast.error('Only accept one user selected');
   };
 
+  handleSetSelectedUser = () => {
+    console.log('Run here');
+    this.setState({
+      ...this.state,
+      selected: [],
+    });
+  };
   render() {
     return (
       <div className="users-container">
@@ -187,13 +201,15 @@ class UserManage extends Component {
           toggle={this.toggleModal}
           createUser={this.handleCreateNewUser}
           dataUser={
-            (this.state.typeModel !== CREATE ||
-              this.state.typeModel !== UPDATE_MANY) &&
+            this.state.typeModel !== CREATE &&
+            this.state.typeModel !== UPDATE_MANY &&
             this.state.dataForModal
           }
           typeModel={this.state.typeModel}
           deleteUser={this.deleteFunc}
           updateUser={this.updateFunc}
+          selected={this.state.selected}
+          handleSetSelectedUser={this.handleSetSelectedUser}
         />
         <div className="title text-center">Manage users</div>
         <div className="flex-grow-1 d-flex">
