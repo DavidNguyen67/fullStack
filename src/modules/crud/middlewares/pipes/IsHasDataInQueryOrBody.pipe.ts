@@ -8,25 +8,16 @@ import { isEmpty } from 'src/utils/function';
 
 @Injectable()
 export class IsHasDataInQueryOrBodyPipe implements PipeTransform {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform(value: any, metadata: ArgumentMetadata) {
     try {
-      const { type } = metadata;
-
-      if (type === 'query') {
-        if (!isEmpty(value)) {
-          return value;
-        }
+      if (!value || isEmpty(value)) {
+        return new BadRequestException(
+          'Missing or invalid parameters from IsHasDataInQueryOrBodyPipe',
+        );
       }
 
-      if (type === 'body') {
-        if (!isEmpty(value)) {
-          return value;
-        }
-      }
-
-      throw new BadRequestException(
-        'Missing or invalid parameters from IsHasDataInQueryOrBodyPipe',
-      );
+      return value;
     } catch (error) {
       console.log(error);
     }

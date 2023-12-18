@@ -18,9 +18,10 @@ export class CrudService {
       const users = await this.prisma.user.findMany({});
       if (users.length < 0) throw new NotFoundException('Not found users');
 
-      return users.map(
-        (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
-      );
+      // return users.map(
+      //   (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
+      // );
+      return users;
     } catch (error) {
       return error;
     }
