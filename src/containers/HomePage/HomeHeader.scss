@@ -1,0 +1,148 @@
+.home-header-container {
+  height: 60px;
+  .home-header-content {
+    display: flex;
+    height: 100%;
+
+    .left-content {
+      width: 20%;
+      display: flex;
+      align-items: center;
+      .header-logo {
+        background: url(../../assets/bookingCare.svg) center center no-repeat;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        transform: scale(0.5, 0.5);
+      }
+      i {
+        font-size: 25px;
+        color: gray;
+        cursor: pointer;
+      }
+    }
+    .center-content {
+      width: 55%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .right-content {
+      width: 25%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .support {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        i {
+          font-size: 15px;
+          margin-right: 5px;
+        }
+        .language-vi {
+          padding-left: 25px;
+          &.active {
+            color: orange;
+          }
+        }
+        .language-en {
+          margin: 0px 10px;
+          cursor: pointer;
+          &.active {
+            color: blue;
+          }
+        }
+      }
+    }
+  }
+}
+.home-header-banner {
+  background: url(./../../assets/images/brg.png) no-repeat center / cover;
+  height: 485px;
+  // padding: 15px 0px;
+  display: flex;
+  flex-direction: column;
+  .content-up {
+    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.1));
+    height: 65%;
+    padding-top: 15px;
+    .title1 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 5px;
+      text-shadow: 1px 1px 1px #333;
+      color: white;
+      margin-top: 30px;
+    }
+    .title2 {
+      text-align: center;
+      font-size: 30px;
+      text-shadow: 1px 1px 1px #333;
+      color: white;
+      margin-bottom: 15px;
+    }
+    .search {
+      width: fit-content;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      padding: 10px;
+      border-radius: 25px;
+      background-color: #f7d800;
+      i {
+        margin: 0px 5px;
+      }
+      input {
+        height: 30px;
+        width: 300px;
+        background-color: transparent;
+        border: none;
+        outline: none;
+      }
+    }
+  }
+  .content-down {
+    height: 35%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: linear-gradient(
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 1)
+    );
+    .options {
+      display: flex;
+      text-align: center;
+      gap: 30px;
+      justify-content: center;
+      .option-child {
+        width: 100px;
+        .icon-child {
+          background-color: white;
+          width: 40px;
+          height: 40px;
+          padding: 10px;
+          border-radius: 50%;
+          text-align: center;
+          margin: 0 auto;
+        }
+        i {
+          color: #49bce2;
+          font-size: 20px;
+        }
+        .text-child {
+          font-size: 17px;
+          font-weight: 500;
+          cursor: pointer;
+          &:hover {
+            color: #49bce2;
+          }
+        }
+      }
+    }
+  }
+}

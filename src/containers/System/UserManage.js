@@ -193,6 +193,7 @@ class UserManage extends Component {
       selected: [],
     });
   };
+
   render() {
     return (
       <div className="users-container">

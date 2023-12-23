@@ -119,7 +119,13 @@ class ModalUser extends Component {
           toggle={this.props.toggle}
           className="modal-user-container"
         >
-          <ModalHeader toggle={this.props.toggle}>Modal title</ModalHeader>
+          <ModalHeader toggle={this.props.toggle}>
+            {this.props.typeModel === DELETE
+              ? DELETE
+              : this.props.typeModel === CREATE
+              ? CREATE
+              : UPDATE}
+          </ModalHeader>
           <ModalBody
             onKeyPress={(event) => {
               return event.which === 13 && this.handleActionUser();
@@ -133,6 +139,10 @@ class ModalUser extends Component {
                   name="email"
                   value={this.state.email}
                   onChange={this.handleChangeInput}
+                  disabled={
+                    this.props.typeModel === DELETE ||
+                    this.props.typeModel === UPDATE_MANY
+                  }
                 />
               </div>
               <div className="input-container">
@@ -142,6 +152,7 @@ class ModalUser extends Component {
                   name="password"
                   value={this.state.password}
                   onChange={this.handleChangeInput}
+                  disabled={this.props.typeModel === DELETE}
                 />
               </div>
               <div className="input-container">
@@ -151,6 +162,7 @@ class ModalUser extends Component {
                   name="firstName"
                   value={this.state.firstName}
                   onChange={this.handleChangeInput}
+                  disabled={this.props.typeModel === DELETE}
                 />
               </div>
               <div className="input-container">
@@ -160,6 +172,7 @@ class ModalUser extends Component {
                   name="lastName"
                   value={this.state.lastName}
                   onChange={this.handleChangeInput}
+                  disabled={this.props.typeModel === DELETE}
                 />
               </div>
               <div className="input-container w-100">
@@ -169,6 +182,7 @@ class ModalUser extends Component {
                   name="address"
                   value={this.state.address}
                   onChange={this.handleChangeInput}
+                  disabled={this.props.typeModel === DELETE}
                 />
               </div>
             </div>
@@ -179,7 +193,11 @@ class ModalUser extends Component {
               className="px-2"
               onClick={this.handleActionUser}
             >
-              Do Something
+              {this.props.typeModel === DELETE
+                ? DELETE
+                : this.props.typeModel === CREATE
+                ? CREATE
+                : UPDATE}
             </Button>
             <Button
               color="secondary"
