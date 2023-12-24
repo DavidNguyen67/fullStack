@@ -15,7 +15,7 @@ class HomeHeader extends Component {
     const { language } = this.props;
     return (
       <>
-        <div className="home-header-container container">
+        <div className="home-header-container">
           <div className="home-header-content">
             <div className="left-content">
               <i className="fas fa-bars"></i>
