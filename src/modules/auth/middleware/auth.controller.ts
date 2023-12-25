@@ -12,7 +12,7 @@ import { LoginInterface } from 'src/utils/interfaces';
 import { AuthPipe } from './auth.pipe';
 import { GlobalRes } from 'src/utils/response.interface';
 
-@Controller(routes.baseRoute)
+@Controller(`${routes.versionApi}/${routes.authPath}`)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Get()

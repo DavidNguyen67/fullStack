@@ -20,11 +20,11 @@ import { IsHasDataInQueryOrBodyPipe } from './pipes/IsHasDataInQueryOrBody.pipe'
 import { processUserData } from 'src/utils/function';
 import { excludeIdFieldPipe } from './pipes/creating.pipe';
 
-@Controller(routes.baseRoute)
+@Controller(`${routes.versionApi}/${routes.crudUserPath}`)
 export class CrudController {
   constructor(private readonly crudService: CrudService) {}
 
-  @Get(routes.getAllUsers)
+  @Get(routes.readRoute)
   // ! Guard in here is not used correctly as itself
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
   async fetchUsers(@Query() query: FetchUserInterface): Promise<GlobalRes> {
@@ -46,20 +46,20 @@ export class CrudController {
     };
   }
 
-  @Post(routes.createUsers)
+  @Post(routes.createRoute)
   @UsePipes(excludeIdFieldPipe)
   async createUsers(
     @Body(new ValidationPipe({ transform: true }))
     body: CreateUserDtos,
   ): Promise<GlobalRes> {
-    const { data }: any = body;
+    const data: any = body.data;
     return {
       statusCode: HttpStatus.OK,
       data: await this.crudService.createUsers(data || body),
     };
   }
 
-  @Delete(routes.deleteUsers)
+  @Delete(routes.deleteRoute)
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
   async deleteUsers(@Query() query: DeleteUserInterface): Promise<GlobalRes> {
     const ids: any = query?.id;
@@ -76,7 +76,7 @@ export class CrudController {
     };
   }
 
-  @Put(routes.updateUsers)
+  @Put(routes.updateRoute)
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
   async updateUsers(
     @Body(new ValidationPipe({ transform: true })) body: UpdateUserDtos | any,

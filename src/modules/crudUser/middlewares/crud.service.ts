@@ -23,7 +23,8 @@ export class CrudService {
       // );
       return users;
     } catch (error) {
-      return error;
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -43,7 +44,8 @@ export class CrudService {
         (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
       );
     } catch (error) {
-      return error;
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -58,7 +60,8 @@ export class CrudService {
       });
       return !!users;
     } catch (error) {
-      return error;
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -87,7 +90,8 @@ export class CrudService {
       if (invalidUsers.length > 0) throw new ConflictException();
       throw new InternalServerErrorException('Error creating user(s)');
     } catch (error) {
-      return error;
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -105,11 +109,13 @@ export class CrudService {
 
       return user.count;
     } catch (error) {
-      return error;
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
   async updateUsers(userId: number[], payload: UpdateUserDto) {
+    payload = { ...payload, updateAt: new Date() };
     if (!payload.email || !(await this.isExistEmail(payload.email))) {
       try {
         const user = await this.prisma.user.updateMany({
@@ -123,7 +129,8 @@ export class CrudService {
         if (user && user.count > 0) return user.count;
         throw new NotFoundException('User not found');
       } catch (error) {
-        return error;
+        console.log(error);
+        throw new InternalServerErrorException(error);
       }
     } else throw new ConflictException();
   }

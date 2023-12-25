@@ -13,8 +13,9 @@ export class AuthPipe implements PipeTransform {
     try {
       const { username, password } = value;
       if (username && password) return value;
-    } catch (error) {
       throw new UnauthorizedException('Missing username or password');
+    } catch (error) {
+      throw error;
     }
   }
 }

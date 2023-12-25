@@ -37,6 +37,7 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
       );
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 }

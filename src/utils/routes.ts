@@ -1,7 +1,12 @@
-export const baseRoute = 'api/v1/';
+export const GlobalPrefix = 'api';
+export const versionApi = 'v1';
+
+export const authPath = 'auth';
+export const crudUserPath = 'user';
+export const allCodePath = 'allCode';
 
 export const loginRoute = 'login';
-export const getAllUsers = 'get-all-users';
-export const createUsers = 'create-new-users';
-export const deleteUsers = 'delete-users';
-export const updateUsers = 'edit-users';
+export const readRoute = 'read';
+export const updateRoute = 'update';
+export const deleteRoute = 'delete';
+export const createRoute = 'create';
