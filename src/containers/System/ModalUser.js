@@ -5,6 +5,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import './userManage.scss';
 import validator from 'validator';
 import { toast } from 'react-toastify';
+import _ from 'lodash';
 
 const CREATE = 'CREATE';
 const DELETE = 'DELETE';
@@ -54,11 +55,21 @@ class ModalUser extends Component {
   handleChangeInput = (event) => {
     this.setState({
       ...this.state,
-      [event.target.name]: event.target.value.trim(),
+      [event.target.name]: ['address', 'lastname', 'firstname'].includes(
+        event.target.name.toLowerCase()
+      )
+        ? event.target.value
+        : event.target.value.trim(),
     });
   };
 
   handleActionUser = async () => {
+    function exclude(user, keys) {
+      return Object.fromEntries(
+        Object.entries(user).filter(([key]) => !keys.includes(key))
+      );
+    }
+
     switch (this.props?.typeModel) {
       case CREATE:
         if (
@@ -66,29 +77,42 @@ class ModalUser extends Component {
           this.state.password &&
           this.state.firstName &&
           this.state.lastName
-        )
-          validator.isEmail(this.state.email) &&
-            validator.isAlpha(this.state.firstName) &&
-            validator.isAlpha(this.state.lastName) &&
-            (await this.props.createUser(this.state));
-        else toast.error('Some fields are not allowed');
+        ) {
+          if (validator.isEmail(this.state.email)) {
+            await this.props.createUser(this.state);
+            this.setState({
+              email: '',
+              password: '',
+              firstName: '',
+              lastName: '',
+              address: '',
+            });
+            return this.props.toggle();
+          } else toast.error('Some fields are not allowed');
+        } else toast.error('Some fields are required');
         break;
+
       case DELETE:
         await this.props.deleteUser(this.state.id?.toString());
-        break;
+        return this.props.toggle();
+
       case UPDATE:
+        if (
+          _.isEqual(
+            this.state,
+            exclude(this.props.dataUser, ['createAt', 'updateAt'])
+          )
+        )
+          return this.props.toggle();
+
         let payload = null;
         if (this.state.email === this.props.dataUser?.email) {
-          function exclude(user, keys) {
-            return Object.fromEntries(
-              Object.entries(user).filter(([key]) => !keys.includes(key))
-            );
-          }
           payload = exclude(this.state, ['email']);
-        }
+        } else payload = this.state;
         if (!Array.isArray(payload)) payload = [payload];
         await this.props.updateUser(payload);
-        break;
+        return this.props.toggle();
+
       case UPDATE_MANY:
         Object.keys(this.state).forEach(
           (key) => !this.state[key] && delete this.state[key]
@@ -101,13 +125,15 @@ class ModalUser extends Component {
         this.props.selected?.forEach((element) => {
           data = [...data, { id: element }];
         });
+        // This line is necessary for formatted data to update bulk users
         data[data.length - 1] = { ...data[data.length - 1], ...this.state };
+
         await this.props.updateUser(data);
-        break;
+        return this.props.toggle();
+
       default:
         break;
     }
-    return this.props.toggle();
   };
 
   render() {
@@ -119,11 +145,13 @@ class ModalUser extends Component {
           className="modal-user-container"
         >
           <ModalHeader toggle={this.props.toggle}>
-            {this.props.typeModel === DELETE
-              ? DELETE
-              : this.props.typeModel === CREATE
-              ? CREATE
-              : UPDATE}
+            {this.props.typeModel === DELETE ? (
+              <FormattedMessage id={'button.delete'} />
+            ) : this.props.typeModel === CREATE ? (
+              <FormattedMessage id={'button.create'} />
+            ) : (
+              <FormattedMessage id={'button.update'} />
+            )}
           </ModalHeader>
           <ModalBody
             onKeyPress={(event) => {
@@ -131,7 +159,15 @@ class ModalUser extends Component {
             }}
           >
             <div className="model-user-body">
-              <div className="input-container">
+              <div
+                className={
+                  this.props.typeModel === UPDATE_MANY ||
+                  this.props.typeModel === UPDATE ||
+                  this.props.typeModel === DELETE
+                    ? 'input-container w-100'
+                    : 'input-container'
+                }
+              >
                 <label>Email</label>
                 <input
                   type="text"
@@ -144,18 +180,26 @@ class ModalUser extends Component {
                   }
                 />
               </div>
+              {this.props.typeModel === UPDATE_MANY ||
+              this.props.typeModel === UPDATE ||
+              this.props.typeModel === DELETE ? (
+                <></>
+              ) : (
+                <div className="input-container">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={this.state.password}
+                    onChange={this.handleChangeInput}
+                    disabled={this.props.typeModel === DELETE}
+                  />
+                </div>
+              )}
               <div className="input-container">
-                <label>Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={this.state.password}
-                  onChange={this.handleChangeInput}
-                  disabled={this.props.typeModel === DELETE}
-                />
-              </div>
-              <div className="input-container">
-                <label>FirstName</label>
+                <label>
+                  <FormattedMessage id={'title.table.firstName'} />
+                </label>
                 <input
                   type="text"
                   name="firstName"
@@ -164,8 +208,10 @@ class ModalUser extends Component {
                   disabled={this.props.typeModel === DELETE}
                 />
               </div>
-              <div className="input-container">
-                <label>LastName</label>
+              <div className="input-container flex-grow-1">
+                <label>
+                  <FormattedMessage id={'title.table.lastName'} />
+                </label>
                 <input
                   type="text"
                   name="lastName"
@@ -175,7 +221,9 @@ class ModalUser extends Component {
                 />
               </div>
               <div className="input-container w-100">
-                <label>Address</label>
+                <label>
+                  <FormattedMessage id={'title.table.address'} />
+                </label>
                 <input
                   type="text"
                   name="address"

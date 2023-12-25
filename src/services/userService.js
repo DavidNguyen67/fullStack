@@ -5,7 +5,8 @@ export const getAllUsers = async (id = 'all') => {
 };
 
 export const createNewUser = async (payload) => {
-  return await instance.post(`/user/create`, payload);
+  const response = await instance.post(`/user/create`, payload);
+  return response;
 };
 
 export const deleteUsers = async (id) => {
@@ -13,7 +14,8 @@ export const deleteUsers = async (id) => {
 };
 
 export const updateUsers = async (payload) => {
-  return await instance.put(`/user/update`, payload);
+  const response = await instance.put(`/user/update`, payload);
+  return response;
 };
 
 export const handleLogin = async (username, password) => {

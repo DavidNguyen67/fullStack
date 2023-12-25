@@ -40,9 +40,10 @@ class UserManage extends Component {
   }
   async componentDidUpdate(prevProps, prevState) {
     if (
-      !prevState.arrUsers.length === this.state.arrUsers.length &&
-      !prevState.arrUsers.every(
-        (value, index) => value === this.state.arrUsers[index]
+      (!prevState.arrUsers && !prevState.arrUsers.length) ===
+        (this.state.arrUsers && this.state.arrUsers.length) &&
+      !prevState.arrUsers?.every(
+        (value, index) => value === this.state?.arrUsers[index]
       )
     )
       await this.fetchUsers();
@@ -98,11 +99,11 @@ class UserManage extends Component {
   handleCreateNewUser = async (payload) => {
     if (!Array.isArray(payload)) payload = [payload];
     const response = await createNewUser(payload);
-    await this.fetchUsers();
     this.handleToastBaseOnStatusCode(
       response.data?.status || response.statusCode,
       response.data?.message || 'Success'
     );
+    await this.fetchUsers();
   };
 
   handleDeleteUsers = async () => {
@@ -159,7 +160,6 @@ class UserManage extends Component {
     if (Math.floor(response.data?.status || response.statusCode / 100) === 2) {
       await this.fetchUsers();
     }
-    console.log('Rn here');
     this.handleToastBaseOnStatusCode(
       response.data?.status || response.statusCode,
       response.data?.message || 'Success'
@@ -196,7 +196,6 @@ class UserManage extends Component {
   };
 
   handleSetSelectedUser = () => {
-    console.log('Run here');
     this.setState({
       ...this.state,
       selected: [],
@@ -221,7 +220,9 @@ class UserManage extends Component {
           selected={this.state.selected}
           handleSetSelectedUser={this.handleSetSelectedUser}
         />
-        <div className="title text-center">Manage users</div>
+        <div className="title text-center">
+          <FormattedMessage id={'title.manageUser'} />
+        </div>
         <div className="flex-grow-1 d-flex">
           <div className="ms-auto" />
           <button
@@ -230,7 +231,7 @@ class UserManage extends Component {
             onClick={this.handleAddNewUser}
           >
             <i className="fas fa-plus"></i>
-            Add new user
+            <FormattedMessage id={'button.create'} />
           </button>
           <div className="mx-2" />
           <button
@@ -239,7 +240,7 @@ class UserManage extends Component {
             onClick={this.handleUpdateUser}
           >
             <i className="fas fa-pencil-alt"></i>
-            Edit
+            <FormattedMessage id={'button.update'} />
           </button>
           <div className="mx-2" />
           <button
@@ -248,7 +249,7 @@ class UserManage extends Component {
             onClick={this.handleDeleteUsers}
           >
             <i className="fas fa-trash"></i>
-            Delete
+            <FormattedMessage id={'button.delete'} />
           </button>
         </div>
         <br />
@@ -257,9 +258,15 @@ class UserManage extends Component {
             <thead>
               <tr>
                 <th>Email</th>
-                <th>FirstName</th>
-                <th>LastName</th>
-                <th>Address</th>
+                <th>
+                  <FormattedMessage id={'title.table.firstName'} />
+                </th>
+                <th>
+                  <FormattedMessage id={'title.table.lastName'} />
+                </th>
+                <th>
+                  <FormattedMessage id={'title.table.address'} />
+                </th>
                 <th></th>
               </tr>
             </thead>
