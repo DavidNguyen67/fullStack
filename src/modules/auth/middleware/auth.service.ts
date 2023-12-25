@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { exclude } from 'src/utils/function';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService) {}
@@ -12,13 +12,12 @@ export class AuthService {
         where: { email: username },
       });
 
-      if (user && password === user.password) {
+      if (user && (await bcrypt.compare(password, user.password))) {
         return exclude(user, ['password', 'createAt', 'updateAt']) || user;
-      }
-
-      throw new UnauthorizedException('Wrong password or username');
+      } else throw new UnauthorizedException('Wrong password or username');
     } catch (error) {
-      throw new UnauthorizedException('Error logging in');
+      console.log(error);
+      throw error;
     }
   }
 }

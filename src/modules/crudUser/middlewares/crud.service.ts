@@ -8,6 +8,8 @@ import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserDto } from 'src/utils/dto/User.dto';
 import { exclude } from 'src/utils/function';
+import * as bcrypt from 'bcrypt';
+const saltOrRounds = 10;
 
 @Injectable()
 export class CrudService {
@@ -16,7 +18,7 @@ export class CrudService {
   async fetchUsers() {
     try {
       const users = await this.prisma.user.findMany({});
-      if (users.length < 0) throw new NotFoundException('Not found users');
+      if (users.length < 0) throw new NotFoundException('Not found user(s)');
 
       // return users.map(
       //   (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
@@ -24,7 +26,7 @@ export class CrudService {
       return users;
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 
@@ -38,14 +40,14 @@ export class CrudService {
         },
       });
       if (!users || users.length === 0) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('User(s) not found');
       }
       return users.map(
         (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
       );
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 
@@ -61,7 +63,7 @@ export class CrudService {
       return !!users;
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 
@@ -74,9 +76,14 @@ export class CrudService {
 
       for (const user of users) {
         const isEmailExists = await this.isExistEmail(user.email);
-
         !isEmailExists
-          ? (validUsers = [...validUsers, { ...user }])
+          ? (validUsers = [
+              ...validUsers,
+              {
+                ...user,
+                password: await bcrypt.hash(user.password, saltOrRounds),
+              },
+            ])
           : (invalidUsers = [...validUsers, { ...user }]);
       }
 
@@ -87,11 +94,12 @@ export class CrudService {
         return createdUsers;
       }
 
-      if (invalidUsers.length > 0) throw new ConflictException();
+      if (invalidUsers.length > 0)
+        throw new ConflictException('Duplicate user(s) data');
       throw new InternalServerErrorException('Error creating user(s)');
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 
@@ -105,19 +113,20 @@ export class CrudService {
         },
       });
       if (!user || user.count === 0)
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('User(s) not found');
 
       return user.count;
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 
   async updateUsers(userId: number[], payload: UpdateUserDto) {
-    payload = { ...payload, updateAt: new Date() };
-    if (!payload.email || !(await this.isExistEmail(payload.email))) {
-      try {
+    const hash = await bcrypt.hash(payload.password, saltOrRounds);
+    payload = { ...payload, updateAt: new Date(), password: hash };
+    try {
+      if (!payload.email || !(await this.isExistEmail(payload.email))) {
         const user = await this.prisma.user.updateMany({
           data: payload,
           where: {
@@ -127,11 +136,11 @@ export class CrudService {
           },
         });
         if (user && user.count > 0) return user.count;
-        throw new NotFoundException('User not found');
-      } catch (error) {
-        console.log(error);
-        throw new InternalServerErrorException(error);
-      }
-    } else throw new ConflictException();
+        throw new NotFoundException('User(s) not found');
+      } else throw new ConflictException('Duplicate user(s) data');
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }

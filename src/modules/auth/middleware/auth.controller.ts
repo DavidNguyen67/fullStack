@@ -21,10 +21,8 @@ export class AuthController {
   }
 
   @Post(routes.loginRoute)
-  @UsePipes(new AuthPipe())
-  async loginController(
-    @Body(AuthPipe) dataLogin: LoginInterface,
-  ): Promise<GlobalRes> {
+  @UsePipes(AuthPipe)
+  async loginController(@Body() dataLogin: LoginInterface): Promise<GlobalRes> {
     const { username, password } = dataLogin;
     return {
       statusCode: HttpStatus.OK,
