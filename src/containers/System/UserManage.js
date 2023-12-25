@@ -38,6 +38,15 @@ class UserManage extends Component {
   async componentDidMount() {
     await this.fetchUsers();
   }
+  async componentDidUpdate(prevProps, prevState) {
+    if (
+      !prevState.arrUsers.length === this.state.arrUsers.length &&
+      !prevState.arrUsers.every(
+        (value, index) => value === this.state.arrUsers[index]
+      )
+    )
+      await this.fetchUsers();
+  }
 
   handleClickSelect = (id, dataUser) => {
     this.setState((prevState) => {
@@ -277,7 +286,23 @@ class UserManage extends Component {
                   </tr>
                 ))
               ) : (
-                <Skeleton count={5} />
+                <tr>
+                  <td>
+                    <Skeleton count={5} />
+                  </td>
+                  <td>
+                    <Skeleton count={5} />
+                  </td>
+                  <td>
+                    <Skeleton count={5} />
+                  </td>
+                  <td>
+                    <Skeleton count={5} />
+                  </td>
+                  <td>
+                    <Skeleton count={5} />
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>

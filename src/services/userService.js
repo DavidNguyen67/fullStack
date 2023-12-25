@@ -1,21 +1,21 @@
 import instance from '../axios';
 
 export const getAllUsers = async (id = 'all') => {
-  return await instance.get(`/get-all-users?id=${id}`);
+  return await instance.get(`/user/read?id=${id}`);
 };
 
 export const createNewUser = async (payload) => {
-  return await instance.post(`/create-new-users`, payload);
+  return await instance.post(`/user/create`, payload);
 };
 
 export const deleteUsers = async (id) => {
-  return await instance.delete(`/delete-users?id=${id}`);
+  return await instance.delete(`/user/delete?id=${id}`);
 };
 
 export const updateUsers = async (payload) => {
-  return await instance.put(`edit-users`, payload);
+  return await instance.put(`/user/update`, payload);
 };
 
 export const handleLogin = async (username, password) => {
-  return await instance.post('login', { username, password });
+  return await instance.post('/auth/login', { username, password });
 };
