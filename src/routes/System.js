@@ -5,6 +5,7 @@ import UserManage from '../containers/System/UserManage';
 import ProductManage from '../containers/System/ProductManage';
 import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroupOrAcc';
 import Header from '../containers/Header/Header';
+import UserManageRedux from '../containers/System/Admin/UserManageRedux';
 class System extends Component {
   render() {
     const { systemMenuPath, isLoggedIn } = this.props;
@@ -16,6 +17,10 @@ class System extends Component {
             <div className="container">
               <Switch>
                 <Route path="/system/manage-user" component={UserManage} />
+                <Route
+                  path="/system/manage-user-redux"
+                  component={UserManageRedux}
+                />
                 <Route
                   path="/system/product-manage"
                   component={ProductManage}

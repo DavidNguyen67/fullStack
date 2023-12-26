@@ -5,6 +5,7 @@ import logo from './../../assets/bookingCare.svg';
 import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from './../../utils/constant';
 import { changeLanguageApp } from '../../store/actions/appActions';
+import { LanguageUtils } from '../../utils';
 
 class HomeHeader extends Component {
   changeLanguage = (lan) => {
@@ -106,9 +107,10 @@ class HomeHeader extends Component {
               <i className="fas fa-search"></i>
               <input
                 type="text"
-                placeholder={`${(
-                  <FormattedMessage id={'search.placeholder'} />
-                )}`}
+                placeholder={LanguageUtils.getMessageByKey(
+                  'search.placeholder',
+                  language
+                )}
               />
             </div>
           </div>

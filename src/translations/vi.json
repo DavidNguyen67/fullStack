@@ -33,8 +33,8 @@
     "welcome": "Xin chào ",
     "manageUser": "Quản lý người dùng",
     "table": {
-      "firstName": "Họ",
-      "lastName": "Tên",
+      "firstName": "Tên",
+      "lastName": "Họ",
       "address": "Địa chỉ"
     }
   },
@@ -56,5 +56,18 @@
       "titleHandbook": "Cẩm nang",
       "manageHandbook": "Quản lý Cẩm nang"
     }
+  },
+  "manage-user": {
+    "add": "Thêm mới",
+    "password": "Mật khẩu",
+    "firstName": "Tên",
+    "lastName": "Họ",
+    "phoneNumber": "Số điện thoại",
+    "address": "Địa chỉ",
+    "gender": "Giới tính",
+    "position": "Chức danh",
+    "role": "Vai trò",
+    "image": "Tải ảnh",
+    "save": "Lưu"
   }
 }

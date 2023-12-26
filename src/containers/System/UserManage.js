@@ -31,17 +31,21 @@ class UserManage extends Component {
   }
 
   fetchUsers = async () => {
-    const response = await getAllUsers();
-    this.setState({ arrUsers: response.data });
+    try {
+      const response = await getAllUsers();
+      this.setState({ arrUsers: response.data });
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   };
 
   async componentDidMount() {
     await this.fetchUsers();
   }
+
   async componentDidUpdate(prevProps, prevState) {
     if (
-      (!prevState.arrUsers && !prevState.arrUsers.length) ===
-        (this.state.arrUsers && this.state.arrUsers.length) &&
       !prevState.arrUsers?.every(
         (value, index) => value === this.state?.arrUsers[index]
       )
@@ -192,7 +196,7 @@ class UserManage extends Component {
       });
       return;
     }
-    toast.error('Only accept one user selected');
+    toast.error('Must be at least one user selected');
   };
 
   handleSetSelectedUser = () => {
@@ -226,7 +230,7 @@ class UserManage extends Component {
         <div className="flex-grow-1 d-flex">
           <div className="ms-auto" />
           <button
-            className="btn btn-primary py-1 px-3"
+            className="btn btn-primary"
             style={{ lineHeight: '14px' }}
             onClick={this.handleAddNewUser}
           >
@@ -235,7 +239,7 @@ class UserManage extends Component {
           </button>
           <div className="mx-2" />
           <button
-            className="btn btn-warning py-1 px-3"
+            className="btn btn-warning"
             style={{ lineHeight: '14px' }}
             onClick={this.handleUpdateUser}
           >
@@ -244,7 +248,7 @@ class UserManage extends Component {
           </button>
           <div className="mx-2" />
           <button
-            className="btn btn-danger py-1 px-3"
+            className="btn btn-danger"
             style={{ lineHeight: '14px' }}
             onClick={this.handleDeleteUsers}
           >

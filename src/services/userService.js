@@ -21,3 +21,7 @@ export const updateUsers = async (payload) => {
 export const handleLogin = async (username, password) => {
   return await instance.post('/auth/login', { username, password });
 };
+
+export const getAllCodeService = async (type) => {
+  return await instance.get(`allCode/read?type=${type}`);
+};
