@@ -13,7 +13,7 @@ import { FormattedMessage } from 'react-intl';
 import adminService from '../services/adminService';
 import { toast } from 'react-toastify';
 import instance from '../axios';
-import { handleLogin } from '../services/userService';
+import { handleLoginService } from '../services/userService';
 
 class Login extends Component {
   constructor(props) {
@@ -56,11 +56,13 @@ class Login extends Component {
 
     if (username && password) {
       try {
-        const response = await handleLogin(username, password);
-        if (response) {
+        const response = await handleLoginService(username, password);
+        if (!response.data.error) {
           this.props.userLoginSuccess(response.data);
-          toast.success('Successfully logged in');
+          toast.success(<FormattedMessage id="toast.successLogin" />);
+          return;
         }
+        toast.error(<FormattedMessage id="toast.failedLogin" />);
       } catch (error) {
         this.setState({ ...this.state, loginError: error.message });
       }

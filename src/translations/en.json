@@ -41,7 +41,8 @@
   "button": {
     "create": "Add new user",
     "update": "Update user",
-    "delete": "Delete user"
+    "delete": "Delete user",
+    "cancel": "Cancel"
   },
   "menu": {
     "admin": {
@@ -68,6 +69,40 @@
     "position": "Position",
     "role": "Role",
     "image": "Upload Avatar",
-    "save": "Save"
-  }
+    "save": "Save",
+    "email": "Email",
+    "emailPlaceholder": "Enter email address",
+    "passwordPlaceholder": "Enter password",
+    "firstNamePlaceholder": "Enter first name",
+    "lastNamePlaceholder": "Enter last name",
+    "addressPlaceholder": "Enter address",
+    "phoneNumberPlaceholder": "Enter phone number"
+  },
+  "validate": {
+    "emailInvalid": "Invalid email",
+    "passwordLength": "Password must be at least 6 characters",
+    "nameCharacters": "First and last names can only contain alphabetical characters",
+    "phoneNumberInvalid": "Invalid phone number",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "firstNameRequired": "FirstName is required",
+    "lastNameRequired": "LastName is required"
+  },
+  "toast": {
+    "successLogin": "Login successful",
+    "failedLogin": "Login failed. <br /> Please check your information",
+    "failedCreateUser": "Failed to create user. <br /> Please check your information <br /> Or contact the developer for more details",
+    "successCreateUser": "User created successfully",
+    "errorCreateUser": "Failed to create user",
+    "errorDeleteUser": "Failed to delete user",
+    "successDeleteUser": "User deleted successfully",
+    "errorUpdateUser": "Failed to update user",
+    "successUpdateUser": "User updated successfully",
+    "selectOneUser": "At least one user must be selected",
+    "confirmDeleteUsers": "Do you want to delete these users?",
+    "confirmYes": "Yes",
+    "confirmNo": "No"
+  },
+  "confirmDeleteUsers": "Do you wanna delete those users?",
+  "selectOneUserAtLeast": "Must be at least one user selected."
 }

@@ -41,7 +41,8 @@
   "button": {
     "create": "Thêm",
     "update": "Cập nhật",
-    "delete": "Xóa"
+    "delete": "Xóa",
+    "cancel": "Hủy"
   },
   "menu": {
     "admin": {
@@ -68,6 +69,41 @@
     "position": "Chức danh",
     "role": "Vai trò",
     "image": "Tải ảnh",
-    "save": "Lưu"
-  }
+    "save": "Lưu",
+    "email": "Email",
+    "emailPlaceholder": "Nhập địa chỉ email",
+    "passwordPlaceholder": "Nhập mật khẩu",
+    "firstNamePlaceholder": "Nhập tên",
+    "lastNamePlaceholder": "Nhập họ",
+    "addressPlaceholder": "Nhập địa chỉ",
+    "phoneNumberPlaceholder": "Nhập số điện thoại"
+  },
+  "validate": {
+    "emailInvalid": "Email không hợp lệ",
+    "passwordLength": "Password phải có ít nhất 6 ký tự",
+    "nameCharacters": "Tên và họ chỉ được chứa các ký tự chữ cái",
+    "phoneNumberInvalid": "Số điện thoại không hợp lệ",
+    "emailRequired": "Trường Email không được bỏ trống",
+    "passwordRequired": "Trường Mật Khẩu không được bỏ trống",
+    "firstNameRequired": "Trường Tên không được bỏ trống",
+    "lastNameRequired": "Trường Họ không được bỏ trống"
+  },
+  "toast": {
+    "successLogin": "Đăng nhập thành công",
+    "failedLogin": "Đăng nhập thất bại. <br /> Vui lòng kiểm tra lại thông tin",
+    "failedCreateUser": "Tạo người dùng thất bại. <br /> Vui lòng kiểm tra lại thông tin <br /> Hoặc liên hệ với dev để biết thêm thông tin chi tiết",
+    "successCreateUser": "Tạo người dùng thành công.",
+    "errorCreateUser": "Tạo người dùng thất bại",
+    "errorDeleteUser": "Xóa người dùng thất bại",
+    "successDeleteUser": "Xóa người dùng thành công",
+    "errorUpdateUser": "Cập nhật người dùng thất bại",
+    "successUpdateUser": "Cập nhật người dùng thành công",
+    "selectOneUser": "Cần chọn ít nhất một người dùng",
+    "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này?",
+    "confirmYes": "Có",
+    "confirmNo": "Không"
+  },
+  "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này không?",
+  "selectOneUserAtLeast": "Phải chọn ít nhất một người dùng.",
+  "CancelBtn": "Hủy"
 }

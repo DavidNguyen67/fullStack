@@ -28,19 +28,6 @@ class ModalUser extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.dataUser !== prevProps.dataUser) {
-      if (
-        this.props.typeModel === CREATE ||
-        this.props.typeModel === UPDATE_MANY
-      ) {
-        this.setState({
-          email: '',
-          password: '',
-          firstName: '',
-          lastName: '',
-          address: '',
-        });
-        return;
-      }
       this.setState({
         id: this.props.dataUser?.id,
         email: this.props.dataUser?.email,
@@ -55,15 +42,17 @@ class ModalUser extends Component {
   handleChangeInput = (event) => {
     this.setState({
       ...this.state,
-      [event.target.name]: ['address', 'lastname', 'firstname'].includes(
-        event.target.name.toLowerCase()
-      )
-        ? event.target.value
-        : event.target.value.trim(),
+      [event.target.name]: event.target.value,
     });
   };
 
   handleActionUser = async () => {
+    const { isLoadingRead, isLoadingCreate, isLoadingUpdate, isLoadingDelete } =
+      this.props;
+
+    if (isLoadingRead || isLoadingCreate || isLoadingUpdate || isLoadingDelete)
+      return;
+
     function exclude(user, keys) {
       return Object.fromEntries(
         Object.entries(user).filter(([key]) => !keys.includes(key))
@@ -80,13 +69,17 @@ class ModalUser extends Component {
         ) {
           if (validator.isEmail(this.state.email)) {
             await this.props.createUser(this.state);
-            this.setState({
-              email: '',
-              password: '',
-              firstName: '',
-              lastName: '',
-              address: '',
-            });
+            if (this.props.isErrorCreate) {
+              toast.error('Error creating user at modal');
+              return;
+            } else
+              this.setState({
+                email: '',
+                password: '',
+                firstName: '',
+                lastName: '',
+                address: '',
+              });
             return this.props.toggle();
           } else toast.error('Some fields are not allowed');
         } else toast.error('Some fields are required');
@@ -94,6 +87,17 @@ class ModalUser extends Component {
 
       case DELETE:
         await this.props.deleteUser(this.state.id?.toString());
+        if (this.props.isErrorDelete) {
+          toast.error('Error delete user at modal');
+          return;
+        } else
+          this.setState({
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+            address: '',
+          });
         return this.props.toggle();
 
       case UPDATE:
@@ -111,6 +115,18 @@ class ModalUser extends Component {
         } else payload = this.state;
         if (!Array.isArray(payload)) payload = [payload];
         await this.props.updateUser(payload);
+
+        if (this.props.isErrorUpdate) {
+          toast.error('Error Update user at modal');
+          return;
+        } else
+          this.setState({
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+            address: '',
+          });
         return this.props.toggle();
 
       case UPDATE_MANY:
@@ -129,6 +145,17 @@ class ModalUser extends Component {
         data[data.length - 1] = { ...data[data.length - 1], ...this.state };
 
         await this.props.updateUser(data);
+        if (this.props.isErrorUpdate) {
+          toast.error('Error Update user at modal');
+          return;
+        } else
+          this.setState({
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+            address: '',
+          });
         return this.props.toggle();
 
       default:
@@ -137,6 +164,9 @@ class ModalUser extends Component {
   };
 
   render() {
+    const { isLoadingRead, isLoadingCreate, isLoadingUpdate, isLoadingDelete } =
+      this.props;
+
     return (
       <>
         <Modal
@@ -159,42 +189,36 @@ class ModalUser extends Component {
             }}
           >
             <div className="model-user-body">
-              <div
-                className={
-                  this.props.typeModel === UPDATE_MANY ||
-                  this.props.typeModel === UPDATE ||
-                  this.props.typeModel === DELETE
-                    ? 'input-container w-100'
-                    : 'input-container'
-                }
-              >
-                <label>Email</label>
-                <input
-                  type="text"
-                  name="email"
-                  value={this.state.email}
-                  onChange={this.handleChangeInput}
-                  disabled={
-                    this.props.typeModel === DELETE ||
-                    this.props.typeModel === UPDATE_MANY
-                  }
-                />
-              </div>
               {this.props.typeModel === UPDATE_MANY ||
               this.props.typeModel === UPDATE ||
               this.props.typeModel === DELETE ? (
                 <></>
               ) : (
-                <div className="input-container">
-                  <label>Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={this.state.password}
-                    onChange={this.handleChangeInput}
-                    disabled={this.props.typeModel === DELETE}
-                  />
-                </div>
+                <>
+                  <div className="input-container">
+                    <label>Email</label>
+                    <input
+                      type="text"
+                      name="email"
+                      value={this.state.email}
+                      onChange={this.handleChangeInput}
+                      disabled={
+                        this.props.typeModel === DELETE ||
+                        this.props.typeModel === UPDATE_MANY
+                      }
+                    />
+                  </div>
+                  <div className="input-container">
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={this.state.password}
+                      onChange={this.handleChangeInput}
+                      disabled={this.props.typeModel === DELETE}
+                    />
+                  </div>
+                </>
               )}
               <div className="input-container">
                 <label>
@@ -239,19 +263,27 @@ class ModalUser extends Component {
               color="primary"
               className="px-2"
               onClick={this.handleActionUser}
+              disabled={
+                isLoadingRead ||
+                isLoadingCreate ||
+                isLoadingUpdate ||
+                isLoadingDelete
+              }
             >
-              {this.props.typeModel === DELETE
-                ? DELETE
-                : this.props.typeModel === CREATE
-                ? CREATE
-                : UPDATE}
+              {this.props.typeModel === DELETE ? (
+                <FormattedMessage id={'button.delete'} />
+              ) : this.props.typeModel === CREATE ? (
+                <FormattedMessage id={'button.create'} />
+              ) : (
+                <FormattedMessage id={'button.update'} />
+              )}
             </Button>
             <Button
               color="secondary"
               className="px-2"
               onClick={this.props.toggle}
             >
-              Cancel
+              <FormattedMessage id={'button.cancel'} />
             </Button>
           </ModalFooter>
         </Modal>
@@ -261,7 +293,19 @@ class ModalUser extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    isLoadingCreate: state.admin.isLoadingCreate,
+    isErrorCreate: state.admin.isErrorCreate,
+
+    isLoadingRead: state.admin.isLoadingRead,
+    isErrorRead: state.admin.isErrorRead,
+
+    isLoadingUpdate: state.admin.isLoadingUpdate,
+    isErrorUpdate: state.admin.isErrorUpdate,
+
+    isLoadingDelete: state.admin.isLoadingDelete,
+    isErrorDelete: state.admin.isErrorDelete,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
