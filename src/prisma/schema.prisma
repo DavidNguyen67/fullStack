@@ -8,23 +8,22 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  email      String    @unique
-  password   String
-  firstName  String
-  lastName   String
-  address    String
-  gender     Boolean   @default(true)
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  password    String
+  firstName   String
+  lastName    String
+  address     String
+  gender      String    @default("M")
   // typeRole   String
   // keyRole    String
-  roleId     String    @default("R3")
-  phoneNum   String?
-  positionId String    @default("P0")
-  image      Json?
-  createAt   DateTime? @default(now())
-  updateAt   DateTime? @default(now())
+  roleId      String    @default("R3")
+  phoneNumber String?
+  positionId  String    @default("P0")
+  image       Json?
+  createAt    DateTime? @default(now())
+  updateAt    DateTime? @default(now())
 }
-
 model AllCode {
   id       Int       @id @default(autoincrement())
   key      String    @unique

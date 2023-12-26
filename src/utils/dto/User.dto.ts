@@ -40,7 +40,7 @@ class CreateUserDto {
 
   @IsString()
   @IsNumberString()
-  readonly phoneNum?: string;
+  readonly phoneNumber?: string;
 
   @IsString()
   readonly positionId?: string;
@@ -85,7 +85,7 @@ export class UpdateUserDto {
 
   @IsString()
   @IsNumberString()
-  readonly phoneNum?: string;
+  readonly phoneNumber?: string;
 
   @IsString()
   readonly positionId?: string;

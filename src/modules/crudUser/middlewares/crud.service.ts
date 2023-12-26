@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -95,7 +96,7 @@ export class CrudService {
       }
 
       if (invalidUsers.length > 0)
-        throw new ConflictException('Duplicate user(s) data');
+        throw new BadRequestException('Invalid user(s) data');
       throw new InternalServerErrorException('Error creating user(s)');
     } catch (error) {
       console.log(error);
@@ -122,10 +123,16 @@ export class CrudService {
     }
   }
 
-  async updateUsers(userId: number[], payload: UpdateUserDto) {
-    const hash = await bcrypt.hash(payload.password, saltOrRounds);
-    payload = { ...payload, updateAt: new Date(), password: hash };
+  async updateUsers(userId: number[], payload: UpdateUserDto | any) {
     try {
+      let hash = null;
+      if (payload.password)
+        hash = await bcrypt.hash(payload.password, saltOrRounds);
+
+      payload = hash
+        ? { ...payload, updateAt: new Date(), password: hash }
+        : { ...payload, updateAt: new Date() };
+
       if (!payload.email || !(await this.isExistEmail(payload.email))) {
         const user = await this.prisma.user.updateMany({
           data: payload,

@@ -8,6 +8,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       await this.$connect();
     } catch (error) {
       console.log(error);
+      await this.$disconnect();
       return error;
     }
   }

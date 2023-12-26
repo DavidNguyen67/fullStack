@@ -7,7 +7,16 @@ export function exclude(user, keys) {
     Object.entries(user).filter(([key]) => !keys.includes(key)),
   );
 }
-
+export function excludeAndNullVal(user, keys) {
+  return Object.fromEntries(
+    Object.entries(user).reduce((acc, [key, value]) => {
+      if (!keys.includes(key) && value !== false) {
+        acc.push([key, value]);
+      }
+      return acc;
+    }, []),
+  );
+}
 export const processUserData = (body) => {
   const filteredPayload = body.reduce(
     (acc, data) => {
