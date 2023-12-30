@@ -46,10 +46,37 @@
       }
     }
   }
+  .labelInputModal {
+    font-weight: 600;
+  }
   button.close {
     background-color: transparent;
     border: transparent;
     color: black;
     font-size: large;
   }
+}
+.inputImage-container {
+  #inputImage {
+    visibility: hidden;
+    width: 0px;
+    padding: 0;
+  }
+}
+.arrows {
+  bottom: 0;
+  right: 0;
+  transform: translate(-150%, -70%);
+}
+.inputImage-container {
+  #inputImage {
+    visibility: hidden;
+    width: 0px;
+    padding: 0;
+  }
+}
+.arrows {
+  bottom: 0;
+  right: 0;
+  transform: translate(-150%, -70%);
 }

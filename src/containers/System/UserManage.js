@@ -4,75 +4,48 @@ import { connect } from 'react-redux';
 import './userManage.scss';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import ModalUser from './ModalUser';
-import { toast } from 'react-toastify';
 import * as actions from './../../store/actions';
+import ModalUser from './ModalUser';
+import { Button } from 'reactstrap';
+import { Redirect } from 'react-router-dom';
 
+const COPY = 'COPY';
+const UPDATE = 'UPDATE';
 const CREATE = 'CREATE';
 const DELETE = 'DELETE';
-const UPDATE = 'UPDATE';
-const UPDATE_MANY = 'UPDATE_MANY';
-
-const ToastDeleteComponent = () => {
-  const deleteFunc = async () => {
-    const ids = this.state.selected.toString();
-    await this.props.deleteUsers(ids);
-
-    const { isErrorDelete } = this.props;
-
-    console.log(this.props.isErrorDelete);
-    if (!isErrorDelete) {
-      this.setState({
-        ...this.state,
-        selected: [],
-      });
-      await this.props.readUsers();
-      toast.success(<FormattedMessage id="toast.successDeleteUser" />);
-    } else {
-      toast.error(<FormattedMessage id="toast.errorDeleteUser" />);
-    }
-  };
-  return (
-    <div className="m-2">
-      <h3 style={{ fontWeight: 'bold', color: 'black' }}>
-        <FormattedMessage id="confirmDeleteUsers" />
-      </h3>
-      <div className="d-flex justify-content-center">
-        <button
-          className="btn btn-primary"
-          style={{ padding: '0 20px' }}
-          onClick={deleteFunc}
-        >
-          <FormattedMessage id="toast.confirmYes" />
-        </button>
-        <div className="mx-2" />
-        <button className="btn btn-danger" style={{ padding: '0 20px' }}>
-          <FormattedMessage id="toast.confirmNo" />
-        </button>
-      </div>
-    </div>
-  );
-};
+const REAAD = 'READ';
 class UserManage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       arrUsers: [],
       selected: [],
-      isOpenModal: false,
-      dataForModal: {},
-      typeModel: '',
+      modal: false,
+      typeModal: '',
     };
   }
 
   async componentDidMount() {
-    await this.props.readUsers();
+    const response = await this.props.readUsers();
+    this.setState((prevState) => ({
+      ...prevState,
+      response,
+    }));
   }
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (prevProps.users.length !== this.props.users.length)
-      await this.props.readUsers();
-  }
+  // async componentDidUpdate(prevProps, prevState) {
+  //   if (prevProps.users.length !== this.props.users.length)
+  //     await this.props.readUsers();
+  // }
+
+  toggleModal = (dataUser, typeModal) => {
+    this.setState((prevState) => ({
+      ...prevState,
+      user: dataUser,
+      modal: !this.state.modal,
+      typeModal,
+    }));
+  };
 
   handleClickSelect = (id, dataUser) => {
     this.setState((prevState) => {
@@ -81,175 +54,80 @@ class UserManage extends Component {
         ? selected.filter((selectedId) => selectedId !== id)
         : [...selected, id];
 
-      let newDataForModal = prevState.selected?.length === 0 ? dataUser : {};
-
-      if (updatedSelected.length === 1)
-        newDataForModal = this.props.users.find(
-          (user) => user.id === updatedSelected[0]
-        );
-
       return {
+        ...prevState,
         selected: updatedSelected,
-        dataForModal: newDataForModal,
       };
     });
   };
-
-  handleAddNewUser = () => {
-    this.setState({
-      ...this.state,
-      isOpenModal: true,
-      typeModel: CREATE,
-    });
+  handleCopyUser = (dataUser) => {
+    console.log(dataUser);
   };
 
-  toggleModal = () => {
-    this.setState({
-      ...this.state,
-      isOpenModal: !this.state.isOpenModal,
-    });
-  };
+  handleActionUsers = (dataUser, typeModal) => {
+    if (this.state.selected.length < 2) this.toggleModal(dataUser, typeModal);
+    else {
+      const { selected } = this.state;
+      const hasSelected = selected.includes(dataUser.id);
 
-  handleCreateNewUser = async (payload) => {
-    if (!Array.isArray(payload)) payload = [payload];
-    await this.props.createNewUser(payload);
-
-    const { isErrorCreate } = this.props;
-    if (!isErrorCreate) {
-      await this.props.readUsers();
-      toast.success(<FormattedMessage id="toast.successCreateUser" />);
-    } else {
-      toast.error(<FormattedMessage id="toast.errorCreateUser" />);
+      if (hasSelected) {
+        const { history } = this.props;
+        console.log(history);
+        history.push(`/system/users/copy:${selected}`);
+      } else {
+        this.toggleModal(dataUser, typeModal);
+      }
     }
-  };
-
-  handleDeleteUsers = async () => {
-    if (this.state.selected.length > 1) {
-      toast(<ToastDeleteComponent />, { pauseOnHover: true });
-      return;
-    }
-    if (this.state.selected.length === 1) {
-      this.setState({
-        ...this.state,
-        isOpenModal: !this.state.isOpenModal,
-        typeModel: DELETE,
-      });
-      return;
-    }
-    toast.error(<FormattedMessage id="selectOneUserAtLeast" />);
-  };
-
-  deleteFunc = async (id) => {
-    await this.props.deleteUsers(id);
-    const { isErrorDelete } = this.props;
-
-    if (!isErrorDelete) {
-      this.setState({
-        ...this.state,
-        selected: [],
-      });
-      await this.props.readUsers();
-      toast.success(<FormattedMessage id="toast.successDeleteUser" />);
-    } else {
-      toast.error(<FormattedMessage id="toast.errorDeleteUser" />);
-    }
-  };
-
-  updateFunc = async (payload) => {
-    await this.props.updateUsers(payload);
-    const { isErrorUpdate } = this.props;
-
-    if (!isErrorUpdate) {
-      await this.props.readUsers();
-      toast.success(<FormattedMessage id="toast.successUpdateUser" />);
-    } else {
-      toast.error(<FormattedMessage id="toast.successUpdateUser" />);
-    }
-  };
-
-  handleUpdateUser = async () => {
-    if (this.state.selected.length === 1) {
-      this.setState({
-        ...this.state,
-        isOpenModal: !this.state.isOpenModal,
-        typeModel: UPDATE,
-      });
-      return;
-    }
-    if (this.state.selected.length > 1) {
-      this.setState({
-        ...this.state,
-        isOpenModal: !this.state.isOpenModal,
-        typeModel: UPDATE_MANY,
-      });
-      return;
-    }
-    toast.error(<FormattedMessage id="selectOneUserAtLeast" />);
-  };
-
-  handleSetSelectedUser = () => {
-    this.setState({
-      ...this.state,
-      selected: [],
-    });
   };
 
   render() {
     const { users } = this.props;
+    const { modal, selected, user, typeModal } = this.state;
+
     return (
       <div className="users-container">
         <ModalUser
-          isOpen={this.state.isOpenModal}
-          toggle={this.toggleModal}
-          createUser={this.handleCreateNewUser}
-          dataUser={
-            this.state.typeModel !== CREATE &&
-            this.state.typeModel !== UPDATE_MANY &&
-            this.state.dataForModal
-          }
-          typeModel={this.state.typeModel}
-          deleteUser={this.deleteFunc}
-          updateUser={this.updateFunc}
-          selected={this.state.selected}
-          handleSetSelectedUser={this.handleSetSelectedUser}
+          modal={modal}
+          toggleModal={this.toggleModal}
+          selected={selected}
+          user={user}
+          typeModal={typeModal}
         />
         <div className="title text-center">
           <FormattedMessage id={'title.manageUser'} />
         </div>
         <div className="flex-grow-1 d-flex">
-          <div className="ms-auto" />
-          <button
-            className="btn btn-primary"
-            style={{ lineHeight: '14px' }}
-            onClick={this.handleAddNewUser}
-          >
-            <i className="fas fa-plus"></i>
-            <FormattedMessage id={'button.create'} />
+          <button className="btn btn-primary" style={{ lineHeight: '14px' }}>
+            <span className="d-flex gap-2">
+              <i className="fas fa-plus"></i>
+              <FormattedMessage id={'button.create'} />
+            </span>
           </button>
           <div className="mx-2" />
-          <button
-            className="btn btn-warning"
-            style={{ lineHeight: '14px' }}
-            onClick={this.handleUpdateUser}
-          >
-            <i className="fas fa-pencil-alt"></i>
-            <FormattedMessage id={'button.update'} />
+          <button className="btn btn-warning" style={{ lineHeight: '14px' }}>
+            <span className="d-flex gap-2">
+              <i className="fas fa-pencil-alt"></i>
+              <FormattedMessage id={'button.update'} />
+            </span>
           </button>
           <div className="mx-2" />
-          <button
-            className="btn btn-danger"
-            style={{ lineHeight: '14px' }}
-            onClick={this.handleDeleteUsers}
-          >
-            <i className="fas fa-trash"></i>
-            <FormattedMessage id={'button.delete'} />
+          <button className="btn btn-danger" style={{ lineHeight: '14px' }}>
+            <span className="d-flex gap-2">
+              <i className="fas fa-trash"></i>
+              <FormattedMessage id={'button.delete'} />
+            </span>
           </button>
+          <div className="me-auto" />
         </div>
         <br />
         <div className="users-table">
           <table id="customers" style={{ overflowX: 'scroll' }}>
             <thead>
               <tr>
+                <th></th>
+                <th>
+                  <FormattedMessage id={'title.table.action'} />
+                </th>
                 <th>Email</th>
                 <th>
                   <FormattedMessage id={'title.table.firstName'} />
@@ -260,18 +138,13 @@ class UserManage extends Component {
                 <th>
                   <FormattedMessage id={'title.table.address'} />
                 </th>
-                <th></th>
               </tr>
             </thead>
             <tbody>
               {users ? (
-                users?.length > 0 &&
+                users.length > 0 &&
                 users?.map((user) => (
                   <tr key={user.id}>
-                    <td>{user.email}</td>
-                    <td>{user.firstName}</td>
-                    <td>{user.lastName}</td>
-                    <td>{user.address}</td>
                     <td>
                       <div className="form-check">
                         <input
@@ -283,10 +156,43 @@ class UserManage extends Component {
                         />
                       </div>
                     </td>
+                    <td>
+                      <Button
+                        color="success"
+                        onClick={() => this.handleActionUsers(user, COPY)}
+                      >
+                        <span className="d-flex gap-1 align-items-center">
+                          <i className="fas fa-copy"></i>
+                          <FormattedMessage id={'button.copy'} />
+                        </span>
+                      </Button>
+                      <button
+                        className="btn btn-warning mx-4"
+                        onClick={() => this.handleActionUsers(user)}
+                      >
+                        <span className="d-flex gap-1 align-items-center">
+                          <i className="fas fa-pencil-alt"></i>
+                          <FormattedMessage id={'button.update'} />
+                        </span>
+                      </button>
+                      <button className="btn btn-danger">
+                        <span className="d-flex gap-1 align-items-center">
+                          <i className="fas fa-trash" />
+                          <FormattedMessage id={'button.delete'} />
+                        </span>
+                      </button>
+                    </td>
+                    <td>{user.email}</td>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td>{user.address}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
+                  <td>
+                    <Skeleton count={5} />
+                  </td>
                   <td>
                     <Skeleton count={5} />
                   </td>

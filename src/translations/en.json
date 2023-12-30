@@ -29,7 +29,8 @@
     "table": {
       "firstName": "First Name",
       "lastName": "Last Name",
-      "address": "Address"
+      "address": "Address",
+      "action": "Action"
     }
   },
   "login": {
@@ -39,10 +40,11 @@
     "userpass-wrong": "Invalid username or password!"
   },
   "button": {
-    "create": "Add new user",
-    "update": "Update user",
-    "delete": "Delete user",
-    "cancel": "Cancel"
+    "create": "Add new",
+    "update": "Update",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "copy": "Copy"
   },
   "menu": {
     "admin": {
@@ -68,7 +70,7 @@
     "gender": "Gender",
     "position": "Position",
     "role": "Role",
-    "image": "Upload Avatar",
+    "image": "Avatar",
     "save": "Save",
     "email": "Email",
     "emailPlaceholder": "Enter email address",
@@ -76,7 +78,8 @@
     "firstNamePlaceholder": "Enter first name",
     "lastNamePlaceholder": "Enter last name",
     "addressPlaceholder": "Enter address",
-    "phoneNumberPlaceholder": "Enter phone number"
+    "phoneNumberPlaceholder": "Enter phone number",
+    "filePlaceholder": "Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
   },
   "validate": {
     "emailInvalid": "Invalid email",
@@ -101,7 +104,8 @@
     "selectOneUser": "At least one user must be selected",
     "confirmDeleteUsers": "Do you want to delete these users?",
     "confirmYes": "Yes",
-    "confirmNo": "No"
+    "confirmNo": "No",
+    "conflictEmail": "Email is exist! "
   },
   "confirmDeleteUsers": "Do you wanna delete those users?",
   "selectOneUserAtLeast": "Must be at least one user selected."

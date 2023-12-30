@@ -47,7 +47,7 @@ class Login extends Component {
 
   redirectToSystemPage = () => {
     const { navigate } = this.props;
-    const redirectPath = '/system/manage-user';
+    const redirectPath = '/system/users';
     navigate(`${redirectPath}`);
   };
 
@@ -57,7 +57,7 @@ class Login extends Component {
     if (username && password) {
       try {
         const response = await handleLoginService(username, password);
-        if (!response.data.error) {
+        if (!response.data?.error || response.status !== 500) {
           this.props.userLoginSuccess(response.data);
           toast.success(<FormattedMessage id="toast.successLogin" />);
           return;

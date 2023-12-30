@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import {
   createNewUserService,
   deleteUsersService,
@@ -88,8 +89,9 @@ export const createNewUser = (payload) => {
         type: actionTypes.CREATE_USER_SUCCESS,
       };
     };
-    const createNewUserFailed = () => ({
+    const createNewUserFailed = (payload) => ({
       type: actionTypes.CREATE_USER_FAILED,
+      payload,
     });
 
     try {
@@ -103,7 +105,8 @@ export const createNewUser = (payload) => {
             response.data.statusCode) / 100
         ) !== 2;
       if (isError) {
-        dispatch(createNewUserFailed());
+        const { statusCode, error, message } = response.data;
+        dispatch(createNewUserFailed({ statusCode, error, message }));
       } else {
         dispatch(createNewUserSuccess());
         dispatch(readUsers());
@@ -149,7 +152,7 @@ export const updateUsers = (payload) => {
   };
 };
 
-export const readUsers = () => {
+export const readUsers = (ids) => {
   return async (dispatch, getState) => {
     const readUsersSuccess = (payload) => {
       return {
@@ -163,11 +166,10 @@ export const readUsers = () => {
 
     try {
       dispatch({ type: actionTypes.READ_USER_START });
-      const response = await getAllUsersService();
-
+      const response = await getAllUsersService(ids);
       return response.data?.error
         ? dispatch(readUsersFailed())
-        : dispatch(readUsersSuccess(response.data));
+        : dispatch(readUsersSuccess(response.data || response));
     } catch (error) {
       console.log(error);
       dispatch(readUsersFailed());
