@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,12 +20,14 @@ import { CreateUserDtos, UpdateUserDtos } from 'src/utils/dto/User.dto';
 import { IsHasDataInQueryOrBodyPipe } from './pipes/IsHasDataInQueryOrBody.pipe';
 import { processUserData } from 'src/utils/function';
 import { excludeIdFieldPipe } from './pipes/creating.pipe';
+import { FetchUsersInterceptor } from './interceptor/fetchUser.interceptor';
 
 @Controller(`${routes.versionApi}/${routes.crudUserPath}`)
 export class CrudController {
   constructor(private readonly crudService: CrudService) {}
 
   @Get(routes.readRoute)
+  @UseInterceptors(FetchUsersInterceptor)
   // ! Guard in here is not used correctly as itself
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
   async fetchUsers(@Query() query: FetchUserInterface): Promise<GlobalRes> {

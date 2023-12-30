@@ -1,3 +1,5 @@
+import { UpdateUserDto } from '../dto/User.dto';
+
 export interface DatabaseConfig {
   host: string;
   port: number;
@@ -19,3 +21,5 @@ export interface FetchAllCodeInterface {
 export interface DeleteUserInterface extends FetchUserInterface {}
 
 export interface UpdateUsersInterface extends FetchUserInterface {}
+
+export interface FetchUsersResponseInterface extends UpdateUserDto {}

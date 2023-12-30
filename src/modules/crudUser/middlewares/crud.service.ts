@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -21,10 +20,10 @@ export class CrudService {
       const users = await this.prisma.user.findMany({});
       if (users.length < 0) throw new NotFoundException('Not found user(s)');
 
-      // return users.map(
-      //   (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
-      // );
-      return users;
+      return users.map(
+        (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
+      );
+      // return users;
     } catch (error) {
       console.log(error);
       throw error;
@@ -77,12 +76,15 @@ export class CrudService {
 
       for (const user of users) {
         const isEmailExists = await this.isExistEmail(user.email);
+        const password =
+          user.password && (await bcrypt.hash(user.password, saltOrRounds));
+
         !isEmailExists
           ? (validUsers = [
               ...validUsers,
               {
                 ...user,
-                password: await bcrypt.hash(user.password, saltOrRounds),
+                password,
               },
             ])
           : (invalidUsers = [...validUsers, { ...user }]);
@@ -96,7 +98,7 @@ export class CrudService {
       }
 
       if (invalidUsers.length > 0)
-        throw new BadRequestException('Invalid user(s) data');
+        throw new ConflictException('Invalid user(s) data');
       throw new InternalServerErrorException('Error creating user(s)');
     } catch (error) {
       console.log(error);

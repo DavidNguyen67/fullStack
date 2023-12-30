@@ -3,6 +3,7 @@ import { AppModule } from './modules/app/app.module';
 import { env } from 'process';
 import { ValidationPipe } from '@nestjs/common';
 import * as routes from './utils/routes';
+import { TimeoutInterceptor } from './utils/interceptor/timeout.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -15,6 +16,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
+  app.useGlobalInterceptors(new TimeoutInterceptor());
   app.setGlobalPrefix(routes.GlobalPrefix);
   await app.listen(env.PORT || 3000);
 }
