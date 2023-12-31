@@ -21,6 +21,10 @@ class System extends Component {
                   path="/system/users/copy:id"
                   component={ActionUserPage}
                 />
+                <Route
+                  path="/system/users/update:id"
+                  component={ActionUserPage}
+                />
                 {/* <Route path="/system/users-redux" component={ActionUserPage} /> */}
                 <Route
                   path="/system/product-manage"
@@ -30,11 +34,11 @@ class System extends Component {
                   path="/system/register-package-group-or-account"
                   component={RegisterPackageGroupOrAcc}
                 />
-                {/* <Route
+                <Route
                   component={() => {
                     return <Redirect to={systemMenuPath} />;
                   }}
-                /> */}
+                />
               </Switch>
             </div>
           </div>

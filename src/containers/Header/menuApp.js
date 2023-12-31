@@ -27,7 +27,7 @@ export const adminMenu = [
       },
       {
         name: 'menu.admin.manageUser',
-        link: '/system/manage-user',
+        link: '/system/users',
       },
     ],
   },

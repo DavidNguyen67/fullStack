@@ -44,7 +44,8 @@
     "update": "Update",
     "delete": "Delete",
     "cancel": "Cancel",
-    "copy": "Copy"
+    "copy": "Copy",
+    "back": "Back"
   },
   "menu": {
     "admin": {
@@ -94,7 +95,7 @@
   "toast": {
     "successLogin": "Login successful",
     "failedLogin": "Login failed. <br /> Please check your information",
-    "failedCreateUser": "Failed to create user. <br /> Please check your information <br /> Or contact the developer for more details",
+    "failedCreateUser": "Failed to create user.",
     "successCreateUser": "User created successfully",
     "errorCreateUser": "Failed to create user",
     "errorDeleteUser": "Failed to delete user",

@@ -163,6 +163,7 @@ const appReducer = (state = initialState, action) => {
         isLoadingUpdate: true,
         isErrorUpdate: false,
         isSuccessUpdate: false,
+        message: null,
       };
     case actionTypes.UPDATE_USER_FAILED:
       return {
@@ -170,6 +171,7 @@ const appReducer = (state = initialState, action) => {
         isErrorUpdate: true,
         isLoadingUpdate: false,
         isSuccessUpdate: false,
+        message: action.payload,
       };
     case actionTypes.UPDATE_USER_SUCCESS:
       return {

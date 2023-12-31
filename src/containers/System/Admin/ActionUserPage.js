@@ -11,26 +11,22 @@ import { toast } from 'react-toastify';
 import { getAllUsersService } from '../../../services/userService';
 import { v4 as uuidv4 } from 'uuid';
 
-const initInfo = {
-  email: '',
-  password: '',
-  firstName: '',
-  lastName: '',
-  phoneNumber: '',
-  address: '',
-  avatar: '',
-};
+const COPY = 'COPY';
+const UPDATE = 'UPDATE';
+const CREATE = 'CREATE';
+const DELETE = 'DELETE';
+const REAAD = 'READ';
+
 class ActionUserPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isOpenModal: false,
       dataForModal: {},
-      previewImgUrl: undefined,
       isOpen: false,
 
-      ...initInfo,
-      users: [],
+      users: {},
+      pureUsers: [],
     };
   }
   handleChangeInput = (event, key) => {
@@ -39,20 +35,26 @@ class ActionUserPage extends Component {
         if (!event.target.files || event.target.files.length === 0) {
           this.setState((prevState) => ({
             ...prevState,
-            previewImgUrl: undefined,
+            users: {
+              ...prevState.users,
+              [key]: { ...prevState.users[key], previewImgUrl: undefined },
+            },
           }));
           return;
         }
 
-        if (this.state.previewImgUrl) {
-          URL.revokeObjectURL(this.state.previewImgUrl);
-        }
         // I've kept this example simple by using the first image instead of multiple
         const objectUrl = URL.createObjectURL(event.target.files[0]);
         this.setState((prevState) => ({
           ...prevState,
-          previewImgUrl: objectUrl,
+          users: {
+            ...prevState.users,
+            [key]: { ...prevState.users[key], previewImgUrl: objectUrl },
+          },
         }));
+        if (this.state.users[key].previewImgUrl) {
+          URL.revokeObjectURL(this.state.users[key].previewImgUrl);
+        }
         return;
       };
 
@@ -72,9 +74,14 @@ class ActionUserPage extends Component {
   };
   submitData = async (event) => {
     event.preventDefault();
-
+    const isCreateForm = this.props.location?.pathname?.includes(
+      CREATE.toLocaleLowerCase()
+    );
+    const isUpdateForm = this.props.location?.pathname?.includes(
+      UPDATE.toLocaleLowerCase()
+    );
     const validateFields = (ObjectData) => {
-      Object.keys(ObjectData).every((key, index) => {
+      return Object.keys(ObjectData).every((key) => {
         const { email, password, firstName, lastName, phoneNumber } =
           ObjectData[key];
 
@@ -82,7 +89,7 @@ class ActionUserPage extends Component {
           toast.error(<FormattedMessage id="validate.emailRequired" />);
           return false;
         }
-        if (!password) {
+        if (isCreateForm && !password) {
           toast.error(<FormattedMessage id="validate.passwordRequired" />);
           return false;
         }
@@ -100,7 +107,7 @@ class ActionUserPage extends Component {
           return false;
         }
 
-        if (!validator.isLength(password, { min: 6 })) {
+        if (isCreateForm && !validator.isLength(password, { min: 6 })) {
           toast.error(<FormattedMessage id="validate.passwordLength" />);
           return false;
         }
@@ -111,6 +118,7 @@ class ActionUserPage extends Component {
         }
 
         if (
+          phoneNumber &&
           !validator.isMobilePhone(phoneNumber, 'any', { strictMode: false })
         ) {
           toast.error(<FormattedMessage id="validate.phoneNumberInvalid" />);
@@ -125,59 +133,81 @@ class ActionUserPage extends Component {
       return;
     }
 
-    console.log(this.state.users);
-    // const {
-    //   email,
-    //   password,
-    //   firstName,
-    //   lastName,
-    //   phoneNumber,
-    //   address,
-    //   gender,
-    //   position,
-    //   role,
-    //   avatar,
-    // } = this.state;
+    let payload = [];
+    Object.keys(this.state.users).forEach(
+      (key) => (payload = [...payload, this.state.users[key]])
+    );
 
-    // let payload = {
-    //   email,
-    //   password,
-    //   firstName,
-    //   lastName,
-    //   phoneNumber,
-    //   address,
-    //   gender,
-    //   positionId: position,
-    //   roleId: role,
-    //   image: avatar,
-    // };
-    // payload = Array.isArray(payload) ? payload : [payload];
-    // await this.props.createNewUser(payload);
-    // if (this.props.isErrorCreated) {
-    //   toast.error(
-    //     <FormattedMessage
-    //       id="toast.failedCreateUser"
-    //       values={{
-    //         br: <br />,
-    //       }}
-    //       tagName="div"
-    //     />
-    //   );
-    // } else {
-    //   toast.success(
-    //     <FormattedMessage
-    //       id="toast.successCreateUser"
-    //       values={{
-    //         br: <br />,
-    //       }}
-    //       tagName="div"
-    //     />
-    //   );
-    //   this.setState((prevState) => ({
-    //     ...prevState,
-    //     ...initInfo,
-    //   }));
-    // }
+    payload = Array.isArray(payload) ? payload : [payload];
+
+    // const isCreateForm = this.props.location?.pathname?.includes(
+    //   CREATE.toLocaleLowerCase()
+    // );
+    // const isCreateForm = this.props.location?.pathname?.includes(
+    //   CREATE.toLocaleLowerCase()
+    // );
+    if (isCreateForm) {
+      await this.props.createNewUser(payload);
+      if (this.props.isErrorCreated) {
+        toast.error(
+          <FormattedMessage
+            id="toast.failedCreateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+      } else {
+        toast.success(
+          <FormattedMessage
+            id="toast.successCreateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+      }
+    }
+    if (isUpdateForm) {
+      let result = [];
+      // payload.forEach((data) =>
+      //   Object.keys(this.state.users).forEach((key) => {
+      //     if (this.state.users[key]?.email === data.key) {
+      //       const { email, ...payloadUpdate } = this.state.users[key];
+      //       result = [...result, payloadUpdate];
+      //     } else result = [...result, this.state.users[key]];
+      //   })
+      // );
+      // Object.keys(this.state.users).forEach(key => {
+
+      // })
+      payload = result;
+      console.log(payload);
+      await this.props.updateUsers(payload);
+      if (this.props.isErrorUpdate) {
+        toast.error(
+          <FormattedMessage
+            id="toast.errorUpdateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+      } else {
+        toast.success(
+          <FormattedMessage
+            id="toast.successUpdateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+      }
+    }
   };
   componentWillUnmount() {
     if (this.state.previewImgUrl) {
@@ -197,6 +227,7 @@ class ActionUserPage extends Component {
         this.setState((prevState) => ({
           ...prevState,
           users,
+          pureUsers: response.data,
         }));
       }
     }
@@ -241,23 +272,18 @@ class ActionUserPage extends Component {
       this.setState((prevState) => ({ ...prevState, ...newState }));
     }
   }
+  goBack = () => {
+    const { history } = this.props;
+    history.goBack();
+  };
 
   render() {
     const { lang, isLoading, isError } = this.props;
-    const { genders, positions, roles, previewImgUrl, isOpen, users } =
-      this.state;
-    const {
-      email,
-      password,
-      firstName,
-      lastName,
-      phoneNumber,
-      address,
-      gender,
-      position,
-      role,
-      avatar,
-    } = this.state;
+    const { genders, positions, roles, users } = this.state;
+    const { location } = this.props;
+    const isCreateForm = location?.pathname.includes(
+      CREATE.toLocaleLowerCase()
+    );
 
     if (isLoading) {
       return <>Loading...</>;
@@ -268,6 +294,12 @@ class ActionUserPage extends Component {
     }
     return (
       <>
+        <div className="mt-4 flex-grow-1 d-flex">
+          <button className="btn btn-primary" onClick={this.goBack}>
+            <FormattedMessage id="button.back" />
+          </button>
+          <div className="mx-2" />
+        </div>
         {users &&
           Object.keys(users).length > 0 &&
           Object.keys(users).map((key) => {
@@ -275,15 +307,21 @@ class ActionUserPage extends Component {
             return (
               <form key={key} className="col col-12 col-md-10 user-form">
                 <div className="form-row my-2 row">
-                  <div className="form-group col-6 col-lg-3">
-                    <label htmlFor="inputEmail">
+                  <div
+                    className={
+                      !isCreateForm
+                        ? 'form-group col-12 col-lg-12'
+                        : 'form-group col-6 col-lg-6'
+                    }
+                  >
+                    <label htmlFor={`inputEmail${key}`}>
                       <FormattedMessage id="manage-user.email" />
                     </label>
                     <input
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="text"
                       className="form-control"
-                      id="inputEmail"
+                      id={`inputEmail${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.emailPlaceholder',
                         lang
@@ -292,15 +330,19 @@ class ActionUserPage extends Component {
                       name="email"
                     />
                   </div>
-                  <div className="form-group col-6 col-lg-3">
-                    <label htmlFor="inputPassword">
+                  <div
+                    className={
+                      !isCreateForm ? 'd-none' : 'form-group  col-6 col-lg-6'
+                    }
+                  >
+                    <label htmlFor={`inputPassword${key}`}>
                       <FormattedMessage id="manage-user.password" />
                     </label>
                     <input
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="password"
                       className="form-control"
-                      id="inputPassword"
+                      id={`inputPassword${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.passwordPlaceholder',
                         lang
@@ -310,14 +352,14 @@ class ActionUserPage extends Component {
                     />
                   </div>
                   <div className="form-group col-6 col-lg-3">
-                    <label htmlFor="inputFirstName">
+                    <label htmlFor={`inputFirstName${key}`}>
                       <FormattedMessage id="manage-user.firstName" />
                     </label>
                     <input
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="text"
                       className="form-control"
-                      id="inputFirstName"
+                      id={`inputFirstName${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.firstNamePlaceholder',
                         lang
@@ -327,14 +369,14 @@ class ActionUserPage extends Component {
                     />
                   </div>
                   <div className="form-group col-6 col-lg-3">
-                    <label htmlFor="inputLastName">
+                    <label htmlFor={`inputLastName${key}`}>
                       <FormattedMessage id="manage-user.lastName" />
                     </label>
                     <input
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="text"
                       className="form-control"
-                      id="inputLastName"
+                      id={`inputLastName${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.lastNamePlaceholder',
                         lang
@@ -346,14 +388,14 @@ class ActionUserPage extends Component {
                 </div>
                 <div className="form-row my-2 row">
                   <div className="form-group col-12 col-lg-6 ">
-                    <label htmlFor="inputAddress">
+                    <label htmlFor={`inputAddress${key}`}>
                       <FormattedMessage id="manage-user.address" />
                     </label>
                     <input
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="text"
                       className="form-control"
-                      id="inputAddress"
+                      id={`inputAddress${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.addressPlaceholder',
                         lang
@@ -363,7 +405,7 @@ class ActionUserPage extends Component {
                     />
                   </div>
                   <div className="form-group col-12 col-lg-6 mt-2 mt-lg-0">
-                    <label htmlFor="inputPhoneNumber">
+                    <label htmlFor={`inputPhoneNumber${key}`}>
                       <FormattedMessage id="manage-user.phoneNumber" />
                     </label>
                     <input
@@ -371,7 +413,7 @@ class ActionUserPage extends Component {
                       type="text"
                       name="phoneNumber"
                       className="form-control col-6 col-lg-3"
-                      id="inputPhoneNumber"
+                      id={`inputPhoneNumber${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.phoneNumberPlaceholder',
                         lang
@@ -382,12 +424,12 @@ class ActionUserPage extends Component {
                 </div>
                 <div className="form-row my-2 row">
                   <div className="form-group col-md-6 col-lg-3 position-relative">
-                    <label htmlFor="inputGender">
+                    <label htmlFor={`inputGender${key}`}>
                       <FormattedMessage id="manage-user.gender" />
                     </label>
                     <i className="fa fa-chevron-down position-absolute arrows"></i>
                     <select
-                      id="inputGender"
+                      id={`inputGender${key}`}
                       className="form-control"
                       name="gender"
                       onChange={(event) => this.handleChangeInput(event, key)}
@@ -407,12 +449,12 @@ class ActionUserPage extends Component {
                     </select>
                   </div>
                   <div className="form-group col-md-6 col-lg-3 position-relative">
-                    <label htmlFor="inputPosition">
+                    <label htmlFor={`inputPosition${key}`}>
                       <FormattedMessage id="manage-user.position" />
                     </label>
                     <i className="fa fa-chevron-down position-absolute arrows"></i>
                     <select
-                      id="inputPosition"
+                      id={`inputPosition${key}`}
                       className="form-control"
                       name="position"
                       onChange={(event) => this.handleChangeInput(event, key)}
@@ -432,12 +474,12 @@ class ActionUserPage extends Component {
                     </select>
                   </div>
                   <div className="form-group col-md-6 col-lg-3 position-relative">
-                    <label htmlFor="inputRoleId">
+                    <label htmlFor={`inputRoleId${key}`}>
                       <FormattedMessage id="manage-user.role" />
                     </label>
                     <i className="fa fa-chevron-down position-absolute arrows"></i>
                     <select
-                      id="inputRoleId"
+                      id={`inputRoleId${key}`}
                       className="form-control"
                       name="role"
                       onChange={(event) => this.handleChangeInput(event, key)}
@@ -459,7 +501,7 @@ class ActionUserPage extends Component {
                   <div className="form-group col-md-6 col-lg-3 inputImage-container">
                     <div className="d-flex">
                       <label
-                        htmlFor="inputImage"
+                        htmlFor={`inputImage${key}`}
                         className="btn btn-success mt-4"
                       >
                         <FormattedMessage id="manage-user.image" />
@@ -468,17 +510,17 @@ class ActionUserPage extends Component {
                       <input
                         onChange={(event) => this.handleChangeInput(event, key)}
                         type="file"
-                        className="form-control"
-                        id="inputImage"
+                        className="form-control inputImage"
+                        id={`inputImage${key}`}
                         value={user.avatar || ''}
                         name="avatar"
                       />
                       <div
                         className="preview-image flex-grow-1 mt-4 mx-3"
                         style={
-                          previewImgUrl
+                          user.previewImgUrl
                             ? {
-                                background: `url(${previewImgUrl}) no-repeat center top / contain`,
+                                background: `url(${user.previewImgUrl}) no-repeat center top / contain`,
                                 boxShadow: `rgba(0, 0, 0, 0.35) 0px 5px 15px`,
                               }
                             : {}
@@ -486,17 +528,29 @@ class ActionUserPage extends Component {
                         onClick={() =>
                           this.setState((prevState) => ({
                             ...prevState,
-                            isOpen: true,
+                            users: {
+                              ...prevState.users,
+                              [key]: {
+                                ...prevState.users[key],
+                                isOpen: true,
+                              },
+                            },
                           }))
                         }
                       ></div>
-                      {isOpen && (
+                      {user.isOpen && (
                         <Lightbox
-                          mainSrc={previewImgUrl}
+                          mainSrc={user.previewImgUrl}
                           onCloseRequest={() =>
                             this.setState((prevState) => ({
                               ...prevState,
-                              isOpen: false,
+                              users: {
+                                ...prevState.users,
+                                [key]: {
+                                  ...prevState.users[key],
+                                  isOpen: false,
+                                },
+                              },
                             }))
                           }
                         />
@@ -508,7 +562,10 @@ class ActionUserPage extends Component {
             );
           })}
         <div className="mt-4 flex-grow-1 d-flex">
-          <button className="btn btn-primary" onClick={this.submitData}>
+          <button
+            className="btn btn-primary"
+            onClick={(event) => this.submitData(event, isCreateForm)}
+          >
             <FormattedMessage id="manage-user.save" />
           </button>
           <div className="mx-2" />
@@ -530,6 +587,7 @@ const mapStateToProps = (state) => {
     isLoading: state.admin.isLoading,
     isError: state.admin.isError,
     isErrorCreated: state.admin.isErrorCreated,
+    isErrorUpdate: state.admin.isErrorUpdate,
   };
 };
 
@@ -539,6 +597,7 @@ const mapDispatchToProps = (dispatch) => {
     getPositionStart: () => dispatch(actions.fetchPositionStart()),
     getRoleStart: () => dispatch(actions.fetchRoleStart()),
     createNewUser: (payload) => dispatch(actions.createNewUser(payload)),
+    updateUsers: (payload) => dispatch(actions.updateUsers(payload)),
   };
 };
 

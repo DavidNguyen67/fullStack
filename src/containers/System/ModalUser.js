@@ -54,6 +54,7 @@ function useWindowSize() {
 }
 
 function ModalUser(props) {
+  const [id, setId] = useState('');
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -97,6 +98,7 @@ function ModalUser(props) {
     try {
       if (props?.user) {
         const {
+          id: initId,
           email: initEmail,
           firstName: initFirstName,
           lastName: initLastName,
@@ -104,6 +106,7 @@ function ModalUser(props) {
           phoneNumber: initPhoneNumber,
         } = props?.user;
 
+        setId(initId);
         setEmail(initEmail);
         setFirstName(initFirstName);
         setLastName(initLastName);
@@ -117,6 +120,7 @@ function ModalUser(props) {
       console.log(error);
     }
     return () => {
+      setId('');
       setEmail('');
       setFirstName('');
       setLastName('');
@@ -225,6 +229,7 @@ function ModalUser(props) {
     };
 
     const dataUser = {
+      id,
       email,
       firstName,
       lastName,
@@ -240,7 +245,24 @@ function ModalUser(props) {
       return;
     }
     // const formData = new FormData();
-    dispatch(actions.createNewUser([dataUser]));
+    let payload = null;
+    if (dataUser.email === props.user.email) {
+      const { email: data, ...payloadUpdate } = dataUser;
+      payload = payloadUpdate;
+    }
+    switch (props.typeModal) {
+      case COPY:
+      case CREATE:
+        dispatch(actions.createNewUser([dataUser]));
+        props.toggleModal();
+        return;
+      case UPDATE:
+        dispatch(actions.updateUsers([payload]));
+        props.toggleModal();
+        return;
+      default:
+        return;
+    }
   };
 
   const size = useWindowSize();
@@ -274,7 +296,7 @@ function ModalUser(props) {
             <div className="form-row my-2 row">
               <div
                 className={
-                  typeModal === COPY
+                  typeModal !== CREATE
                     ? 'form-group col-12 col-lg-12'
                     : 'form-group col-6 col-lg-6'
                 }
@@ -297,7 +319,7 @@ function ModalUser(props) {
               </div>
               <div
                 className={
-                  typeModal === COPY ? 'd-none' : 'form-group  col-6 col-lg-6'
+                  typeModal !== CREATE ? 'd-none' : 'form-group  col-6 col-lg-6'
                 }
               >
                 <label htmlFor="inputPassword" className="labelInputModal">

@@ -44,7 +44,8 @@
     "update": "Cập nhật",
     "delete": "Xóa",
     "cancel": "Hủy",
-    "copy": "Sao chép"
+    "copy": "Sao chép",
+    "back": "Quay lại"
   },
   "menu": {
     "admin": {
@@ -94,7 +95,7 @@
   "toast": {
     "successLogin": "Đăng nhập thành công",
     "failedLogin": "Đăng nhập thất bại. <br /> Vui lòng kiểm tra lại thông tin",
-    "failedCreateUser": "Tạo người dùng thất bại. <br /> Vui lòng kiểm tra lại thông tin <br /> Hoặc liên hệ với dev để biết thêm thông tin chi tiết",
+    "failedCreateUser": "Tạo người dùng thất bại.",
     "successCreateUser": "Tạo người dùng thành công.",
     "errorCreateUser": "Tạo người dùng thất bại",
     "errorDeleteUser": "Xóa người dùng thất bại",

@@ -7,7 +7,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import * as actions from './../../store/actions';
 import ModalUser from './ModalUser';
 import { Button } from 'reactstrap';
-import { Redirect } from 'react-router-dom';
+import ScrollToTop from 'react-scroll-to-top';
 
 const COPY = 'COPY';
 const UPDATE = 'UPDATE';
@@ -72,8 +72,16 @@ class UserManage extends Component {
 
       if (hasSelected) {
         const { history } = this.props;
-        console.log(history);
-        history.push(`/system/users/copy:${selected}`);
+        switch (typeModal) {
+          case COPY:
+            history.push(`/system/users/copy:${selected}`);
+            break;
+          case UPDATE:
+            history.push(`/system/users/update:${selected}`);
+            break;
+          default:
+            break;
+        }
       } else {
         this.toggleModal(dataUser, typeModal);
       }
@@ -81,11 +89,20 @@ class UserManage extends Component {
   };
 
   render() {
-    const { users } = this.props;
+    const { users, isLoadingRead, isErrorRead } = this.props;
     const { modal, selected, user, typeModal } = this.state;
+
+    if (isLoadingRead) {
+      return <>Loading...</>;
+    }
+
+    if (isErrorRead) {
+      return <>Error...</>;
+    }
 
     return (
       <div className="users-container">
+        <ScrollToTop smooth color="#6f00ff" />
         <ModalUser
           modal={modal}
           toggleModal={this.toggleModal}
@@ -141,7 +158,7 @@ class UserManage extends Component {
               </tr>
             </thead>
             <tbody>
-              {users ? (
+              {Array.isArray(users) &&
                 users.length > 0 &&
                 users?.map((user) => (
                   <tr key={user.id}>
@@ -168,7 +185,7 @@ class UserManage extends Component {
                       </Button>
                       <button
                         className="btn btn-warning mx-4"
-                        onClick={() => this.handleActionUsers(user)}
+                        onClick={() => this.handleActionUsers(user, UPDATE)}
                       >
                         <span className="d-flex gap-1 align-items-center">
                           <i className="fas fa-pencil-alt"></i>
@@ -187,29 +204,7 @@ class UserManage extends Component {
                     <td>{user.lastName}</td>
                     <td>{user.address}</td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td>
-                    <Skeleton count={5} />
-                  </td>
-                  <td>
-                    <Skeleton count={5} />
-                  </td>
-                  <td>
-                    <Skeleton count={5} />
-                  </td>
-                  <td>
-                    <Skeleton count={5} />
-                  </td>
-                  <td>
-                    <Skeleton count={5} />
-                  </td>
-                  <td>
-                    <Skeleton count={5} />
-                  </td>
-                </tr>
-              )}
+                ))}
             </tbody>
           </table>
         </div>

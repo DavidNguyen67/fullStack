@@ -125,8 +125,9 @@ export const updateUsers = (payload) => {
         type: actionTypes.UPDATE_USER_SUCCESS,
       };
     };
-    const updateUsersFailed = () => ({
+    const updateUsersFailed = (payload) => ({
       type: actionTypes.UPDATE_USER_FAILED,
+      payload,
     });
 
     try {
@@ -140,7 +141,7 @@ export const updateUsers = (payload) => {
             response.data.statusCode) / 100
         ) !== 2;
       if (isError) {
-        dispatch(updateUsersFailed());
+        dispatch(updateUsersFailed(response));
       } else {
         dispatch(updateUsersSuccess());
         dispatch(readUsers());
