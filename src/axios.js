@@ -1,6 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import config from './config';
+import axiosRetry from 'axios-retry';
 
 const TIMEOUT = 50000;
 
@@ -8,6 +9,18 @@ const instance = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL,
   withCredentials: true,
   timeout: TIMEOUT,
+});
+
+axiosRetry(instance, {
+  retries: 3, // number of retries
+  retryDelay: (retryCount) => {
+    console.log(`retry attempt: ${retryCount}`);
+    return retryCount * 2000; // time interval between retries
+  },
+  retryCondition: (error) => {
+    // if retry condition is not specified, by default idempotent requests are retried
+    return error.response.status === 503;
+  },
 });
 
 instance.interceptors.response.use(

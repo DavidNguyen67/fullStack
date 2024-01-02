@@ -57,7 +57,18 @@ class Login extends Component {
     if (username && password) {
       try {
         const response = await handleLoginService(username, password);
-        if (!response.data?.error || response.status !== 500) {
+
+        if (!response)
+        if (
+          response.status === 500 ||
+          response.data?.statusCode === 500 ||
+          response.statusCode === 500
+        ) {
+          toast.error(<FormattedMessage id={`toast.InternalError`} />);
+          return;
+        }
+
+        if (!response.data?.error) {
           this.props.userLoginSuccess(response.data);
           toast.success(<FormattedMessage id="toast.successLogin" />);
           return;

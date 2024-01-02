@@ -96,13 +96,14 @@ export const createNewUser = (payload) => {
 
     try {
       dispatch({ type: actionTypes.CREATE_USER_START });
+
       const response = await createNewUserService(payload);
       const isError =
         Math.floor(
           (response.status ||
             response.statusCode ||
             response.data.status ||
-            response.data.statusCode) / 100
+            response.data?.statusCode) / 100
         ) !== 2;
       if (isError) {
         const { statusCode, error, message } = response.data;
@@ -138,7 +139,7 @@ export const updateUsers = (payload) => {
           (response.status ||
             response.statusCode ||
             response.data.status ||
-            response.data.statusCode) / 100
+            response.data?.statusCode) / 100
         ) !== 2;
       if (isError) {
         dispatch(updateUsersFailed(response));
@@ -195,7 +196,7 @@ export const deleteUsers = (ids) => {
           (response.status ||
             response.statusCode ||
             response.data.status ||
-            response.data.statusCode) / 100
+            response.data?.statusCode) / 100
         ) !== 2;
 
       if (isError) {

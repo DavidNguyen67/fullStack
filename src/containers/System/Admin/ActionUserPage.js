@@ -8,7 +8,10 @@ import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 import validator from 'validator';
 import { toast } from 'react-toastify';
-import { getAllUsersService } from '../../../services/userService';
+import {
+  deleteUsersService,
+  getAllUsersService,
+} from '../../../services/userService';
 import { v4 as uuidv4 } from 'uuid';
 
 const COPY = 'COPY';
@@ -27,6 +30,7 @@ class ActionUserPage extends Component {
 
       users: {},
       pureUsers: [],
+      isLoadingRequest: false,
     };
   }
   handleChangeInput = (event, key) => {
@@ -77,8 +81,14 @@ class ActionUserPage extends Component {
     const isCreateForm = this.props.location?.pathname?.includes(
       CREATE.toLocaleLowerCase()
     );
+    const isCopyForm = this.props.location?.pathname?.includes(
+      COPY.toLocaleLowerCase()
+    );
     const isUpdateForm = this.props.location?.pathname?.includes(
       UPDATE.toLocaleLowerCase()
+    );
+    const isDeleteForm = this.props.location?.pathname?.includes(
+      DELETE.toLocaleLowerCase()
     );
     const validateFields = (ObjectData) => {
       return Object.keys(ObjectData).every((key) => {
@@ -129,36 +139,41 @@ class ActionUserPage extends Component {
       });
     };
 
-    if (!validateFields(this.state.users)) {
-      return;
-    }
-
     let payload = [];
     Object.keys(this.state.users).forEach(
       (key) => (payload = [...payload, this.state.users[key]])
     );
 
-    payload = Array.isArray(payload) ? payload : [payload];
-
-    // const isCreateForm = this.props.location?.pathname?.includes(
-    //   CREATE.toLocaleLowerCase()
-    // );
-    // const isCreateForm = this.props.location?.pathname?.includes(
-    //   CREATE.toLocaleLowerCase()
-    // );
-    if (isCreateForm) {
-      await this.props.createNewUser(payload);
-      if (this.props.isErrorCreated) {
+    if (isDeleteForm) {
+      const id = payload.map((data) => data.id);
+      this.setState((prevState) => ({
+        ...prevState,
+        isLoadingRequest: !prevState.isLoadingRequest,
+      }));
+      const response = await deleteUsersService(id);
+      this.setState((prevState) => ({
+        ...prevState,
+        isLoadingRequest: !prevState.isLoadingRequest,
+      }));
+      if (!response || Object.keys(response).length < 1) {
         toast.error(
           <FormattedMessage
-            id="toast.failedCreateUser"
+            id="toast.cantConnectToServer"
             values={{
               br: <br />,
             }}
             tagName="div"
           />
         );
-      } else {
+        return;
+      }
+      if (
+        response.status === 500 ||
+        response.data.statusCode === 500 ||
+        response.statusCode === 500
+      )
+        toast.error(<FormattedMessage id={`toast.InternalError`} />);
+      if (response.statusCode === 200 || response.status === 200) {
         toast.success(
           <FormattedMessage
             id="toast.successCreateUser"
@@ -168,45 +183,143 @@ class ActionUserPage extends Component {
             tagName="div"
           />
         );
+        return;
+      }
+      if (response.statusCode === 409 || response.status === 409) {
+        toast.error(
+          <FormattedMessage
+            id="toast.conflictEmail"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+        return;
+      }
+      toast.error(
+        <FormattedMessage
+          id="toast.errorUpdateUser"
+          values={{
+            br: <br />,
+          }}
+          tagName="div"
+        />
+      );
+      return;
+    }
+
+    if (!validateFields(this.state.users)) {
+      return;
+    }
+
+    payload = Array.isArray(payload) ? payload : [payload];
+
+    if (isCreateForm || isCopyForm) {
+      function compareById(a, b) {
+        return a.id - b.id;
+      }
+      payload.sort(compareById);
+      const pureUsers = this.state.pureUsers.sort(compareById);
+      const isSameData = pureUsers.every((user, index) => {
+        return Object.keys(user).every((key) => {
+          return user[key] === payload[index][key];
+        });
+      });
+
+      payload.forEach((user) => {
+        if (!user.password) user.password = 'admin';
+      });
+      if (!isSameData) {
+        this.setState((prevState) => ({
+          ...prevState,
+          isLoadingRequest: !prevState.isLoadingRequest,
+        }));
+        await this.props.createNewUser(payload);
+        this.setState((prevState) => ({
+          ...prevState,
+          isLoadingRequest: !prevState.isLoadingRequest,
+        }));
+        if (this.props.isErrorCreate) {
+          toast.error(
+            <FormattedMessage
+              id="toast.failedCreateUser"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+        } else {
+          toast.success(
+            <FormattedMessage
+              id="toast.successCreateUser"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+        }
+        return;
       }
     }
     if (isUpdateForm) {
       let result = [];
-      // payload.forEach((data) =>
-      //   Object.keys(this.state.users).forEach((key) => {
-      //     if (this.state.users[key]?.email === data.key) {
-      //       const { email, ...payloadUpdate } = this.state.users[key];
-      //       result = [...result, payloadUpdate];
-      //     } else result = [...result, this.state.users[key]];
-      //   })
-      // );
-      // Object.keys(this.state.users).forEach(key => {
 
-      // })
-      payload = result;
-      console.log(payload);
-      await this.props.updateUsers(payload);
-      if (this.props.isErrorUpdate) {
-        toast.error(
-          <FormattedMessage
-            id="toast.errorUpdateUser"
-            values={{
-              br: <br />,
-            }}
-            tagName="div"
-          />
-        );
-      } else {
-        toast.success(
-          <FormattedMessage
-            id="toast.successUpdateUser"
-            values={{
-              br: <br />,
-            }}
-            tagName="div"
-          />
-        );
+      function compareById(a, b) {
+        return a.id - b.id;
       }
+      payload.sort(compareById);
+      const pureUsers = this.state.pureUsers.sort(compareById);
+
+      payload.forEach((data, index) => {
+        let value = null;
+        let userId = null;
+        Object.keys(data).forEach((key) => {
+          if (data[key] !== pureUsers[index][key]) {
+            value = { ...value, [key]: data[key] };
+            !userId && (userId = data.id);
+          }
+          userId && (value = { ...value, id: data.id });
+        });
+        result = [...result, value];
+      });
+      payload = result.filter((data) => data);
+
+      if (payload.length > 0 && payload.some((data) => data)) {
+        this.setState((prevState) => ({
+          ...prevState,
+          isLoadingRequest: !prevState.isLoadingRequest,
+        }));
+        await this.props.updateUsers(payload);
+        this.setState((prevState) => ({
+          ...prevState,
+          isLoadingRequest: !prevState.isLoadingRequest,
+        }));
+        if (this.props.isErrorUpdate) {
+          toast.error(
+            <FormattedMessage
+              id="toast.errorUpdateUser"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+        } else {
+          toast.success(
+            <FormattedMessage
+              id="toast.successUpdateUser"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+        }
+      }
+      return;
     }
   };
   componentWillUnmount() {
@@ -220,7 +333,7 @@ class ActionUserPage extends Component {
     this.props.getRoleStart();
     if (this.props.match?.params?.id) {
       const response = await getAllUsersService(this.props.match.params.id);
-      if (response.data) {
+      if (response.data && Array.isArray(response.data)) {
         const users = response.data.reduce((accumulator, value) => {
           return { ...accumulator, [uuidv4()]: value };
         }, {});
@@ -229,6 +342,18 @@ class ActionUserPage extends Component {
           users,
           pureUsers: response.data,
         }));
+      } else {
+        const { history, systemMenuPath } = this.props;
+        if (
+          response.status === 500 ||
+          response.data?.statusCode === 500 ||
+          response.statusCode === 500
+        )
+          toast.error(<FormattedMessage id={`toast.InternalError`} />);
+        if (response.status === 404 || response.data?.statusCode === 404)
+          toast.error(<FormattedMessage id={`toast.errorNotFoundUser`} />);
+        else toast.error(<FormattedMessage id={`toast.errorReadUser`} />);
+        history.push(systemMenuPath);
       }
     }
   }
@@ -278,8 +403,11 @@ class ActionUserPage extends Component {
   };
 
   render() {
-    const { lang, isLoading, isError } = this.props;
-    const { genders, positions, roles, users } = this.state;
+    const isDeleteForm = this.props.location?.pathname?.includes(
+      DELETE.toLocaleLowerCase()
+    );
+    const { lang, isLoading, isError, isSuccessRead, isErrorRead } = this.props;
+    const { genders, positions, roles, users, isLoadingRequest } = this.state;
     const { location } = this.props;
     const isCreateForm = location?.pathname.includes(
       CREATE.toLocaleLowerCase()
@@ -292,6 +420,7 @@ class ActionUserPage extends Component {
     if (isError) {
       return <>Error...</>;
     }
+
     return (
       <>
         <div className="mt-4 flex-grow-1 d-flex">
@@ -321,6 +450,7 @@ class ActionUserPage extends Component {
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="text"
                       className="form-control"
+                      disabled={isDeleteForm}
                       id={`inputEmail${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.emailPlaceholder',
@@ -342,6 +472,7 @@ class ActionUserPage extends Component {
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="password"
                       className="form-control"
+                      disabled={isDeleteForm}
                       id={`inputPassword${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.passwordPlaceholder',
@@ -359,6 +490,7 @@ class ActionUserPage extends Component {
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="text"
                       className="form-control"
+                      disabled={isDeleteForm}
                       id={`inputFirstName${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.firstNamePlaceholder',
@@ -376,6 +508,7 @@ class ActionUserPage extends Component {
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="text"
                       className="form-control"
+                      disabled={isDeleteForm}
                       id={`inputLastName${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.lastNamePlaceholder',
@@ -395,6 +528,7 @@ class ActionUserPage extends Component {
                       onChange={(event) => this.handleChangeInput(event, key)}
                       type="text"
                       className="form-control"
+                      disabled={isDeleteForm}
                       id={`inputAddress${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.addressPlaceholder',
@@ -413,6 +547,7 @@ class ActionUserPage extends Component {
                       type="text"
                       name="phoneNumber"
                       className="form-control col-6 col-lg-3"
+                      disabled={isDeleteForm}
                       id={`inputPhoneNumber${key}`}
                       placeholder={LanguageUtils.getMessageByKey(
                         'manage-user.phoneNumberPlaceholder',
@@ -431,6 +566,7 @@ class ActionUserPage extends Component {
                     <select
                       id={`inputGender${key}`}
                       className="form-control"
+                      disabled={isDeleteForm}
                       name="gender"
                       onChange={(event) => this.handleChangeInput(event, key)}
                     >
@@ -456,6 +592,7 @@ class ActionUserPage extends Component {
                     <select
                       id={`inputPosition${key}`}
                       className="form-control"
+                      disabled={isDeleteForm}
                       name="position"
                       onChange={(event) => this.handleChangeInput(event, key)}
                     >
@@ -481,6 +618,7 @@ class ActionUserPage extends Component {
                     <select
                       id={`inputRoleId${key}`}
                       className="form-control"
+                      disabled={isDeleteForm}
                       name="role"
                       onChange={(event) => this.handleChangeInput(event, key)}
                     >
@@ -514,6 +652,7 @@ class ActionUserPage extends Component {
                         id={`inputImage${key}`}
                         value={user.avatar || ''}
                         name="avatar"
+                        disabled={isDeleteForm}
                       />
                       <div
                         className="preview-image flex-grow-1 mt-4 mx-3"
@@ -565,11 +704,12 @@ class ActionUserPage extends Component {
           <button
             className="btn btn-primary"
             onClick={(event) => this.submitData(event, isCreateForm)}
+            disabled={isLoadingRequest}
           >
             <FormattedMessage id="manage-user.save" />
           </button>
           <div className="mx-2" />
-          <button className="btn btn-secondary">
+          <button className="btn btn-secondary" onClick={this.goBack}>
             <FormattedMessage id="button.cancel" />
           </button>
         </div>
@@ -586,8 +726,12 @@ const mapStateToProps = (state) => {
     positions: state.admin.positions,
     isLoading: state.admin.isLoading,
     isError: state.admin.isError,
-    isErrorCreated: state.admin.isErrorCreated,
+    isErrorCreate: state.admin.isErrorCreate,
     isErrorUpdate: state.admin.isErrorUpdate,
+    isLoadingRead: state.admin.isLoadingRead,
+    isErrorRead: state.admin.isErrorRead,
+    isSuccessRead: state.admin.isSuccessRead,
+    systemMenuPath: state.app.systemMenuPath,
   };
 };
 
@@ -598,6 +742,8 @@ const mapDispatchToProps = (dispatch) => {
     getRoleStart: () => dispatch(actions.fetchRoleStart()),
     createNewUser: (payload) => dispatch(actions.createNewUser(payload)),
     updateUsers: (payload) => dispatch(actions.updateUsers(payload)),
+    deleteUsers: (payload) => dispatch(actions.deleteUsers(payload)),
+    readUsers: (id) => dispatch(actions.readUsers(id)),
   };
 };
 

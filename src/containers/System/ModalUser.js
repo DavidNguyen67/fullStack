@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './userManage.scss';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { FormattedMessage } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { LanguageUtils } from '../../utils';
 import * as actions from './../../store/actions';
 import validator from 'validator';
@@ -13,6 +13,10 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import {
+  createNewUserService,
+  updateUsersService,
+} from '../../services/userService';
 
 // Register the plugins
 registerPlugin(
@@ -64,6 +68,7 @@ function ModalUser(props) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [positionId, setPositionId] = useState('');
   const [image, setImage] = useState('');
+  const [isLoadingRequest, setIsLoadingRequest] = useState(false);
 
   const { language: lang } = useSelector((state) => state.app);
   const {
@@ -104,17 +109,20 @@ function ModalUser(props) {
           lastName: initLastName,
           address: initAddress,
           phoneNumber: initPhoneNumber,
+          gender,
+          roleId,
+          positionId,
         } = props?.user;
 
-        setId(initId);
-        setEmail(initEmail);
-        setFirstName(initFirstName);
-        setLastName(initLastName);
-        setAddress(initAddress);
-        setPhoneNumber(initPhoneNumber);
-        setGender(genders[0]?.key);
-        setRoleId(roles[0]?.key);
-        setPositionId(positions[0]?.key);
+        setId(initId || '');
+        setEmail(initEmail || '');
+        setFirstName(initFirstName || '');
+        setLastName(initLastName || '');
+        setAddress(initAddress || '');
+        setPhoneNumber(initPhoneNumber || '');
+        setGender(gender || genders[0]?.key);
+        setRoleId(roleId || roles[0]?.key);
+        setPositionId(positionId || positions[0]?.key);
       }
     } catch (error) {
       console.log(error);
@@ -131,19 +139,6 @@ function ModalUser(props) {
       setPositionId('');
     };
   }, [props.user]);
-
-  useEffect(() => {
-    statusCode === 409 &&
-      isErrorCreate &&
-      toast.error(<FormattedMessage id={'toast.conflictEmail'} />);
-  }, [isErrorCreate]);
-
-  useEffect(() => {
-    if (isSuccessCreate) {
-      toast.success(<FormattedMessage id={'toast.successCreateUser'} />);
-      props.toggleModal();
-    }
-  }, [isSuccessCreate]);
 
   const handleChangeInput = {
     email: (event) => {
@@ -181,7 +176,7 @@ function ModalUser(props) {
 
   const submitData = async (event) => {
     event.preventDefault();
-
+    setIsLoadingRequest(true);
     const validateFields = (dataUser) => {
       const { email, password, firstName, lastName, phoneNumber } = dataUser;
 
@@ -244,25 +239,201 @@ function ModalUser(props) {
     if (!validateFields(dataUser)) {
       return;
     }
-    // const formData = new FormData();
-    let payload = null;
-    if (dataUser.email === props.user.email) {
-      const { email: data, ...payloadUpdate } = dataUser;
-      payload = payloadUpdate;
-    }
+    let result = null;
+    let response = null;
+
     switch (props.typeModal) {
       case COPY:
       case CREATE:
-        dispatch(actions.createNewUser([dataUser]));
-        props.toggleModal();
+        Object.keys(dataUser).forEach((key) => {
+          if (dataUser[key]) {
+            result = { ...result, [key]: dataUser[key] };
+            return;
+          }
+        });
+        response = await createNewUserService([result]);
+        if (
+          response.status === 500 ||
+          response.data?.statusCode === 500 ||
+          response.statusCode === 500
+        )
+          toast.error(<FormattedMessage id={`toast.InternalError`} />);
+        if (response.statusCode === 200 || response.status === 200) {
+          toast.success(
+            <FormattedMessage
+              id="toast.successCreateUser"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+          props.toggleModal();
+          setIsLoadingRequest(false);
+          return;
+        }
+        if (response.statusCode === 409 || response.status === 409) {
+          toast.error(
+            <FormattedMessage
+              id="toast.conflictEmail"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+          setIsLoadingRequest(false);
+          return;
+        }
+        toast.error(
+          <FormattedMessage
+            id="toast.errorUpdateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+        setIsLoadingRequest(false);
         return;
       case UPDATE:
-        dispatch(actions.updateUsers([payload]));
-        props.toggleModal();
+        dataUser.password && delete dataUser.password;
+        Object.keys(dataUser).forEach((key) => {
+          if (
+            key === 'id' ||
+            (dataUser[key] !== props.user[key] && dataUser[key])
+          ) {
+            result = { ...result, [key]: dataUser[key] };
+            return;
+          }
+        });
+        if (Object.keys(result).length < 2) {
+          setIsLoadingRequest(false);
+          return;
+        }
+        response = await updateUsersService([result]);
+        if (!response || Object.keys(response).length < 1) {
+          toast.error(
+            <FormattedMessage
+              id="toast.cantConnectToServer"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+        }
+        if (response.statusCode === 200 || response.status === 200) {
+          toast.success(
+            <FormattedMessage
+              id="toast.successUpdateUser"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+          props.toggleModal();
+          setIsLoadingRequest(false);
+          return;
+        }
+        if (response.statusCode === 409 || response.status === 409) {
+          toast.error(
+            <FormattedMessage
+              id="toast.conflictEmail"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+          setIsLoadingRequest(false);
+          return;
+        }
+        toast.error(
+          <FormattedMessage
+            id="toast.errorUpdateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+        setIsLoadingRequest(false);
         return;
       default:
+        setIsLoadingRequest(false);
         return;
     }
+    // let payload;
+    // if (dataUser.email === props.user.email) {
+    //   const { email: data, ...payloadUpdate } = dataUser;
+    //   Object.keys(payloadUpdate).forEach(
+    //     (key) => (payload = { ...payload, [key]: dataUser[key] })
+    //   );
+    // } else
+    //   Object.keys(dataUser).forEach((key) => {
+    //     payload = { ...payload, [key]: dataUser[key] };
+    //   });
+    // payload = Array.isArray(payload) ? payload : [payload];
+    // switch (props.typeModal) {
+    //   case COPY:
+    //   case CREATE:
+    //     const { id: userId, ...body } = payload[0];
+    //     dispatch(actions.createNewUser([body]));
+    //     console.log(props);
+    //     if (props.isErrorCreate) {
+    //       toast.error(
+    //         <FormattedMessage
+    //           id="toast.conflictEmail"
+    //           values={{
+    //             br: <br />,
+    //           }}
+    //           tagName="div"
+    //         />
+    //       );
+    //     } else {
+    //       toast.success(
+    //         <FormattedMessage
+    //           id="toast.successCreateUser"
+    //           values={{
+    //             br: <br />,
+    //           }}
+    //           tagName="div"
+    //         />
+    //       );
+    //       props.toggleModal();
+    //     }
+    //     return;
+    //   case UPDATE:
+    //     console.log(props);
+    //     dispatch(actions.updateUsers([payload]));
+    //     if (props.isErrorUpdate) {
+    //       toast.error(
+    //         <FormattedMessage
+    //           id="toast.errorUpdateUser"
+    //           values={{
+    //             br: <br />,
+    //           }}
+    //           tagName="div"
+    //         />
+    //       );
+    //     } else {
+    //       toast.success(
+    //         <FormattedMessage
+    //           id="toast.successUpdateUser"
+    //           values={{
+    //             br: <br />,
+    //           }}
+    //           tagName="div"
+    //         />
+    //       );
+    //       props.toggleModal();
+    //     }
+    //     return;
+    //   default:
+    //     return;
+    // }
   };
 
   const size = useWindowSize();
@@ -544,7 +715,11 @@ function ModalUser(props) {
           </form>
         </ModalBody>
         <ModalFooter>
-          <button className="btn btn-primary" onClick={submitData}>
+          <button
+            className="btn btn-primary"
+            onClick={submitData}
+            disabled={isLoadingRequest}
+          >
             <FormattedMessage id="manage-user.save" />
           </button>
           <button className="btn btn-secondary" onClick={toggleModal}>
@@ -555,5 +730,17 @@ function ModalUser(props) {
     </>
   );
 }
+const mapStateToProps = (state) => {
+  return {
+    lang: state.app.language,
+    genders: state.admin.genders,
+    roles: state.admin.roles,
+    positions: state.admin.positions,
+    isLoading: state.admin.isLoading,
+    isError: state.admin.isError,
+    isErrorCreate: state.admin.isErrorCreate,
+    isErrorUpdate: state.admin.isErrorUpdate,
+  };
+};
 
-export default ModalUser;
+export default connect(mapStateToProps)(ModalUser);

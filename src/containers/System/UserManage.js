@@ -8,6 +8,8 @@ import * as actions from './../../store/actions';
 import ModalUser from './ModalUser';
 import { Button } from 'reactstrap';
 import ScrollToTop from 'react-scroll-to-top';
+import { toast } from 'react-toastify';
+import { deleteUsersService } from '../../services/userService';
 
 const COPY = 'COPY';
 const UPDATE = 'UPDATE';
@@ -65,11 +67,77 @@ class UserManage extends Component {
   };
 
   handleActionUsers = (dataUser, typeModal) => {
-    if (this.state.selected.length < 2) this.toggleModal(dataUser, typeModal);
-    else {
-      const { selected } = this.state;
-      const hasSelected = selected.includes(dataUser.id);
+    const { selected } = this.state;
+    const hasSelected = selected.includes(dataUser.id);
 
+    const handleDeleteUsers = (isMany) => {
+      const deleteFunc = async () => {
+        const { id } = dataUser;
+        const response = await deleteUsersService([id]);
+        if (response.statusCode === 200 || response.status === 200) {
+          toast.success(
+            <FormattedMessage
+              id="toast.successDeleteUser"
+              values={{
+                br: <br />,
+              }}
+              tagName="div"
+            />
+          );
+          const response = await this.props.readUsers();
+          this.setState((prevState) => ({
+            ...prevState,
+            response,
+          }));
+          return;
+        }
+        toast.error(
+          <FormattedMessage
+            id="toast.errorDeleteUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+      };
+      toast(
+        <div className="m-2">
+          <h4 style={{ color: 'black' }}>
+            <FormattedMessage
+              id={
+                isMany ? 'toast.confirmDeleteUsers' : 'toast.confirmDeleteUser'
+              }
+            />
+            <br />
+            {!isMany ? <strong>{dataUser.firstName}</strong> : ''}
+          </h4>
+          <div className="d-flex justify-content-center">
+            <button
+              className="btn btn-primary"
+              style={{ padding: '0 20px' }}
+              onClick={deleteFunc}
+            >
+              <FormattedMessage id={'toast.confirmYes'} />
+            </button>
+            <div className="mx-2" />
+            <button className="btn btn-danger" style={{ padding: '0 20px' }}>
+              <FormattedMessage id={'toast.confirmNo'} />
+            </button>
+          </div>
+        </div>,
+        { pauseOnHover: true }
+      );
+      return;
+    };
+
+    if (this.state.selected.length < 2) {
+      if (typeModal === DELETE) {
+        handleDeleteUsers();
+        return;
+      }
+      this.toggleModal(dataUser, typeModal);
+    } else {
       if (hasSelected) {
         const { history } = this.props;
         switch (typeModal) {
@@ -79,19 +147,46 @@ class UserManage extends Component {
           case UPDATE:
             history.push(`/system/users/update:${selected}`);
             break;
+          case DELETE:
+            history.push(`/system/users/delete:${selected}`);
+            break;
           default:
             break;
         }
       } else {
+        if (typeModal === DELETE) {
+          handleDeleteUsers();
+          return;
+        }
         this.toggleModal(dataUser, typeModal);
       }
+    }
+  };
+
+  handleSelectAll = () => {
+    const { users } = this.props;
+    const { selected } = this.state;
+    let selectedUsers = [];
+    if (selected.length < users.length) {
+      users.forEach((user) => {
+        selectedUsers = [...selectedUsers, user.id];
+      });
+      this.setState((prevState) => ({
+        ...prevState,
+        selected: selectedUsers,
+      }));
+      return;
+    } else {
+      this.setState((prevState) => ({
+        ...prevState,
+        selected: [],
+      }));
     }
   };
 
   render() {
     const { users, isLoadingRead, isErrorRead } = this.props;
     const { modal, selected, user, typeModal } = this.state;
-
     if (isLoadingRead) {
       return <>Loading...</>;
     }
@@ -141,7 +236,18 @@ class UserManage extends Component {
           <table id="customers" style={{ overflowX: 'scroll' }}>
             <thead>
               <tr>
-                <th></th>
+                <th>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      className="flexCheckDefault"
+                      checked={
+                        selected.length === users.length && users.length > 0
+                      }
+                      onChange={() => this.handleSelectAll()}
+                    />
+                  </div>
+                </th>
                 <th>
                   <FormattedMessage id={'title.table.action'} />
                 </th>
@@ -192,7 +298,10 @@ class UserManage extends Component {
                           <FormattedMessage id={'button.update'} />
                         </span>
                       </button>
-                      <button className="btn btn-danger">
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => this.handleActionUsers(user, DELETE)}
+                      >
                         <span className="d-flex gap-1 align-items-center">
                           <i className="fas fa-trash" />
                           <FormattedMessage id={'button.delete'} />
