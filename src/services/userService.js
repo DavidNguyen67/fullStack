@@ -4,7 +4,7 @@ export const getAllUsersService = async (id = 'all') => {
   return await instance.get(`/user/read?id=${id}`);
 };
 
-export const createNewUserService = async (payload) => {
+export const createNewUserService = async (payload, file) => {
   const response = await instance.post(`/user/create`, payload);
   return response;
 };

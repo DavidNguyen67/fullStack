@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import './userManage.scss';
-import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import * as actions from './../../store/actions';
 import ModalUser from './ModalUser';
@@ -209,7 +208,11 @@ class UserManage extends Component {
           <FormattedMessage id={'title.manageUser'} />
         </div>
         <div className="flex-grow-1 d-flex">
-          <button className="btn btn-primary" style={{ lineHeight: '14px' }}>
+          <button
+            className="btn btn-primary"
+            style={{ lineHeight: '14px' }}
+            onClick={(event) => this.handleActionUsers('', CREATE)}
+          >
             <span className="d-flex gap-2">
               <i className="fas fa-plus"></i>
               <FormattedMessage id={'button.create'} />
@@ -316,6 +319,40 @@ class UserManage extends Component {
                 ))}
             </tbody>
           </table>
+          <nav
+            aria-label="Page navigation example"
+            onClick={(event) => console.log(event)}
+          >
+            <ul className="pagination">
+              <li className="page-item">
+                <a className="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span className="sr-only">Previous</span>
+                </a>
+              </li>
+              <li className="page-item">
+                <a className="page-link" href="#">
+                  1
+                </a>
+              </li>
+              <li className="page-item">
+                <a className="page-link" href="#">
+                  2
+                </a>
+              </li>
+              <li className="page-item">
+                <a className="page-link" href="#">
+                  3
+                </a>
+              </li>
+              <li className="page-item">
+                <a className="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span className="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     );

@@ -3,7 +3,7 @@ import './userManage.scss';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { FormattedMessage } from 'react-intl';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { LanguageUtils } from '../../utils';
+import { CommonUtils, LanguageUtils } from '../../utils';
 import * as actions from './../../store/actions';
 import validator from 'validator';
 import { toast } from 'react-toastify';
@@ -137,6 +137,7 @@ function ModalUser(props) {
       setGender('');
       setRoleId('');
       setPositionId('');
+      setImage('');
     };
   }, [props.user]);
 
@@ -233,7 +234,7 @@ function ModalUser(props) {
       roleId,
       phoneNumber,
       positionId,
-      image,
+      image: JSON.stringify(await CommonUtils.getBase64(image[0].file)),
       password: 'admin',
     };
     if (!validateFields(dataUser)) {
@@ -241,13 +242,13 @@ function ModalUser(props) {
     }
     let result = null;
     let response = null;
-
+    const formData = new FormData();
     switch (props.typeModal) {
       case COPY:
       case CREATE:
         Object.keys(dataUser).forEach((key) => {
           if (dataUser[key]) {
-            result = { ...result, [key]: dataUser[key] };
+            formData.append(key, dataUser[key]);
             return;
           }
         });
@@ -256,8 +257,10 @@ function ModalUser(props) {
           response.status === 500 ||
           response.data?.statusCode === 500 ||
           response.statusCode === 500
-        )
+        ) {
           toast.error(<FormattedMessage id={`toast.InternalError`} />);
+          return;
+        }
         if (response.statusCode === 200 || response.status === 200) {
           toast.success(
             <FormattedMessage
@@ -270,6 +273,7 @@ function ModalUser(props) {
           );
           props.toggleModal();
           setIsLoadingRequest(false);
+          dispatch(actions.readUsers());
           return;
         }
         if (response.statusCode === 409 || response.status === 409) {
@@ -335,6 +339,7 @@ function ModalUser(props) {
           );
           props.toggleModal();
           setIsLoadingRequest(false);
+          dispatch(actions.readUsers());
           return;
         }
         if (response.statusCode === 409 || response.status === 409) {
@@ -594,7 +599,7 @@ function ModalUser(props) {
                     genders.map((item, index) => (
                       <option
                         key={item.id}
-                        defaultChecked={index === 0}
+                        defaultChecked={item.key === gender}
                         value={item.key}
                       >
                         {lang.toLowerCase() === 'en'
@@ -619,7 +624,7 @@ function ModalUser(props) {
                     positions.map((item, index) => (
                       <option
                         key={item.id}
-                        defaultChecked={index === 0}
+                        defaultChecked={item.key === positionId}
                         value={item.key}
                       >
                         {lang.toLowerCase() === 'en'
@@ -641,54 +646,24 @@ function ModalUser(props) {
                   onChange={handleChangeInput.roleKey}
                 >
                   {roles?.length > 0 &&
-                    roles.map((item, index) => (
-                      <option
-                        key={item.id}
-                        defaultChecked={index === 0}
-                        value={item.key}
-                      >
-                        {lang.toLowerCase() === 'en'
-                          ? item.valueEn
-                          : item.valueVi}
-                      </option>
-                    ))}
+                    roles.map((item, index) => {
+                      return (
+                        <option
+                          key={item.id}
+                          defaultChecked={roleId === item.key}
+                          value={item.key}
+                        >
+                          {lang.toLowerCase() === 'en'
+                            ? item.valueEn
+                            : item.valueVi}
+                        </option>
+                      );
+                    })}
                 </select>
               </div>
             </div>
             <div className="form-row my-2 row">
               <div className="form-group col-12 inputImage-container mt-2">
-                {/* <div className="d-flex flex-column">
-                  <label htmlFor="inputImage" className='labelInputModal' className="btn btn-success">
-                    <FormattedMessage id="manage-user.image" />
-                    <i className="fas fa-upload"></i>
-                  </label>
-                  <input
-                    onChange={handleChangeInput.}
-                    type="file"
-                    className="form-control"
-                    id="inputImage"
-                    value={avatar}
-                    name="avatar"
-                  />
-                  <div
-                    className="preview-image flex-grow-1 mt-4 mx-3"
-                    style={
-                      previewImgUrl
-                        ? {
-                            background: `url(${previewImgUrl}) no-repeat center top / contain`,
-                            boxShadow: `rgba(0, 0, 0, 0.35) 0px 5px 15px`,
-                          }
-                        : {}
-                    }
-                    onClick={toggleLightBox}
-                  ></div>
-                  {isOpen && (
-                    <Lightbox
-                      mainSrc={previewImgUrl}
-                      onCloseRequest={toggleLightBox}
-                    />
-                  )}
-                </div> */}
                 <label
                   htmlFor="filepond--browser-bsdrbpvlg"
                   className="labelInputModal"
@@ -699,12 +674,10 @@ function ModalUser(props) {
                   files={image}
                   onupdatefiles={setImage}
                   acceptedFileTypes={'image/*'}
-                  // allowMultiple={true}
                   allowReplace
                   maxFiles={1}
                   // server="/api"
                   name="file1"
-                  // labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
                   labelIdle={LanguageUtils.getMessageByKey(
                     'manage-user.filePlaceholder',
                     lang
@@ -743,4 +716,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(ModalUser);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    readUsers: (id) => dispatch(actions.readUsers(id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ModalUser);

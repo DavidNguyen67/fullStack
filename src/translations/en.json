@@ -45,7 +45,9 @@
     "delete": "Delete",
     "cancel": "Cancel",
     "copy": "Copy",
-    "back": "Back"
+    "back": "Back",
+    "addRow": "Add Row",
+    "removeRow": "Remove Row"
   },
   "menu": {
     "admin": {

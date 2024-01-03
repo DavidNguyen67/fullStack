@@ -45,7 +45,9 @@
     "delete": "Xóa",
     "cancel": "Hủy",
     "copy": "Sao chép",
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "addRow": "Thêm hàng",
+    "removeRow": "Xóa hàng"
   },
   "menu": {
     "admin": {
