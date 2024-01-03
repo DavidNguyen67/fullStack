@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -21,6 +22,7 @@ import { IsHasDataInQueryOrBodyPipe } from './pipes/IsHasDataInQueryOrBody.pipe'
 import { processUserData } from 'src/utils/function';
 import { excludeIdFieldPipe } from './pipes/creating.pipe';
 import { FetchUsersInterceptor } from './interceptor/fetchUser.interceptor';
+import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
 
 @Controller(`${routes.versionApi}/${routes.crudUserPath}`)
 export class CrudController {
@@ -49,18 +51,18 @@ export class CrudController {
     };
   }
 
-  @Post(routes.createRoute)
-  @UsePipes(excludeIdFieldPipe)
-  async createUsers(
-    @Body(new ValidationPipe({ transform: true }))
-    body: CreateUserDtos,
-  ): Promise<GlobalRes> {
-    const data: any = body.data;
-    return {
-      statusCode: HttpStatus.OK,
-      data: await this.crudService.createUsers(data || body),
-    };
-  }
+  // @Post(routes.createRoute)
+  // @UsePipes(excludeIdFieldPipe)
+  // async createUsers(
+  //   @Body(new ValidationPipe({ transform: true }))
+  //   body: CreateUserDtos,
+  // ): Promise<GlobalRes> {
+  //   const data: any = body.data;
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     data: await this.crudService.createUsers(data || body),
+  //   };
+  // }
 
   @Delete(routes.deleteRoute)
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
@@ -120,4 +122,23 @@ export class CrudController {
     };
     // this.crudService.updateUsers(body);
   }
+
+  @Post(routes.createRoute)
+  @FormDataRequest({ storage: MemoryStoredFile })
+  @UsePipes(excludeIdFieldPipe)
+  async createUsers(@Body() data) {
+    console.log('====================================');
+    console.log(data);
+    console.log('====================================');
+    // return {
+    //   statusCode: HttpStatus.OK,
+    //   data: await this.crudService.createUsers(data),
+    // };
+  }
+  // @UsePipes(excludeIdFieldPipe)
+  // async createUsers(@UploadedFile() file: Express.Multer.File) {
+  //   console.log('====================================');
+  //   console.log(file);
+  //   console.log('====================================');
+  // }
 }

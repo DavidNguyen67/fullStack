@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 export function isEmpty(obj) {
   if (Array.isArray(obj)) return obj.length === 0;
   return Object.keys(obj).length === 0;
@@ -33,4 +35,20 @@ export const processUserData = (body) => {
   );
 
   return filteredPayload;
+};
+// export function base64_encode(file) {
+//   // read binary data
+//   const bitmap = fs.readFileSync(file);
+//   // convert binary data to base64 encoded string
+//   return new Buffer(bitmap).toString('base64');
+// }
+export const getBase64 = async (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new window.FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = reject;
+  });
 };

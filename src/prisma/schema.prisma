@@ -13,14 +13,14 @@ model User {
   password    String
   firstName   String
   lastName    String
-  address     String
+  address     String?
   gender      String    @default("M")
   // typeRole   String
   // keyRole    String
   roleId      String    @default("R3")
   phoneNumber String?
   positionId  String    @default("P0")
-  image       Json?
+  image       Bytes?
   createAt    DateTime? @default(now())
   updateAt    DateTime? @default(now())
 }
@@ -50,7 +50,7 @@ model Clinic {
   name        String
   address     Json
   description Json
-  image       Json
+  image       Bytes
   createAt    DateTime? @default(now())
   updateAt    DateTime? @default(now())
 }
@@ -79,7 +79,7 @@ model Specialty {
   id          Int       @id @default(autoincrement())
   name        String
   description Json
-  image       Json
+  image       Bytes
   createAt    DateTime? @default(now())
   updateAt    DateTime? @default(now())
 }

@@ -6,7 +6,10 @@ export class excludeIdFieldPipe implements PipeTransform {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform(value: any, metadata: ArgumentMetadata): any {
     try {
-      if (!Array.isArray(value)) throw new TypeError('This is not array');
+      console.log('====================================');
+      console.log(value.payload);
+      console.log('====================================');
+      if (!Array.isArray(value)) value = [value];
       const data = value.map((val) => excludeAndNullVal(val, ['id']));
       return data;
     } catch (error) {

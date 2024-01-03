@@ -78,6 +78,7 @@ export class CrudService {
         const isEmailExists = await this.isExistEmail(user.email);
         const password =
           user.password && (await bcrypt.hash(user.password, saltOrRounds));
+        const image: any = user.image && user.image.buffer;
 
         !isEmailExists
           ? (validUsers = [
@@ -85,6 +86,7 @@ export class CrudService {
               {
                 ...user,
                 password,
+                image,
               },
             ])
           : (invalidUsers = [...validUsers, { ...user }]);
