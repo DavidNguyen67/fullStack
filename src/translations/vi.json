@@ -113,7 +113,10 @@
     "confirmYes": "Có",
     "confirmNo": "Không",
     "conflictEmail": "Email đã tồn tại!",
-    "cantConnectToServer": "Không thể kết nối đến với server"
+    "cantConnectToServer": "Không thể kết nối đến với server",
+    "AtLestChoiceOne": "Hãy chọn ít nhất một người",
+    "OverSizeFile": "Kích thước ảnh quá lớn",
+    "NotImageFile": "File ảnh không phù hợp"
   },
   "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này không?",
   "selectOneUserAtLeast": "Phải chọn ít nhất một người dùng.",

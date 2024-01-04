@@ -219,14 +219,36 @@ class UserManage extends Component {
             </span>
           </button>
           <div className="mx-2" />
-          <button className="btn btn-warning" style={{ lineHeight: '14px' }}>
+          <button
+            className="btn btn-warning"
+            style={{ lineHeight: '14px' }}
+            onClick={() => {
+              if (selected.length > 0) {
+                const user = users.find((user) => selected[0] === user.id);
+                this.handleActionUsers(user, UPDATE);
+              } else {
+                toast.error(<FormattedMessage id="toast.AtLestChoiceOne" />);
+              }
+            }}
+          >
             <span className="d-flex gap-2">
               <i className="fas fa-pencil-alt"></i>
               <FormattedMessage id={'button.update'} />
             </span>
           </button>
           <div className="mx-2" />
-          <button className="btn btn-danger" style={{ lineHeight: '14px' }}>
+          <button
+            className="btn btn-danger"
+            style={{ lineHeight: '14px' }}
+            onClick={() => {
+              if (selected.length > 0) {
+                const user = users.find((user) => selected[0] === user.id);
+                this.handleActionUsers(user, DELETE);
+              } else {
+                toast.error(<FormattedMessage id="toast.AtLestChoiceOne" />);
+              }
+            }}
+          >
             <span className="d-flex gap-2">
               <i className="fas fa-trash"></i>
               <FormattedMessage id={'button.delete'} />

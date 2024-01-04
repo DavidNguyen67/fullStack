@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
-import { LanguageUtils } from '../../../utils';
+import { CommonUtils, LanguageUtils, MAX_FILE_SIZE } from '../../../utils';
 import * as actions from '../../../store/actions';
 import './UserRedux.scss';
 import Lightbox from 'react-image-lightbox';
@@ -13,6 +13,7 @@ import {
   getAllUsersService,
 } from '../../../services/userService';
 import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
 
 const COPY = 'COPY';
 const UPDATE = 'UPDATE';
@@ -53,7 +54,11 @@ class ActionUserPage extends Component {
           ...prevState,
           users: {
             ...prevState.users,
-            [key]: { ...prevState.users[key], previewImgUrl: objectUrl },
+            [key]: {
+              ...prevState.users[key],
+              previewImgUrl: objectUrl,
+              image: event.target.files[0],
+            },
           },
         }));
         if (this.state.users[key].previewImgUrl) {
@@ -78,6 +83,7 @@ class ActionUserPage extends Component {
   };
   submitData = async (event) => {
     event.preventDefault();
+
     const isCreateForm = this.props.location?.pathname?.includes(
       CREATE.toLocaleLowerCase()
     );
@@ -99,7 +105,7 @@ class ActionUserPage extends Component {
           toast.error(<FormattedMessage id="validate.emailRequired" />);
           return false;
         }
-        if (isCreateForm && !password) {
+        if ((isCreateForm || isCopyForm) && !password) {
           toast.error(<FormattedMessage id="validate.passwordRequired" />);
           return false;
         }
@@ -117,7 +123,10 @@ class ActionUserPage extends Component {
           return false;
         }
 
-        if (isCreateForm && !validator.isLength(password, { min: 6 })) {
+        if (
+          (isCreateForm || isCopyForm) &&
+          !validator.isLength(password, { min: 6 })
+        ) {
           toast.error(<FormattedMessage id="validate.passwordLength" />);
           return false;
         }
@@ -217,11 +226,24 @@ class ActionUserPage extends Component {
       });
     }
 
-    if (!validateFields(users)) {
-      return;
+    // if (!validateFields(users)) {
+    //   return;
+    // }
+    payload = Array.isArray(payload) ? payload : [payload];
+    for (const item of payload) {
+      if (item.image && (!item.image.type || !item.image.data)) {
+        const file = item.image;
+        if (!file.type.startsWith('image/')) {
+          toast.error(<FormattedMessage id={'toast.NotImageFile'} />);
+          return;
+        }
+        if (file?.size > MAX_FILE_SIZE) {
+          toast.error(<FormattedMessage id={'toast.OverSizeFile'} />);
+          return;
+        }
+      }
     }
 
-    payload = Array.isArray(payload) ? payload : [payload];
     if (isCreateForm || isCopyForm) {
       function compareById(a, b) {
         return a.id - b.id;
@@ -244,7 +266,7 @@ class ActionUserPage extends Component {
         return true;
       });
 
-      const formData = new FormData();
+      // const formData = new FormData();
       // payload.forEach((data) => {
       //   Object.keys(data).forEach((key) => {
       //     if (data[key]) {
@@ -253,16 +275,31 @@ class ActionUserPage extends Component {
       //     }
       //   });
       // });
+      let result = [];
+      for (const item of payload) {
+        const newItem = { ...item };
+        if (item.previewImgUrl) delete newItem.previewImgUrl;
 
-      payload.forEach((item) => formData.append('payload[]', item));
-      console.log(formData.getAll('payload[]'));
+        if (item.image && (!item.image?.type || !item.image?.data)) {
+          newItem.image = await CommonUtils.getBase64(item.image);
+        } else if (item.image && item.image.data && item.image.type) {
+          newItem.image = btoa(
+            new Uint8Array(item.image.data).reduce(
+              (data, byte) => data + String.fromCharCode(byte),
+              ''
+            )
+          );
+        } else newItem.image = '';
+
+        result.push(newItem);
+      }
 
       if (!isSameData) {
         this.setState((prevState) => ({
           ...prevState,
           isLoadingRequest: !prevState.isLoadingRequest,
         }));
-        await this.props.createNewUser(formData);
+        await this.props.createNewUser(result);
         this.setState((prevState) => ({
           ...prevState,
           isLoadingRequest: !prevState.isLoadingRequest,
@@ -300,6 +337,16 @@ class ActionUserPage extends Component {
       payload.sort(compareById);
       const pureUsers = this.state.pureUsers.sort(compareById);
 
+      for (const item of payload) {
+        if (item.image) {
+          if (item.image.data && item.image.type) {
+            delete item.image;
+          } else {
+            item.image = await CommonUtils.getBase64(item.image);
+          }
+        }
+      }
+
       payload.forEach((data, index) => {
         let value = null;
         let userId = null;
@@ -312,14 +359,16 @@ class ActionUserPage extends Component {
         });
         result = [...result, value];
       });
-      payload = result.filter((data) => data);
+      result.forEach((data) => {
+        if (data && data.previewImgUrl) delete data.previewImgUrl;
+      });
 
-      if (payload.length > 0 && payload.some((data) => data)) {
+      if (result.length > 0 && result.some((data) => data)) {
         this.setState((prevState) => ({
           ...prevState,
           isLoadingRequest: !prevState.isLoadingRequest,
         }));
-        await this.props.updateUsers(payload);
+        await this.props.updateUsers(result);
         this.setState((prevState) => ({
           ...prevState,
           isLoadingRequest: !prevState.isLoadingRequest,
@@ -344,6 +393,35 @@ class ActionUserPage extends Component {
               tagName="div"
             />
           );
+          if (this.props.match?.params?.id) {
+            const response = await getAllUsersService(
+              this.props.match.params.id
+            );
+            if (response.data && Array.isArray(response.data)) {
+              const users = response.data.reduce((accumulator, value) => {
+                return { ...accumulator, [uuidv4()]: value };
+              }, {});
+              this.setState((prevState) => ({
+                ...prevState,
+                users,
+                pureUsers: response.data,
+              }));
+            } else {
+              const { history, systemMenuPath } = this.props;
+              if (
+                response.status === 500 ||
+                response.data?.statusCode === 500 ||
+                response.statusCode === 500
+              )
+                toast.error(<FormattedMessage id={`toast.InternalError`} />);
+              if (response.status === 404 || response.data?.statusCode === 404)
+                toast.error(
+                  <FormattedMessage id={`toast.errorNotFoundUser`} />
+                );
+              else toast.error(<FormattedMessage id={`toast.errorReadUser`} />);
+              history.push(systemMenuPath);
+            }
+          }
         }
       }
       return;
@@ -496,7 +574,7 @@ class ActionUserPage extends Component {
                 ''
               )
             );
-            const imageSrc = `data:image/png;base64,${base64}`;
+            const imageSrc = base64 ? `data:image/png;base64,${base64}` : '';
 
             return (
               <div key={key} className="d-lg-flex user-form">
@@ -548,7 +626,7 @@ class ActionUserPage extends Component {
                         name="password"
                       />
                     </div>
-                    <div className="form-group col-6 col-lg-3">
+                    <div className={'form-group  col-6 col-lg-6'}>
                       <label htmlFor={`inputFirstName${key}`}>
                         <FormattedMessage id="manage-user.firstName" />
                       </label>
@@ -566,7 +644,7 @@ class ActionUserPage extends Component {
                         value={user.firstName || ''}
                       />
                     </div>
-                    <div className="form-group col-6 col-lg-3">
+                    <div className={'form-group  col-6 col-lg-6'}>
                       <label htmlFor={`inputLastName${key}`}>
                         <FormattedMessage id="manage-user.lastName" />
                       </label>
@@ -716,6 +794,7 @@ class ActionUserPage extends Component {
                             this.handleChangeInput(event, key)
                           }
                           type="file"
+                          accept="image/*"
                           className="form-control inputImage"
                           id={`inputImage${key}`}
                           value={user.avatar || ''}
@@ -730,23 +809,27 @@ class ActionUserPage extends Component {
                                   background: `url(${user.previewImgUrl}) no-repeat center top / contain`,
                                   boxShadow: `rgba(0, 0, 0, 0.35) 0px 5px 15px`,
                                 }
-                              : {
+                              : imageSrc
+                              ? {
                                   background: `url(${imageSrc}) no-repeat center top / contain`,
                                   boxShadow: `rgba(0, 0, 0, 0.35) 0px 5px 15px`,
                                 }
+                              : {}
                           }
-                          onClick={() =>
-                            this.setState((prevState) => ({
-                              ...prevState,
-                              users: {
-                                ...prevState.users,
-                                [key]: {
-                                  ...prevState.users[key],
-                                  isOpen: true,
+                          onClick={() => {
+                            if (user.previewImgUrl || imageSrc) {
+                              this.setState((prevState) => ({
+                                ...prevState,
+                                users: {
+                                  ...prevState.users,
+                                  [key]: {
+                                    ...prevState.users[key],
+                                    isOpen: true,
+                                  },
                                 },
-                              },
-                            }))
-                          }
+                              }));
+                            }
+                          }}
                         ></div>
                         {user.isOpen && (
                           <Lightbox

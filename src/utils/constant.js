@@ -25,3 +25,6 @@ export const YesNoObj = {
   YES: 'Y',
   NO: 'N',
 };
+
+// 20971520 byte = 20 MB
+export const MAX_FILE_SIZE = 20971520;

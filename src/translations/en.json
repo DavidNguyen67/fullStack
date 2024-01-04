@@ -112,7 +112,10 @@
     "confirmYes": "Yes",
     "confirmNo": "No",
     "conflictEmail": "Email is exist!",
-    "cantConnectToServer": "Can not connect to server"
+    "cantConnectToServer": "Can not connect to server",
+    "AtLestChoiceOne": "At least a user is selected!",
+    "OverSizeFile": "File is too large!",
+    "NotImageFile": "This is not a valid image"
   },
   "confirmDeleteUsers": "Do you wanna delete those users?",
   "selectOneUserAtLeast": "Must be at least one user selected."

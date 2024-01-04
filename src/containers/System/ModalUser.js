@@ -3,7 +3,7 @@ import './userManage.scss';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { FormattedMessage } from 'react-intl';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { CommonUtils, LanguageUtils } from '../../utils';
+import { CommonUtils, LanguageUtils, MAX_FILE_SIZE } from '../../utils';
 import * as actions from './../../store/actions';
 import validator from 'validator';
 import { toast } from 'react-toastify';
@@ -29,7 +29,7 @@ const COPY = 'COPY';
 const UPDATE = 'UPDATE';
 const CREATE = 'CREATE';
 const DELETE = 'DELETE';
-const REAAD = 'READ';
+const READ = 'READ';
 
 function useWindowSize() {
   // Initialize state with undefined width/height so server and client renders match
@@ -234,24 +234,44 @@ function ModalUser(props) {
       roleId,
       phoneNumber,
       positionId,
-      image: JSON.stringify(await CommonUtils.getBase64(image[0].file)),
+      // image: JSON.stringify(await CommonUtils.getBase64(image[0].file)),
       password: 'admin',
     };
     if (!validateFields(dataUser)) {
       return;
     }
-    let result = null;
+    let result = { ...dataUser };
     let response = null;
-    const formData = new FormData();
+
+    if (image[0] && image[0].file) {
+      const file = image[0].file;
+      if (!file.type.startsWith('image/')) {
+        toast.error(<FormattedMessage id={'toast.NotImageFile'} />);
+        setIsLoadingRequest(false);
+        return;
+      }
+      if (file?.size > MAX_FILE_SIZE) {
+        toast.error(<FormattedMessage id={'toast.OverSizeFile'} />);
+        setIsLoadingRequest(false);
+        return;
+      }
+    }
     switch (props.typeModal) {
       case COPY:
       case CREATE:
-        Object.keys(dataUser).forEach((key) => {
-          if (dataUser[key]) {
-            formData.append(key, dataUser[key]);
-            return;
-          }
-        });
+        if (image[0] && image[0].file) {
+          const file = image[0].file;
+
+          if (image[0].data && image[0].type)
+            result.image = btoa(
+              new Uint8Array(image[0].data).reduce(
+                (data, byte) => data + String.fromCharCode(byte),
+                ''
+              )
+            );
+          else result.image = await CommonUtils.getBase64(file);
+        }
+
         response = await createNewUserService([result]);
         if (
           response.status === 500 ||
@@ -259,6 +279,7 @@ function ModalUser(props) {
           response.statusCode === 500
         ) {
           toast.error(<FormattedMessage id={`toast.InternalError`} />);
+          setIsLoadingRequest(false);
           return;
         }
         if (response.statusCode === 200 || response.status === 200) {
@@ -370,75 +391,6 @@ function ModalUser(props) {
         setIsLoadingRequest(false);
         return;
     }
-    // let payload;
-    // if (dataUser.email === props.user.email) {
-    //   const { email: data, ...payloadUpdate } = dataUser;
-    //   Object.keys(payloadUpdate).forEach(
-    //     (key) => (payload = { ...payload, [key]: dataUser[key] })
-    //   );
-    // } else
-    //   Object.keys(dataUser).forEach((key) => {
-    //     payload = { ...payload, [key]: dataUser[key] };
-    //   });
-    // payload = Array.isArray(payload) ? payload : [payload];
-    // switch (props.typeModal) {
-    //   case COPY:
-    //   case CREATE:
-    //     const { id: userId, ...body } = payload[0];
-    //     dispatch(actions.createNewUser([body]));
-    //     console.log(props);
-    //     if (props.isErrorCreate) {
-    //       toast.error(
-    //         <FormattedMessage
-    //           id="toast.conflictEmail"
-    //           values={{
-    //             br: <br />,
-    //           }}
-    //           tagName="div"
-    //         />
-    //       );
-    //     } else {
-    //       toast.success(
-    //         <FormattedMessage
-    //           id="toast.successCreateUser"
-    //           values={{
-    //             br: <br />,
-    //           }}
-    //           tagName="div"
-    //         />
-    //       );
-    //       props.toggleModal();
-    //     }
-    //     return;
-    //   case UPDATE:
-    //     console.log(props);
-    //     dispatch(actions.updateUsers([payload]));
-    //     if (props.isErrorUpdate) {
-    //       toast.error(
-    //         <FormattedMessage
-    //           id="toast.errorUpdateUser"
-    //           values={{
-    //             br: <br />,
-    //           }}
-    //           tagName="div"
-    //         />
-    //       );
-    //     } else {
-    //       toast.success(
-    //         <FormattedMessage
-    //           id="toast.successUpdateUser"
-    //           values={{
-    //             br: <br />,
-    //           }}
-    //           tagName="div"
-    //         />
-    //       );
-    //       props.toggleModal();
-    //     }
-    //     return;
-    //   default:
-    //     return;
-    // }
   };
 
   const size = useWindowSize();
@@ -472,7 +424,7 @@ function ModalUser(props) {
             <div className="form-row my-2 row">
               <div
                 className={
-                  typeModal !== CREATE
+                  typeModal !== CREATE || typeModal !== COPY
                     ? 'form-group col-12 col-lg-12'
                     : 'form-group col-6 col-lg-6'
                 }
@@ -495,7 +447,7 @@ function ModalUser(props) {
               </div>
               <div
                 className={
-                  typeModal !== CREATE ? 'd-none' : 'form-group  col-6 col-lg-6'
+                  typeModal === UPDATE ? 'd-none' : 'form-group  col-12'
                 }
               >
                 <label htmlFor="inputPassword" className="labelInputModal">
