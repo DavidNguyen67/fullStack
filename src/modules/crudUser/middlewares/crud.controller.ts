@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  // UploadedFile,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -20,9 +21,12 @@ import { convertAnyStringArrToNumArrPipe } from './pipes/convertAnyStringArrToNu
 import { CreateUserDtos, UpdateUserDtos } from 'src/utils/dto/User.dto';
 import { IsHasDataInQueryOrBodyPipe } from './pipes/IsHasDataInQueryOrBody.pipe';
 import { processUserData } from 'src/utils/function';
-import { excludeIdFieldPipe } from './pipes/creating.pipe';
+import { ExcludeIdFieldPipe } from './pipes/creating.pipe';
 import { FetchUsersInterceptor } from './interceptor/fetchUser.interceptor';
-import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
+import { RemoveBase64PrefixPipe } from './pipes/removeImagePrefix.pipe';
+import { FileSizeAndImageValidationPipe } from './pipes/FileSizeAndImage.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
+// import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
 
 @Controller(`${routes.versionApi}/${routes.crudUserPath}`)
 export class CrudController {
@@ -51,18 +55,22 @@ export class CrudController {
     };
   }
 
-  // @Post(routes.createRoute)
-  // @UsePipes(excludeIdFieldPipe)
-  // async createUsers(
-  //   @Body(new ValidationPipe({ transform: true }))
-  //   body: CreateUserDtos,
-  // ): Promise<GlobalRes> {
-  //   const data: any = body.data;
-  //   return {
-  //     statusCode: HttpStatus.OK,
-  //     data: await this.crudService.createUsers(data || body),
-  //   };
-  // }
+  @Post(routes.createRoute)
+  @UsePipes(
+    ExcludeIdFieldPipe,
+    FileSizeAndImageValidationPipe,
+    RemoveBase64PrefixPipe,
+  )
+  async createUsers(
+    @Body(new ValidationPipe({ transform: true }))
+    body: CreateUserDtos,
+  ): Promise<GlobalRes> {
+    const data: any = body.data || body;
+    return {
+      statusCode: HttpStatus.OK,
+      data: await this.crudService.createUsers(data),
+    };
+  }
 
   @Delete(routes.deleteRoute)
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
@@ -82,7 +90,12 @@ export class CrudController {
   }
 
   @Put(routes.updateRoute)
-  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  @UsePipes(
+    IsHasDataInQueryOrBodyPipe,
+    FileSizeAndImageValidationPipe,
+    RemoveBase64PrefixPipe,
+    convertAnyStringArrToNumArrPipe,
+  )
   async updateUsers(
     @Body(new ValidationPipe({ transform: true })) body: UpdateUserDtos | any,
   ): Promise<GlobalRes> {
@@ -120,25 +133,29 @@ export class CrudController {
       statusCode: HttpStatus.BAD_REQUEST,
       message: 'Invalid data received',
     };
-    // this.crudService.updateUsers(body);
   }
 
-  @Post(routes.createRoute)
-  @FormDataRequest({ storage: MemoryStoredFile })
-  @UsePipes(excludeIdFieldPipe)
-  async createUsers(@Body() data) {
-    console.log('====================================');
-    console.log(data);
-    console.log('====================================');
-    // return {
-    //   statusCode: HttpStatus.OK,
-    //   data: await this.crudService.createUsers(data),
-    // };
-  }
+  // @Post(routes.createRoute)
+  // @FormDataRequest({ storage: MemoryStoredFile })
+  // @UsePipes(excludeIdFieldPipe)
+  // async createUsers(@Body() data) {
+  //   console.log('====================================');
+  //   console.log(data);
+  //   console.log('====================================');
+  // return {
+  //   statusCode: HttpStatus.OK,
+  //   data: await this.crudService.createUsers(data),
+  // };
   // @UsePipes(excludeIdFieldPipe)
   // async createUsers(@UploadedFile() file: Express.Multer.File) {
   //   console.log('====================================');
   //   console.log(file);
   //   console.log('====================================');
   // }
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  @UsePipes(FileSizeAndImageValidationPipe, RemoveBase64PrefixPipe)
+  testFileUpload(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+  }
 }

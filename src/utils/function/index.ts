@@ -52,3 +52,4 @@ export const getBase64 = async (file) => {
     reader.onerror = reject;
   });
 };
+export const calculateSizeBytes = (charLength: number) => (charLength * 6) / 8;

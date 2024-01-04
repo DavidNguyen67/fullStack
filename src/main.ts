@@ -4,6 +4,7 @@ import { env } from 'process';
 import { ValidationPipe } from '@nestjs/common';
 import * as routes from './utils/routes';
 import { TimeoutInterceptor } from './utils/interceptor/timeout.interceptor';
+import { urlencoded, json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -16,6 +17,8 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.useGlobalInterceptors(new TimeoutInterceptor());
   app.setGlobalPrefix(routes.GlobalPrefix);
   await app.listen(env.PORT || 3000);

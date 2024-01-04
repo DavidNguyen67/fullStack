@@ -1,6 +1,7 @@
 import {
   ArgumentMetadata,
-  BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   PipeTransform,
 } from '@nestjs/common';
@@ -32,8 +33,9 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
           return { ...value, id: uniqueValues };
         }
       }
-      throw new BadRequestException(
+      throw new HttpException(
         'Missing parameter from convertAnyStringArrToNumArrPipe',
+        HttpStatus.BAD_REQUEST,
       );
     } catch (error) {
       console.log(error);

@@ -1,20 +1,32 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  Injectable,
+  PipeTransform,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { excludeAndNullVal } from 'src/utils/function';
 
 @Injectable()
-export class excludeIdFieldPipe implements PipeTransform {
+export class ExcludeIdFieldPipe implements PipeTransform {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform(value: any, metadata: ArgumentMetadata): any {
     try {
-      console.log('====================================');
-      console.log(value.payload);
-      console.log('====================================');
+      value = Array.isArray(value.payload) ? value.payload : value;
       if (!Array.isArray(value)) value = [value];
-      const data = value.map((val) => excludeAndNullVal(val, ['id']));
+
+      const data = value.map((val) => {
+        if (typeof val === 'string') {
+          const parsedData = JSON.parse(val);
+          return excludeAndNullVal(parsedData, ['id']);
+        } else {
+          return excludeAndNullVal(val, ['id']);
+        }
+      });
+
       return data;
     } catch (error) {
-      console.log(error);
-      throw error;
+      throw new HttpException('Validation failed', HttpStatus.BAD_REQUEST);
     }
   }
 }
