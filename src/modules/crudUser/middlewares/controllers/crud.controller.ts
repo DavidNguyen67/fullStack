@@ -13,18 +13,18 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import * as routes from './../../../utils/routes';
-import { CrudService } from './crud.service';
+import * as routes from '../../../../utils/routes';
+import { CrudService } from '../services/crud.service';
 import { DeleteUserInterface, FetchUserInterface } from 'src/utils/interfaces';
 import { GlobalRes } from 'src/utils/response.interface';
-import { convertAnyStringArrToNumArrPipe } from './pipes/convertAnyStringArrToNumArr.pipe';
+import { convertAnyStringArrToNumArrPipe } from '../pipes/convertAnyStringArrToNumArr.pipe';
 import { CreateUserDtos, UpdateUserDtos } from 'src/utils/dto/User.dto';
-import { IsHasDataInQueryOrBodyPipe } from './pipes/IsHasDataInQueryOrBody.pipe';
+import { IsHasDataInQueryOrBodyPipe } from '../pipes/IsHasDataInQueryOrBody.pipe';
 import { processUserData } from 'src/utils/function';
-import { ExcludeIdFieldPipe } from './pipes/creating.pipe';
-import { FetchUsersInterceptor } from './interceptor/fetchUser.interceptor';
-import { RemoveBase64PrefixPipe } from './pipes/removeImagePrefix.pipe';
-import { FileSizeAndImageValidationPipe } from './pipes/FileSizeAndImage.pipe';
+import { ExcludeIdFieldPipe } from '../pipes/creating.pipe';
+import { FetchUsersInterceptor } from '../interceptor/fetchUser.interceptor';
+import { RemoveBase64PrefixPipe } from '../pipes/removeImagePrefix.pipe';
+import { FileSizeAndImageValidationPipe } from '../pipes/FileSizeAndImage.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 // import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
 

@@ -4,6 +4,7 @@ export const versionApi = 'v1';
 export const authPath = 'auth';
 export const crudUserPath = 'user';
 export const allCodePath = 'allCode';
+export const crudDoctorPath = 'doctor';
 
 export const loginRoute = 'login';
 export const readRoute = 'read';

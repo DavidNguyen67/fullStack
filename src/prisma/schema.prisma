@@ -8,30 +8,37 @@ datasource db {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
-  password    String
-  firstName   String
-  lastName    String
-  address     String?
-  gender      String    @default("M")
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  password     String
+  firstName    String
+  lastName     String
+  address      String?
+  gender       String    @default("M")
   // typeRole   String
   // keyRole    String
-  roleId      String    @default("R3")
-  phoneNumber String?
-  positionId  String    @default("P0")
-  image       Bytes?
-  createAt    DateTime? @default(now())
-  updateAt    DateTime? @default(now())
+  roleId       String    @default("R3")
+  phoneNumber  String?
+  positionId   String    @default("P0")
+  image        Bytes?
+  createAt     DateTime? @default(now())
+  updateAt     DateTime? @default(now())
+  genderData   AllCode   @relation("Gender", fields: [gender], references: [keyMap])
+  positionData AllCode   @relation("Position", fields: [positionId], references: [keyMap])
+  roleData     AllCode   @relation("Role", fields: [roleId], references: [keyMap])
 }
+
 model AllCode {
-  id       Int       @id @default(autoincrement())
-  key      String    @unique
-  type     String
-  valueEn  String
-  valueVi  String
-  createAt DateTime? @default(now())
-  updateAt DateTime? @default(now())
+  id           Int       @id @default(autoincrement())
+  keyMap       String    @unique
+  type         String
+  valueEn      String
+  valueVi      String
+  createAt     DateTime? @default(now())
+  updateAt     DateTime? @default(now())
+  genderUser   User[]    @relation("Gender")
+  positionUser User[]    @relation("Position")
+  roleUser     User[]    @relation("Role")
 }
 
 model Booking {

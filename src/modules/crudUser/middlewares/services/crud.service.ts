@@ -17,7 +17,11 @@ export class CrudService {
 
   async fetchUsers() {
     try {
-      const users = await this.prisma.user.findMany({});
+      const users = await this.prisma.user.findMany({
+        orderBy: {
+          id: 'asc',
+        },
+      });
       if (users.length < 0) throw new NotFoundException('Not found user(s)');
 
       return users.map(
@@ -37,6 +41,9 @@ export class CrudService {
           id: {
             in: id,
           },
+        },
+        orderBy: {
+          id: 'asc',
         },
       });
       if (!users || users.length === 0) {
