@@ -191,15 +191,18 @@ function ModalUser(props) {
       // }
       if (!firstName) {
         toast.error(<FormattedMessage id="validate.firstNameRequired" />);
+        setIsLoadingRequest(false);
         return false;
       }
       if (!lastName) {
         toast.error(<FormattedMessage id="validate.lastNameRequired" />);
+        setIsLoadingRequest(false);
         return false;
       }
 
       if (!validator.isEmail(email)) {
         toast.error(<FormattedMessage id="validate.emailInvalid" />);
+        setIsLoadingRequest(false);
         return false;
       }
 
@@ -210,6 +213,7 @@ function ModalUser(props) {
 
       if (validator.isNumeric(firstName) || validator.isNumeric(lastName)) {
         toast.error(<FormattedMessage id="validate.nameCharacters" />);
+        setIsLoadingRequest(false);
         return false;
       }
 
@@ -218,6 +222,7 @@ function ModalUser(props) {
         !validator.isMobilePhone(phoneNumber, 'any', { strictMode: false })
       ) {
         toast.error(<FormattedMessage id="validate.phoneNumberInvalid" />);
+        setIsLoadingRequest(false);
         return false;
       }
 
@@ -234,6 +239,7 @@ function ModalUser(props) {
       roleId,
       phoneNumber,
       positionId,
+      image,
       // image: JSON.stringify(await CommonUtils.getBase64(image[0].file)),
       password: 'admin',
     };
@@ -256,22 +262,23 @@ function ModalUser(props) {
         return;
       }
     }
+    if (image[0] && image[0].file) {
+      const file = image[0].file;
+
+      if (image[0].data && image[0].type)
+        result.image = btoa(
+          new Uint8Array(image[0].data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        );
+      else result.image = await CommonUtils.getBase64(file);
+      dataUser.image = result.image;
+    }
+
     switch (props.typeModal) {
       case COPY:
       case CREATE:
-        if (image[0] && image[0].file) {
-          const file = image[0].file;
-
-          if (image[0].data && image[0].type)
-            result.image = btoa(
-              new Uint8Array(image[0].data).reduce(
-                (data, byte) => data + String.fromCharCode(byte),
-                ''
-              )
-            );
-          else result.image = await CommonUtils.getBase64(file);
-        }
-
         response = await createNewUserService([result]);
         if (
           response.status === 500 ||
@@ -336,6 +343,7 @@ function ModalUser(props) {
           setIsLoadingRequest(false);
           return;
         }
+        result.email && delete result.email;
         response = await updateUsersService([result]);
         if (!response || Object.keys(response).length < 1) {
           toast.error(
@@ -433,6 +441,7 @@ function ModalUser(props) {
                   <FormattedMessage id="manage-user.email" />
                 </label>
                 <input
+                  disabled={typeModal === UPDATE}
                   onChange={handleChangeInput.email}
                   type="text"
                   className="form-control"

@@ -2,6 +2,7 @@ import actionTypes from '../actions/actionTypes';
 
 const initialState = {
   users: [],
+  doctors: [],
 
   statusCode: null,
   message: null,
@@ -28,6 +29,10 @@ const initialState = {
   isLoadingDelete: false,
   isErrorDelete: false,
   isSuccessDelete: false,
+
+  isLoadingReadDoctor: false,
+  isErrorReadDoctor: false,
+  isSuccessReadDoctor: false,
 };
 
 const appReducer = (state = initialState, action) => {
@@ -208,8 +213,38 @@ const appReducer = (state = initialState, action) => {
       };
 
     default:
-      return state;
+      break;
   }
+
+  switch (action.type) {
+    case actionTypes.READ_DOCTOR_START:
+      return {
+        ...state,
+        isLoadingReadDoctor: true,
+        isErrorReadDoctor: false,
+        isSuccessReadDoctor: false,
+      };
+    case actionTypes.READ_DOCTOR_FAILED:
+      return {
+        ...state,
+        isErrorReadDoctor: true,
+        isLoadingReadDoctor: false,
+        isSuccessReadDoctor: false,
+      };
+    case actionTypes.READ_DOCTOR_SUCCESS:
+      return {
+        ...state,
+        isErrorReadDoctor: false,
+        isLoadingReadDoctor: false,
+        doctors: action.payload,
+        statusCode: null,
+        message: null,
+        isSuccessReadDoctor: true,
+      };
+    default:
+      break;
+  }
+  return state;
 };
 
 export default appReducer;

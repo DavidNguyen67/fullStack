@@ -4,6 +4,7 @@ import {
   deleteUsersService,
   getAllCodeService,
   getAllUsersService,
+  getTopDoctorService,
   updateUsersService,
 } from '../../services/userService';
 import actionTypes from './actionTypes';
@@ -208,6 +209,32 @@ export const deleteUsers = (ids) => {
     } catch (error) {
       console.log(error);
       dispatch(deleteUsersFailed());
+    }
+  };
+};
+
+export const readDoctors = (limit) => {
+  return async (dispatch, getState) => {
+    const readDoctorsSuccess = (payload) => {
+      return {
+        type: actionTypes.READ_DOCTOR_SUCCESS,
+        payload,
+      };
+    };
+    const readDoctorsFailed = () => ({
+      type: actionTypes.READ_DOCTOR_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.READ_DOCTOR_START });
+      const response = await getTopDoctorService(limit);
+
+      return response.data?.error
+        ? dispatch(readDoctorsFailed())
+        : dispatch(readDoctorsSuccess(response.data || response));
+    } catch (error) {
+      console.log(error);
+      dispatch(readDoctorsFailed());
     }
   };
 };

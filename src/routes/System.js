@@ -39,6 +39,7 @@ class System extends Component {
                   component={RegisterPackageGroupOrAcc}
                 />
                 <Route
+                  path="*"
                   component={() => {
                     return <Redirect to={systemMenuPath} />;
                   }}

@@ -28,3 +28,4 @@ export const YesNoObj = {
 
 // 20971520 byte = 20 MB
 export const MAX_FILE_SIZE = 20971520;
+export const MAX_NUMBER_OF_DOCTORS = 10;

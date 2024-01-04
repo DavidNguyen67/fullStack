@@ -25,3 +25,7 @@ export const handleLoginService = async (username, password) => {
 export const getAllCodeService = async (type) => {
   return await instance.get(`allCode/read?type=${type}`);
 };
+
+export const getTopDoctorService = async (limit) => {
+  return await instance.get(`/doctor/read?limit=${limit}`);
+};
