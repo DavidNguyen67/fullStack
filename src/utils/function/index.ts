@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-
 export function isEmpty(obj) {
   if (Array.isArray(obj)) return obj.length === 0;
   return Object.keys(obj).length === 0;
@@ -19,23 +17,20 @@ export function excludeAndNullVal(user, keys) {
     }, []),
   );
 }
-export const processUserData = (body) => {
-  const filteredPayload = body.reduce(
-    (acc, data) => {
-      const id = Number(data.id);
+export const processUserData = (body: any[]): any[] => {
+  const filteredPayload = body.reduce((acc, data) => {
+    const id = Number(data.id || data.doctorId);
 
-      const filteredData = exclude(data, ['id']);
-      acc.ids = [...acc.ids, id];
-      if (!isEmpty(filteredData)) {
-        acc.payload = [...acc.payload, filteredData];
-      }
-      return acc;
-    },
-    { ids: [], payload: [] },
-  );
+    const filteredData = exclude(data, ['id']);
+    if (!isEmpty(filteredData)) {
+      acc.push({ id, ...filteredData });
+    }
+    return acc;
+  }, []);
 
   return filteredPayload;
 };
+
 // export function base64_encode(file) {
 //   // read binary data
 //   const bitmap = fs.readFileSync(file);

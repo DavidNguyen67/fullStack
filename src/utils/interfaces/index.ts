@@ -16,7 +16,8 @@ export interface FetchUserInterface {
   id: string | string[];
 }
 export interface FetchDoctorInterface {
-  limit: string | number;
+  limit?: string | number;
+  id?: string | string[];
 }
 export interface FetchAllCodeInterface {
   type?: string;

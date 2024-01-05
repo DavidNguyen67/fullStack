@@ -14,11 +14,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
-import { CrudService } from '../services/crud.service';
+import { UsersService } from '../services/users.service';
 import { DeleteUserInterface, FetchUserInterface } from 'src/utils/interfaces';
 import { GlobalRes } from 'src/utils/response.interface';
 import { convertAnyStringArrToNumArrPipe } from '../pipes/convertAnyStringArrToNumArr.pipe';
-import { CreateUserDtos, UpdateUserDtos } from 'src/utils/dto/User.dto';
+import { CreateUsersDto, UpdateUsersDto } from 'src/utils/dto/User.dto';
 import { IsHasDataInQueryOrBodyPipe } from '../pipes/IsHasDataInQueryOrBody.pipe';
 import { processUserData } from 'src/utils/function';
 import { ExcludeIdFieldPipe } from '../pipes/creating.pipe';
@@ -29,8 +29,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 // import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
 
 @Controller(`${routes.versionApi}/${routes.crudUserPath}`)
-export class CrudController {
-  constructor(private readonly crudService: CrudService) {}
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
   @Get(routes.readRoute)
   @UseInterceptors(FetchUsersInterceptor)
@@ -42,8 +42,8 @@ export class CrudController {
 
     if (id && id.length > 0) {
       if (Array.isArray(id))
-        data = await this.crudService.fetchUser(id.map(Number));
-      if (id === 'all') data = await this.crudService.fetchUsers();
+        data = await this.usersService.fetchUser(id.map(Number));
+      if (id === 'all') data = await this.usersService.fetchUsers();
       return {
         statusCode: HttpStatus.OK,
         data,
@@ -63,12 +63,12 @@ export class CrudController {
   )
   async createUsers(
     @Body(new ValidationPipe({ transform: true }))
-    body: CreateUserDtos,
+    body: CreateUsersDto,
   ): Promise<GlobalRes> {
     const data: any = body.data || body;
     return {
       statusCode: HttpStatus.OK,
-      data: await this.crudService.createUsers(data),
+      data: await this.usersService.createUsers(data),
     };
   }
 
@@ -80,7 +80,7 @@ export class CrudController {
     if (ids && ids.length > 0) {
       return {
         statusCode: HttpStatus.OK,
-        data: await this.crudService.deleteUsers(ids.map(Number)),
+        data: await this.usersService.deleteUsers(ids.map(Number)),
       };
     }
     return {
@@ -97,18 +97,15 @@ export class CrudController {
     convertAnyStringArrToNumArrPipe,
   )
   async updateUsers(
-    @Body(new ValidationPipe({ transform: true })) body: UpdateUserDtos | any,
-  ): Promise<GlobalRes> {
-    const { ids, payload } = processUserData(body);
-
-    if (ids.length === payload.length) {
+    @Body(new ValidationPipe({ transform: true })) body: UpdateUsersDto | any,
+  ) {
+    const payload = processUserData(body);
+    if (payload.length > 0) {
       let totalSuccessRecord = 0;
-      for (let i = 0; i < payload.length; i++) {
-        const response = await this.crudService.updateUsers(
-          [ids[i]],
-          payload[i],
-        );
-        response && (totalSuccessRecord += response);
+      for (const item of payload) {
+        const response = await this.usersService.updateUsers(item);
+
+        response && (totalSuccessRecord += 1);
       }
       if (totalSuccessRecord)
         return {
@@ -116,23 +113,42 @@ export class CrudController {
           data: totalSuccessRecord,
         };
     }
-    if (payload.length === 1 && ids.length > 0) {
-      if (payload[0].email) {
-        return {
-          statusCode: HttpStatus.CONFLICT,
-          message: 'Email attribute cannot be updateMany',
-        };
-      }
-      const response = await this.crudService.updateUsers(ids, payload[0]);
-      return {
-        statusCode: HttpStatus.OK,
-        data: response,
-      };
-    }
     return {
       statusCode: HttpStatus.BAD_REQUEST,
       message: 'Invalid data received',
     };
+    // if (ids.length === payload.length) {
+    //   let totalSuccessRecord = 0;
+    //   for (let i = 0; i < payload.length; i++) {
+    //     const response = await this.usersService.updateUsers(
+    //       [ids[i]],
+    //       payload[i],
+    //     );
+    //     response && (totalSuccessRecord += response);
+    //   }
+    //   if (totalSuccessRecord)
+    //     return {
+    //       statusCode: HttpStatus.OK,
+    //       data: totalSuccessRecord,
+    //     };
+    // }
+    // if (payload.length === 1 && ids.length > 0) {
+    //   if (payload[0].email) {
+    //     return {
+    //       statusCode: HttpStatus.CONFLICT,
+    //       message: 'Email attribute cannot be updateMany',
+    //     };
+    //   }
+    //   const response = await this.usersService.updateUsers(ids, payload[0]);
+    //   return {
+    //     statusCode: HttpStatus.OK,
+    //     data: response,
+    //   };
+    // }
+    // return {
+    //   statusCode: HttpStatus.BAD_REQUEST,
+    //   message: 'Invalid data received',
+    // };
   }
 
   // @Post(routes.createRoute)
@@ -144,7 +160,7 @@ export class CrudController {
   //   console.log('====================================');
   // return {
   //   statusCode: HttpStatus.OK,
-  //   data: await this.crudService.createUsers(data),
+  //   data: await this.usersService.createUsers(data),
   // };
   // @UsePipes(excludeIdFieldPipe)
   // async createUsers(@UploadedFile() file: Express.Multer.File) {

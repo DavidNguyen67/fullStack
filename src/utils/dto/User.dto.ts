@@ -48,7 +48,7 @@ class CreateUserDto {
   readonly image?: any;
   readonly updateAt?: any;
 }
-export class CreateUserDtos {
+export class CreateUsersDto {
   // @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => CreateUserDto)
@@ -56,7 +56,7 @@ export class CreateUserDtos {
 }
 export class UpdateUserDto {
   @IsNotEmpty()
-  readonly id?: any;
+  id?: any;
 
   @IsEmail()
   readonly email?: string;
@@ -93,7 +93,17 @@ export class UpdateUserDto {
   readonly image?: any;
   readonly updateAt?: any;
 }
-export class UpdateUserDtos {
+export class UpdateDoctorDto extends UpdateUserDto {}
+
+export class UpdateDoctorsDto {
+  // @IsDefined()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateDoctorDto)
+  readonly data: UpdateDoctorDto[];
+}
+
+export class UpdateUsersDto {
   // @IsDefined()
   @IsArray()
   @ValidateNested({ each: true })

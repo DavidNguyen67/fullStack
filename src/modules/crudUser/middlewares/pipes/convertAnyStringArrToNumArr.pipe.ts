@@ -12,7 +12,7 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata): any {
     try {
       if (Array.isArray(value)) {
-        const result = value.filter((val) => val.id);
+        const result = value.filter((val) => val.id || val.limit);
         if (result.length > 0) return result;
       }
       const { id, limit } = value;
@@ -53,6 +53,7 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
           };
         }
       }
+
       throw new HttpException(
         'Missing parameter from convertAnyStringArrToNumArrPipe',
         HttpStatus.BAD_REQUEST,

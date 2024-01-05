@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserDto } from 'src/utils/dto/User.dto';
@@ -12,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 const saltOrRounds = 10;
 
 @Injectable()
-export class CrudService {
+export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async fetchUsers() {
@@ -22,7 +17,8 @@ export class CrudService {
           id: 'asc',
         },
       });
-      if (users.length < 0) throw new NotFoundException('Not found user(s)');
+      if (users.length < 0)
+        throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
 
       return users.map(
         (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
@@ -47,7 +43,7 @@ export class CrudService {
         },
       });
       if (!users || users.length === 0) {
-        throw new NotFoundException('User(s) not found');
+        throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
       }
       return users.map(
         (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
@@ -105,8 +101,11 @@ export class CrudService {
       }
 
       if (invalidUsers.length > 0)
-        throw new ConflictException('Invalid user(s) data');
-      throw new InternalServerErrorException('Error creating user(s)');
+        throw new HttpException('Invalid Doctor(s) data', HttpStatus.CONFLICT);
+      throw new HttpException(
+        'Error creating user(s)',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } catch (error) {
       console.log(error);
       throw error;
@@ -123,7 +122,7 @@ export class CrudService {
         },
       });
       if (!user || user.count === 0)
-        throw new NotFoundException('User(s) not found');
+        throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
 
       return user.count;
     } catch (error) {
@@ -132,8 +131,12 @@ export class CrudService {
     }
   }
 
-  async updateUsers(userId: number[], payload: UpdateUserDto | any) {
+  async updateUsers(payload: UpdateUserDto | any) {
     try {
+      const id = payload.id;
+      const isExist = !!(await this.fetchUser([id]));
+      if (!isExist)
+        throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
       let hash = null;
       if (payload.password)
         hash = await bcrypt.hash(payload.password, saltOrRounds);
@@ -143,17 +146,20 @@ export class CrudService {
         : { ...payload, updateAt: new Date() };
 
       if (!payload.email || !(await this.isExistEmail(payload.email))) {
-        const user = await this.prisma.user.updateMany({
+        payload.id && delete payload.id;
+        const user = await this.prisma.user.update({
           data: payload,
           where: {
-            id: {
-              in: userId,
-            },
+            id: id,
           },
         });
-        if (user && user.count > 0) return user.count;
-        throw new NotFoundException('User(s) not found');
-      } else throw new ConflictException('Duplicate user(s) data');
+
+        if (user) return user;
+      } else
+        throw new HttpException(
+          'Duplicate Doctor(s) data',
+          HttpStatus.CONFLICT,
+        );
     } catch (error) {
       console.log(error);
       throw error;

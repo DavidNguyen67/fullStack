@@ -1,8 +1,9 @@
 import {
   ArgumentMetadata,
+  HttpException,
+  HttpStatus,
   Injectable,
   PipeTransform,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { LoginInterface } from 'src/utils/interfaces';
 
@@ -13,7 +14,10 @@ export class AuthPipe implements PipeTransform {
     try {
       const { username, password } = value;
       if (username && password) return value;
-      throw new UnauthorizedException('Missing username or password');
+      throw new HttpException(
+        'Missing username or password',
+        HttpStatus.UNAUTHORIZED,
+      );
     } catch (error) {
       console.log(error);
       throw error;

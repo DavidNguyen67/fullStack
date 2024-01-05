@@ -98,6 +98,18 @@ model doctor_clinic_specialty {
   clinicId    Int
 }
 
+model Markdown {
+  id              Int       @id @default(autoincrement())
+  contentHTML     Json
+  contentMarkdown Json
+  description     Json?
+  doctorId        Int?
+  specialtyId     Int?
+  clinicId        Int?
+  createAt        DateTime? @default(now())
+  updateAt        DateTime? @default(now())
+}
+
 // model User {
 //   user_id  Int       @id @default(autoincrement())
 //   username String    @unique
