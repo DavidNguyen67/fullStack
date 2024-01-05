@@ -120,9 +120,9 @@ function ModalUser(props) {
         setLastName(initLastName || '');
         setAddress(initAddress || '');
         setPhoneNumber(initPhoneNumber || '');
-        setGender(gender || genders[0]?.key);
-        setRoleId(roleId || roles[0]?.key);
-        setPositionId(positionId || positions[0]?.key);
+        setGender(gender || genders[0]?.keyMap);
+        setRoleId(roleId || roles[0]?.keyMap);
+        setPositionId(positionId || positions[0]?.keyMap);
       }
     } catch (error) {
       console.log(error);
@@ -561,7 +561,7 @@ function ModalUser(props) {
                       <option
                         key={item.id}
                         defaultChecked={item.key === gender}
-                        value={item.key}
+                        value={item.keyMap}
                       >
                         {lang.toLowerCase() === 'en'
                           ? item.valueEn
@@ -586,7 +586,7 @@ function ModalUser(props) {
                       <option
                         key={item.id}
                         defaultChecked={item.key === positionId}
-                        value={item.key}
+                        value={item.keyMap}
                       >
                         {lang.toLowerCase() === 'en'
                           ? item.valueEn
@@ -612,7 +612,7 @@ function ModalUser(props) {
                         <option
                           key={item.id}
                           defaultChecked={roleId === item.key}
-                          value={item.key}
+                          value={item.keyMap}
                         >
                           {lang.toLowerCase() === 'en'
                             ? item.valueEn

@@ -14,8 +14,7 @@ export const deleteUsersService = async (id) => {
 };
 
 export const updateUsersService = async (payload) => {
-  const response = await instance.put(`/user/update`, payload);
-  return response;
+  return await instance.put(`/user/update`, payload);
 };
 
 export const handleLoginService = async (username, password) => {
@@ -28,4 +27,12 @@ export const getAllCodeService = async (type) => {
 
 export const getTopDoctorService = async (limit) => {
   return await instance.get(`/doctor/read?limit=${limit}`);
+};
+
+export const getAllDoctorsService = async (id = 'all') => {
+  return await instance.get(`/doctor/read?id=${id}`);
+};
+
+export const updateDoctorService = async (payload) => {
+  return await instance.put(`/doctor/update`, payload);
 };

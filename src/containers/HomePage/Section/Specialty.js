@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Slider from 'react-slick';
+import { FormattedMessage } from 'react-intl';
 
 class Specialty extends Component {
   changeLanguage = (lan) => {
@@ -13,7 +14,9 @@ class Specialty extends Component {
         <div className="section-container">
           <div className="section-header">
             <span className="title-section">Chuyen khoa pho bien</span>
-            <button className="btn-section">Xem them</button>
+            <button className="btn-section">
+              <FormattedMessage id={`homePage.moreInfo`} />
+            </button>
           </div>
           <div className="section-body">
             <Slider {...this.props.settings}>

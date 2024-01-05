@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './MedicalFacility.scss';
 import Slider from 'react-slick';
+import { FormattedMessage } from 'react-intl';
 
 class MedicalFacility extends Component {
   render() {
@@ -10,7 +11,9 @@ class MedicalFacility extends Component {
         <div className="section-container">
           <div className="section-header">
             <span className="title-section">Co so y te noi bat</span>
-            <button className="btn-section">Xem them</button>
+            <button className="btn-section">
+              <FormattedMessage id={`homePage.moreInfo`} />
+            </button>
           </div>
           <div className="section-body">
             <Slider {...this.props.settings}>

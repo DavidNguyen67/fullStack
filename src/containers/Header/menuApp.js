@@ -3,24 +3,24 @@ export const adminMenu = [
     // Quản lý người dùng
     name: 'menu.admin.title',
     menus: [
-      {
-        name: 'menu.admin.manageDoctor',
-        link: '/system/manage-doctor',
-        // subMenus: [
-        //   {
-        //     name: 'menu.system.system-administrator.manage-user',
-        //     link: '/system/manage-user',
-        //   },
-        //   {
-        //     name: 'menu.system.system-administrator.product-manage',
-        //     link: '/system/product-manage',
-        //   },
-        // {
-        //   name: 'menu.system.system-administrator.register-package-group-or-account',
-        //   link: '/system/register-package-group-or-account',
-        // },
-        // ],
-      },
+      // {
+      // name: 'menu.admin.manageDoctor',
+      // link: '/system/manage-doctor',
+      // subMenus: [
+      //   {
+      //     name: 'menu.system.system-administrator.manage-user',
+      //     link: '/system/manage-user',
+      //   },
+      //   {
+      //     name: 'menu.system.system-administrator.product-manage',
+      //     link: '/system/product-manage',
+      //   },
+      // {
+      //   name: 'menu.system.system-administrator.register-package-group-or-account',
+      //   link: '/system/register-package-group-or-account',
+      // },
+      // ],
+      // },
       {
         name: 'menu.admin.manageAdmin',
         link: '/system/manage-admin',
@@ -28,6 +28,10 @@ export const adminMenu = [
       {
         name: 'menu.admin.manageUser',
         link: '/system/users',
+      },
+      {
+        name: 'menu.admin.manageDoctor',
+        link: '/system/doctors',
       },
     ],
   },

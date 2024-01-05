@@ -37,9 +37,15 @@
       "lastName": "Họ",
       "address": "Địa chỉ",
       "action": "Hành động"
+    },
+    "doctor": {
+      "introductoryInformation": "Thông tin giới thiệu",
+      "SelectDoctor": "Chọn bác sĩ",
+      "title": "TẠO THÊM THÔNG TÍN BÁC SĨ"
     }
   },
   "button": {
+    "save": "Lưu",
     "create": "Thêm",
     "update": "Cập nhật",
     "delete": "Xóa",
@@ -106,6 +112,8 @@
     "successDeleteUser": "Xóa người dùng thành công",
     "errorUpdateUser": "Cập nhật người dùng thất bại",
     "successUpdateUser": "Cập nhật người dùng thành công",
+    "successUpdateDoctor": "Cập nhật bác sĩ thành công",
+    "failUpdateDoctor": "Cập nhật bác sĩ thất bại",
     "selectOneUser": "Cần chọn ít nhất một người dùng",
     "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này?",
     "confirmDeleteUser": "Bạn có muốn xóa người dùng này?",
@@ -116,7 +124,14 @@
     "cantConnectToServer": "Không thể kết nối đến với server",
     "AtLestChoiceOne": "Hãy chọn ít nhất một người",
     "OverSizeFile": "Kích thước ảnh quá lớn",
-    "NotImageFile": "File ảnh không phù hợp"
+    "NotImageFile": "File ảnh không phù hợp",
+    "contentHTMLRequired": "contentHTML không được bỏ trống",
+    "contentMarkdownRequired": "contentMarkdown không được bỏ trống",
+    "selectDoctorIsRequired": "Chưa chọn bác sỹ"
+  },
+  "homePage": {
+    "outStandingDoctor": "Bác sĩ nổi bật tuần qua",
+    "moreInfo": "Xêm thêm"
   },
   "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này không?",
   "selectOneUserAtLeast": "Phải chọn ít nhất một người dùng.",

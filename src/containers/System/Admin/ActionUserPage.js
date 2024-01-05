@@ -1,7 +1,12 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
-import { CommonUtils, LanguageUtils, MAX_FILE_SIZE } from '../../../utils';
+import {
+  CommonUtils,
+  LanguageUtils,
+  MAX_FILE_SIZE,
+  PNG_PREFIX,
+} from '../../../utils';
 import * as actions from '../../../store/actions';
 import './UserRedux.scss';
 import Lightbox from 'react-image-lightbox';
@@ -226,35 +231,29 @@ class ActionUserPage extends Component {
       });
     }
 
-    // if (!validateFields(users)) {
-    //   return;
-    // }
+    if (!validateFields(users)) {
+      return;
+    }
     payload = Array.isArray(payload) ? payload : [payload];
     for (const item of payload) {
-      if (item.image && (!item.image.type || !item.image.data)) {
-        const file = item.image;
-        if (!file.type.startsWith('image/')) {
-          toast.error(<FormattedMessage id={'toast.NotImageFile'} />);
-          return;
+      try {
+        if (item.image && (!item.image.type || !item.image.data)) {
+          const file = item.image;
+          if (!file.type.startsWith('image/')) {
+            toast.error(<FormattedMessage id={'toast.NotImageFile'} />);
+            return;
+          }
+          if (file?.size > MAX_FILE_SIZE) {
+            toast.error(<FormattedMessage id={'toast.OverSizeFile'} />);
+            return;
+          }
         }
-        if (file?.size > MAX_FILE_SIZE) {
-          toast.error(<FormattedMessage id={'toast.OverSizeFile'} />);
-          return;
-        }
+      } catch (error) {
+        console.log(error);
       }
     }
 
     if (isCreateForm || isCopyForm) {
-      function compareById(a, b) {
-        return a.id - b.id;
-      }
-      payload.sort(compareById);
-      const pureUsers = this.state.pureUsers.sort(compareById);
-      const isSameData = pureUsers.every((user, index) => {
-        return Object.keys(user).every((key) => {
-          return user[key] === payload[index][key];
-        });
-      });
       payload = payload.filter((data) => {
         if (!data.email) return false;
 
@@ -281,61 +280,76 @@ class ActionUserPage extends Component {
         if (item.previewImgUrl) delete newItem.previewImgUrl;
 
         if (item.image && (!item.image?.type || !item.image?.data)) {
-          newItem.image = await CommonUtils.getBase64(item.image);
+          const base64String = await CommonUtils.getBase64(item.image);
+          newItem.image = base64String;
         } else if (item.image && item.image.data && item.image.type) {
-          newItem.image = btoa(
+          const bufferToBase64 = `${PNG_PREFIX}${btoa(
             new Uint8Array(item.image.data).reduce(
               (data, byte) => data + String.fromCharCode(byte),
               ''
             )
-          );
+          )}`;
+          newItem.image = bufferToBase64;
         } else newItem.image = '';
 
         result.push(newItem);
       }
-
-      if (!isSameData) {
-        this.setState((prevState) => ({
-          ...prevState,
-          isLoadingRequest: !prevState.isLoadingRequest,
-        }));
-        await this.props.createNewUser(result);
-        this.setState((prevState) => ({
-          ...prevState,
-          isLoadingRequest: !prevState.isLoadingRequest,
-        }));
-        if (this.props.isErrorCreate) {
+      // if (!isSameData) {
+      this.setState((prevState) => ({
+        ...prevState,
+        isLoadingRequest: !prevState.isLoadingRequest,
+      }));
+      await this.props.createNewUser(result);
+      this.setState((prevState) => ({
+        ...prevState,
+        isLoadingRequest: !prevState.isLoadingRequest,
+      }));
+      if (this.props.isErrorCreate) {
+        const { statusCode } = this.props;
+        if (statusCode === 500) {
+          toast.error(<FormattedMessage id={`toast.InternalError`} />);
+          return;
+        }
+        if (statusCode === 409) {
           toast.error(
             <FormattedMessage
-              id="toast.failedCreateUser"
+              id="toast.conflictEmail"
               values={{
                 br: <br />,
               }}
               tagName="div"
             />
           );
-        } else {
-          toast.success(
-            <FormattedMessage
-              id="toast.successCreateUser"
-              values={{
-                br: <br />,
-              }}
-              tagName="div"
-            />
-          );
+          return;
         }
-        return;
+        toast.error(
+          <FormattedMessage
+            id="toast.failedCreateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
+      } else {
+        toast.success(
+          <FormattedMessage
+            id="toast.successCreateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />
+        );
       }
+      return;
+      // }
     }
     if (isUpdateForm) {
-      let result = [];
-
-      function compareById(a, b) {
-        return a.id - b.id;
-      }
-      payload.sort(compareById);
+      const compareById = (a, b) => a.id - b.id;
       const pureUsers = this.state.pureUsers.sort(compareById);
+      payload.sort(compareById);
+      this.state.pureUsers.sort(compareById);
 
       for (const item of payload) {
         if (item.image) {
@@ -347,56 +361,72 @@ class ActionUserPage extends Component {
         }
       }
 
-      payload.forEach((data, index) => {
+      const result = payload.reduce((acc, data, index) => {
         let value = null;
         let userId = null;
+
         Object.keys(data).forEach((key) => {
-          if (data[key] !== pureUsers[index][key]) {
+          if (data[key] !== this.state.pureUsers[index][key]) {
             value = { ...value, [key]: data[key] };
             !userId && (userId = data.id);
           }
           userId && (value = { ...value, id: data.id });
         });
-        result = [...result, value];
-      });
+
+        return value ? [...acc, value] : acc;
+      }, []);
+
       result.forEach((data) => {
         if (data && data.previewImgUrl) delete data.previewImgUrl;
       });
 
       if (result.length > 0 && result.some((data) => data)) {
-        this.setState((prevState) => ({
-          ...prevState,
-          isLoadingRequest: !prevState.isLoadingRequest,
-        }));
-        await this.props.updateUsers(result);
-        this.setState((prevState) => ({
-          ...prevState,
-          isLoadingRequest: !prevState.isLoadingRequest,
-        }));
-        if (this.props.isErrorUpdate) {
-          toast.error(
-            <FormattedMessage
-              id="toast.errorUpdateUser"
-              values={{
-                br: <br />,
-              }}
-              tagName="div"
-            />
-          );
-        } else {
-          toast.success(
-            <FormattedMessage
-              id="toast.successUpdateUser"
-              values={{
-                br: <br />,
-              }}
-              tagName="div"
-            />
-          );
+        const isSameData = pureUsers.every((user, index) => {
+          return Object.keys(user).every((key) => {
+            return user[key] === payload[index][key];
+          });
+        });
+        if (!isSameData) {
+          this.setState((prevState) => ({
+            ...prevState,
+            isLoadingRequest: !prevState.isLoadingRequest,
+          }));
+          const isErrorUpdate = await this.props.updateUsers(result);
+          this.setState((prevState) => ({
+            ...prevState,
+            isLoadingRequest: !prevState.isLoadingRequest,
+          }));
+
+          if (isErrorUpdate) {
+            toast.error(
+              <FormattedMessage
+                id="toast.errorUpdateUser"
+                values={{
+                  br: <br />,
+                }}
+                tagName="div"
+              />
+            );
+          } else {
+            toast.success(
+              <FormattedMessage
+                id="toast.successUpdateUser"
+                values={{
+                  br: <br />,
+                }}
+                tagName="div"
+              />
+            );
+            const { history, systemMenuPath } = this.props;
+            history.push(systemMenuPath);
+          }
+
           if (this.props.match?.params?.id) {
             const response = await getAllUsersService(
               this.props.match.params.id
             );
+            const { history, systemMenuPath } = this.props;
+
             if (response.data && Array.isArray(response.data)) {
               const users = response.data.reduce((accumulator, value) => {
                 return { ...accumulator, [uuidv4()]: value };
@@ -407,24 +437,26 @@ class ActionUserPage extends Component {
                 pureUsers: response.data,
               }));
             } else {
-              const { history, systemMenuPath } = this.props;
               if (
                 response.status === 500 ||
-                response.data?.statusCode === 500 ||
-                response.statusCode === 500
-              )
+                response.data?.statusCode === 500
+              ) {
                 toast.error(<FormattedMessage id={`toast.InternalError`} />);
-              if (response.status === 404 || response.data?.statusCode === 404)
+              } else if (
+                response.status === 404 ||
+                response.data?.statusCode === 404
+              ) {
                 toast.error(
                   <FormattedMessage id={`toast.errorNotFoundUser`} />
                 );
-              else toast.error(<FormattedMessage id={`toast.errorReadUser`} />);
+              } else {
+                toast.error(<FormattedMessage id={`toast.errorReadUser`} />);
+              }
               history.push(systemMenuPath);
             }
           }
         }
       }
-      return;
     }
   };
   componentWillUnmount() {
@@ -520,9 +552,9 @@ class ActionUserPage extends Component {
         ...prevState.users,
         [uuidv4()]: {
           ...newObject,
-          roleId: roles[0].key,
-          positionId: positions[0].key,
-          gender: genders[0].key,
+          roleId: roles[0].keyMap,
+          positionId: positions[0].keyMap,
+          gender: genders[0].keyMap,
         },
       },
     }));
@@ -574,7 +606,7 @@ class ActionUserPage extends Component {
                 ''
               )
             );
-            const imageSrc = base64 ? `data:image/png;base64,${base64}` : '';
+            const imageSrc = base64 ? `${PNG_PREFIX}${base64}` : '';
 
             return (
               <div key={key} className="d-lg-flex user-form">
@@ -719,7 +751,7 @@ class ActionUserPage extends Component {
                             <option
                               key={item.id}
                               defaultChecked={index === 0}
-                              value={item.key || ''}
+                              value={item.keyMap || ''}
                             >
                               {lang.toLowerCase() === 'en'
                                 ? item.valueEn
@@ -745,7 +777,7 @@ class ActionUserPage extends Component {
                             <option
                               key={item.id}
                               defaultChecked={index === 0}
-                              value={item.key || ''}
+                              value={item.keyMap || ''}
                             >
                               {lang.toLowerCase() === 'en'
                                 ? item.valueEn
@@ -771,7 +803,7 @@ class ActionUserPage extends Component {
                             <option
                               key={item.id}
                               defaultChecked={index === 0}
-                              value={item.key || ''}
+                              value={item.keyMap || ''}
                             >
                               {lang.toLowerCase() === 'en'
                                 ? item.valueEn
@@ -907,6 +939,7 @@ const mapStateToProps = (state) => {
     lang: state.app.language,
     genders: state.admin.genders,
     roles: state.admin.roles,
+    statusCode: state.admin.statusCode,
     positions: state.admin.positions,
     isLoading: state.admin.isLoading,
     isError: state.admin.isError,

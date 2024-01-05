@@ -6,6 +6,7 @@ import ProductManage from '../containers/System/ProductManage';
 import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroupOrAcc';
 import Header from '../containers/Header/Header';
 import ActionUserPage from '../containers/System/Admin/ActionUserPage';
+import ManageDoctor from '../containers/System/ManageDoctor';
 class System extends Component {
   render() {
     const { systemMenuPath, isLoggedIn } = this.props;
@@ -30,6 +31,7 @@ class System extends Component {
                   component={ActionUserPage}
                 />
                 {/* <Route path="/system/users-redux" component={ActionUserPage} /> */}
+                <Route path="/system/doctors" exact component={ManageDoctor} />
                 <Route
                   path="/system/product-manage"
                   component={ProductManage}

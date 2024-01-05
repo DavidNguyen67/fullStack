@@ -9,12 +9,21 @@ import { Button } from 'reactstrap';
 import ScrollToTop from 'react-scroll-to-top';
 import { toast } from 'react-toastify';
 import { deleteUsersService } from '../../services/userService';
+import 'react-markdown-editor-lite/lib/index.css';
+import MarkdownIt from 'markdown-it';
+import MdEditor from 'react-markdown-editor-lite';
 
 const COPY = 'COPY';
 const UPDATE = 'UPDATE';
 const CREATE = 'CREATE';
 const DELETE = 'DELETE';
-const REAAD = 'READ';
+const READ = 'READ';
+const mdParser = new MarkdownIt(/* Markdown-it options */);
+
+function handleEditorChange({ html, text }) {
+  console.log(html);
+}
+
 class UserManage extends Component {
   constructor(props) {
     super(props);
@@ -341,40 +350,12 @@ class UserManage extends Component {
                 ))}
             </tbody>
           </table>
-          <nav
-            aria-label="Page navigation example"
-            onClick={(event) => console.log(event)}
-          >
-            <ul className="pagination">
-              <li className="page-item">
-                <a className="page-link" href="#" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                  <span className="sr-only">Previous</span>
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  1
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  2
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  3
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                  <span className="sr-only">Next</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+
+          <MdEditor
+            style={{ height: '500px' }}
+            renderHTML={(text) => mdParser.render(text)}
+            onChange={handleEditorChange}
+          />
         </div>
       </div>
     );

@@ -2,6 +2,7 @@ import actionTypes from '../actions/actionTypes';
 
 const initialState = {
   users: [],
+  topDoctors: [],
   doctors: [],
 
   statusCode: null,
@@ -33,6 +34,14 @@ const initialState = {
   isLoadingReadDoctor: false,
   isErrorReadDoctor: false,
   isSuccessReadDoctor: false,
+
+  isLoadingReadTopDoctor: false,
+  isErrorReadTopDoctor: false,
+  isSuccessReadTopDoctor: false,
+
+  isLoadingUpdateDoctor: false,
+  isErrorUpdateDoctor: false,
+  isSuccessUpdateDoctor: false,
 };
 
 const appReducer = (state = initialState, action) => {
@@ -217,21 +226,46 @@ const appReducer = (state = initialState, action) => {
   }
 
   switch (action.type) {
-    case actionTypes.READ_DOCTOR_START:
+    case actionTypes.READ_TOP_DOCTORS_START:
+      return {
+        ...state,
+        isLoadingReadTopDoctor: true,
+        isErrorReadTopDoctor: false,
+        isSuccessReadTopDoctor: false,
+      };
+    case actionTypes.READ_TOP_DOCTORS_FAILED:
+      return {
+        ...state,
+        isErrorReadTopDoctor: true,
+        isLoadingReadTopDoctor: false,
+        isSuccessReadTopDoctor: false,
+      };
+    case actionTypes.READ_TOP_DOCTORS_SUCCESS:
+      return {
+        ...state,
+        isErrorReadTopDoctor: false,
+        isLoadingReadTopDoctor: false,
+        topDoctors: action.payload,
+        statusCode: null,
+        message: null,
+        isSuccessReadTopDoctor: true,
+      };
+
+    case actionTypes.READ_DOCTORS_START:
       return {
         ...state,
         isLoadingReadDoctor: true,
         isErrorReadDoctor: false,
         isSuccessReadDoctor: false,
       };
-    case actionTypes.READ_DOCTOR_FAILED:
+    case actionTypes.READ_DOCTORS_FAILED:
       return {
         ...state,
         isErrorReadDoctor: true,
         isLoadingReadDoctor: false,
         isSuccessReadDoctor: false,
       };
-    case actionTypes.READ_DOCTOR_SUCCESS:
+    case actionTypes.READ_DOCTORS_SUCCESS:
       return {
         ...state,
         isErrorReadDoctor: false,
@@ -241,6 +275,33 @@ const appReducer = (state = initialState, action) => {
         message: null,
         isSuccessReadDoctor: true,
       };
+
+    case actionTypes.UPDATE_DOCTOR_START:
+      return {
+        ...state,
+        isLoadingUpdateDoctor: true,
+        isErrorUpdateDoctor: false,
+        isSuccessUpdateDoctor: false,
+        message: null,
+      };
+    case actionTypes.UPDATE_DOCTOR_FAILED:
+      return {
+        ...state,
+        isErrorUpdateDoctor: true,
+        isLoadingUpdateDoctor: false,
+        isSuccessUpdateDoctor: false,
+        message: action.payload,
+      };
+    case actionTypes.UPDATE_DOCTOR_SUCCESS:
+      return {
+        ...state,
+        isErrorUpdateDoctor: false,
+        isLoadingUpdateDoctor: false,
+        statusCode: null,
+        message: null,
+        isSuccessUpdateDoctor: true,
+      };
+
     default:
       break;
   }

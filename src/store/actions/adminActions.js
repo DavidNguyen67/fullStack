@@ -3,8 +3,10 @@ import {
   createNewUserService,
   deleteUsersService,
   getAllCodeService,
+  getAllDoctorsService,
   getAllUsersService,
   getTopDoctorService,
+  updateDoctorService,
   updateUsersService,
 } from '../../services/userService';
 import actionTypes from './actionTypes';
@@ -213,20 +215,20 @@ export const deleteUsers = (ids) => {
   };
 };
 
-export const readDoctors = (limit) => {
+export const readTopDoctors = (limit) => {
   return async (dispatch, getState) => {
     const readDoctorsSuccess = (payload) => {
       return {
-        type: actionTypes.READ_DOCTOR_SUCCESS,
+        type: actionTypes.READ_TOP_DOCTORS_SUCCESS,
         payload,
       };
     };
     const readDoctorsFailed = () => ({
-      type: actionTypes.READ_DOCTOR_FAILED,
+      type: actionTypes.READ_TOP_DOCTORS_FAILED,
     });
 
     try {
-      dispatch({ type: actionTypes.READ_DOCTOR_START });
+      dispatch({ type: actionTypes.READ_TOP_DOCTORS_START });
       const response = await getTopDoctorService(limit);
 
       return response.data?.error
@@ -235,6 +237,67 @@ export const readDoctors = (limit) => {
     } catch (error) {
       console.log(error);
       dispatch(readDoctorsFailed());
+    }
+  };
+};
+
+export const readAllDoctors = () => {
+  return async (dispatch, getState) => {
+    const readDoctorsSuccess = (payload) => {
+      return {
+        type: actionTypes.READ_DOCTORS_SUCCESS,
+        payload,
+      };
+    };
+    const readDoctorsFailed = () => ({
+      type: actionTypes.READ_DOCTORS_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.READ_DOCTORS_START });
+      const response = await getAllDoctorsService();
+
+      return response.data?.error
+        ? dispatch(readDoctorsFailed())
+        : dispatch(readDoctorsSuccess(response.data || response));
+    } catch (error) {
+      console.log(error);
+      dispatch(readDoctorsFailed());
+    }
+  };
+};
+
+export const updateDoctor = (payload) => {
+  return async (dispatch, getState) => {
+    const updateDoctorSuccess = () => {
+      return {
+        type: actionTypes.UPDATE_DOCTOR_SUCCESS,
+      };
+    };
+    const updateDoctorFailed = (payload) => ({
+      type: actionTypes.UPDATE_DOCTOR_FAILED,
+      payload,
+    });
+
+    try {
+      dispatch({ type: actionTypes.UPDATE_DOCTOR_START });
+      const response = await updateDoctorService(payload);
+      const isError =
+        Math.floor(
+          (response.status ||
+            response.statusCode ||
+            response.data.status ||
+            response.data?.statusCode) / 100
+        ) !== 2;
+      if (isError) {
+        dispatch(updateDoctorFailed(response));
+      } else {
+        dispatch(updateDoctorSuccess());
+        dispatch(readAllDoctors());
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(updateDoctorFailed());
     }
   };
 };
