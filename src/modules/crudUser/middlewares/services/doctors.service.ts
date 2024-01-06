@@ -108,6 +108,51 @@ export class DoctorsService {
     }
   }
 
+  async getDoctorDetail(id: number) {
+    try {
+      const doctor = await this.prisma.user.findFirst({
+        include: {
+          positionData: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+            },
+          },
+          roleData: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+            },
+          },
+          markDown: {
+            select: {
+              contentHTML: true,
+              contentMarkdown: true,
+              description: true,
+            },
+          },
+        },
+        where: {
+          id: id,
+          roleId: role.ROLE_DOCTOR_CODE,
+        },
+        orderBy: {
+          id: 'asc',
+        },
+      });
+      if (!doctor || Object.keys(doctor)?.length < 1) {
+        throw new HttpException(
+          'Doctor not found or invalid Role',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return exclude(doctor, ['password', 'createAt', 'updateAt', 'image']);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
   async getAllDoctors() {
     try {
       const doctors = await this.prisma.user.findMany({

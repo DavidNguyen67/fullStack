@@ -31,12 +31,11 @@ export const processUserData = (body: any[]): any[] => {
   return filteredPayload;
 };
 
-// export function base64_encode(file) {
-//   // read binary data
-//   const bitmap = fs.readFileSync(file);
-//   // convert binary data to base64 encoded string
-//   return new Buffer(bitmap).toString('base64');
-// }
+// Auto return the biggest number if value is a string[]
+export const getMaxElement = (value: string[]): number => {
+  return +value.reduce((min, c) => (c < min ? c : min));
+};
+
 export const getBase64 = async (file) => {
   return new Promise((resolve, reject) => {
     const reader = new window.FileReader();
@@ -48,3 +47,7 @@ export const getBase64 = async (file) => {
   });
 };
 export const calculateSizeBytes = (charLength: number) => (charLength * 6) / 8;
+
+export const hasNumber = (myString: string): boolean => {
+  return /\d/.test(myString);
+};

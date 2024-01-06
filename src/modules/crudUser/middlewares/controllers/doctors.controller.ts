@@ -17,8 +17,9 @@ import { convertAnyStringArrToNumArrPipe } from '../pipes/convertAnyStringArrToN
 import { GlobalRes } from 'src/utils/response.interface';
 import { FetchUsersInterceptor } from '../interceptor/fetchUser.interceptor';
 import { UpdateDoctorsDto } from 'src/utils/dto/User.dto';
-import { processUserData } from 'src/utils/function';
+import { getMaxElement, processUserData } from 'src/utils/function';
 import { isHasDoctorIdPipe } from '../pipes/isHasDoctorId.pipe';
+import { IsIdHasNumberInStringPipe } from '../pipes/isHasNumberInString.pipe';
 
 @Controller(`${routes.versionApi}/${routes.crudDoctorPath}`)
 export class DoctorController {
@@ -77,6 +78,34 @@ export class DoctorController {
     return {
       statusCode: HttpStatus.BAD_REQUEST,
       message: 'Invalid data received',
+    };
+  }
+
+  @Get(routes.readDetailRoute)
+  @UsePipes(
+    IsHasDataInQueryOrBodyPipe,
+    convertAnyStringArrToNumArrPipe,
+    IsIdHasNumberInStringPipe,
+  )
+  async fetchDoctorDetail(
+    @Query() query: FetchDoctorInterface,
+  ): Promise<GlobalRes> {
+    const id = query?.id;
+
+    let data: any;
+
+    if (id && id.length > 0) {
+      if (Array.isArray(id))
+        data = await this.doctorsService.getDoctorDetail(getMaxElement(id));
+
+      return {
+        statusCode: HttpStatus.OK,
+        data,
+      };
+    }
+    return {
+      statusCode: HttpStatus.NOT_FOUND,
+      message: 'Missing or invalid query parameters',
     };
   }
 }

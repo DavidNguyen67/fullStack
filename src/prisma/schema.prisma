@@ -26,6 +26,19 @@ model User {
   genderData   AllCode   @relation("Gender", fields: [gender], references: [keyMap])
   positionData AllCode   @relation("Position", fields: [positionId], references: [keyMap])
   roleData     AllCode   @relation("Role", fields: [roleId], references: [keyMap])
+  markDown     Markdown? @relation("Markdown")
+}
+model Markdown {
+  id              Int       @id @default(autoincrement())
+  contentHTML     Json
+  contentMarkdown Json
+  description     Json?
+  doctorId        Int?      @unique
+  specialtyId     Int?
+  clinicId        Int?
+  createAt        DateTime? @default(now())
+  updateAt        DateTime? @default(now())
+  doctorMarkDown  User?     @relation("Markdown", fields: [doctorId], references: [id])
 }
 
 model AllCode {
@@ -97,165 +110,3 @@ model doctor_clinic_specialty {
   specialtyId Int
   clinicId    Int
 }
-
-model Markdown {
-  id              Int       @id @default(autoincrement())
-  contentHTML     Json
-  contentMarkdown Json
-  description     Json?
-  doctorId        Int?
-  specialtyId     Int?
-  clinicId        Int?
-  createAt        DateTime? @default(now())
-  updateAt        DateTime? @default(now())
-}
-
-// model User {
-//   user_id  Int       @id @default(autoincrement())
-//   username String    @unique
-//   email    String    @unique
-//   password String
-//   active   Boolean   @default(true)
-//   role_id  Int
-//   customer Customer? @relation("CustomerAccount")
-//   staff    Staff?    @relation("StaffAccount")
-//   Role     Role[]
-// }
-
-// model Role {
-//   role_id        Int        @id @default(autoincrement())
-//   role_name      String
-//   description    String?
-//   permissions_id Int
-//   user_id        Int
-//   permissions    Permission @relation(fields: [permissions_id], references: [permission_id])
-//   user           User       @relation(fields: [user_id], references: [user_id])
-// }
-// model Permission {
-//   permission_id   Int    @id @default(autoincrement())
-//   permission_name String
-//   url             String
-//   role            Role[]
-// }
-// model Staff {
-//   staff_id   Int       @id @default(autoincrement())
-//   first_name String
-//   last_name  String
-//   email      String
-//   phone      String?
-//   active     Boolean   @default(true)
-//   store_id   Int
-//   manager_id Int?
-//   avatar     Bytes?
-//   user_id    Int       @unique
-//   manager    Staff?    @relation("ManagedBy", fields: [manager_id], references: [staff_id])
-//   employees  Staff[]   @relation("ManagedBy")
-//   worksAt    Store?    @relation("StaffWorkingAt", fields: [store_id], references: [store_id])
-//   orders     Order[]   @relation("StaffHandlingOrders")
-//   user       User      @relation("StaffAccount", fields: [user_id], references: [user_id])
-//   topStaff   TopStaff? @relation("TopStaff")
-// }
-// model Store {
-//   store_id   Int     @id @default(autoincrement())
-//   store_name String
-//   phone      String
-//   email      String?
-//   street     String
-//   city       String
-//   state      String
-//   zip_code   String?
-//   storeImage Bytes?
-//   staffs     Staff[] @relation("StaffWorkingAt")
-//   orders     Order[] @relation("StoreOrders")
-//   stocks     Stock[]
-// }
-
-// model OrderItem {
-//   id         Int     @id @default(autoincrement())
-//   order_id   Int
-//   item_id    Int
-//   product_id Int
-//   quantity   Int
-//   list_price Int
-//   discount   Int?
-//   order      Order   @relation(fields: [order_id], references: [order_id])
-//   product    Product @relation(fields: [product_id], references: [product_id])
-// }
-
-// model Customer {
-//   customer_id Int     @id @default(autoincrement())
-//   first_name  String
-//   last_name   String
-//   phone       String?
-//   email       String
-//   street      String?
-//   city        String
-//   state       String
-//   zip_code    String
-//   avatar      Bytes?
-//   orders      Order[] @relation("CustomerOrders")
-//   user        User?   @relation("CustomerAccount", fields: [customer_id], references: [user_id])
-// }
-
-// model Order {
-//   order_id      Int         @id @default(autoincrement())
-//   customer_id   Int
-//   order_status  String      @default("Not Available")
-//   order_date    DateTime?
-//   required_date DateTime?
-//   shipped_date  DateTime?
-//   store_id      Int
-//   staff_id      Int
-//   store         Store       @relation("StoreOrders", fields: [store_id], references: [store_id])
-//   staff         Staff       @relation("StaffHandlingOrders", fields: [staff_id], references: [staff_id])
-//   customer      Customer    @relation("CustomerOrders", fields: [customer_id], references: [customer_id])
-//   products      OrderItem[]
-// }
-
-// model Category {
-//   category_id   Int       @id @default(autoincrement())
-//   category_name String
-//   products      Product[] @relation("ProductCategory")
-// }
-
-// model Product {
-//   product_id   Int         @id @default(autoincrement())
-//   product_name String
-//   brand_id     Int
-//   category_id  Int
-//   model_year   Int?
-//   list_price   Int
-//   image        Bytes?
-//   stocks       Stock[]     @relation("ProductStock")
-//   category     Category    @relation("ProductCategory", fields: [category_id], references: [category_id])
-//   brand        Brand       @relation("ProductBrand", fields: [brand_id], references: [brand_id])
-//   orders       OrderItem[]
-// }
-
-// model Stock {
-//   stockId    Int     @id @default(autoincrement())
-//   store_id   Int
-//   product_id Int
-//   quantity   Int
-//   product    Product @relation("ProductStock", fields: [product_id], references: [product_id])
-//   store      Store   @relation(fields: [store_id], references: [store_id])
-// }
-
-// model Brand {
-//   brand_id   Int       @id @default(autoincrement())
-//   brand_name String
-//   image      Bytes?
-//   products   Product[] @relation("ProductBrand")
-// }
-
-// model Events {
-//   events_id   Int    @id @default(autoincrement())
-//   events_name String
-//   image       Bytes?
-// }
-
-// model TopStaff {
-//   TopStaff_id Int   @id @default(autoincrement())
-//   staff_Id    Int   @unique
-//   staff       Staff @relation("TopStaff", fields: [staff_Id], references: [staff_id])
-// }

@@ -5,6 +5,7 @@ import {
   Injectable,
   PipeTransform,
 } from '@nestjs/common';
+import { getMaxElement } from 'src/utils/function';
 
 @Injectable()
 export class convertAnyStringArrToNumArrPipe implements PipeTransform {
@@ -45,7 +46,7 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
           ];
           let limitRecord: number = +uniqueValues[0];
           if (uniqueValues.length > 1) {
-            limitRecord = +uniqueValues.reduce((min, c) => (c < min ? c : min));
+            limitRecord = getMaxElement(uniqueValues);
           }
           return {
             ...value,
