@@ -34,6 +34,10 @@ class OutStandingDoctor extends Component {
   //   }
   // }
 
+  handleViewDetailDoctor = (item) => {
+    console.log(item);
+  };
+
   render() {
     const { lang } = this.props;
     const { topDoctors } = this.state;
@@ -69,7 +73,11 @@ class OutStandingDoctor extends Component {
                     : '';
 
                   return (
-                    <div className="section-customize" key={doctor.id}>
+                    <div
+                      className="section-customize"
+                      key={doctor.id}
+                      onClick={() => this.handleViewDetailDoctor(doctor)}
+                    >
                       <div className="customize-border">
                         <div className="outer-bg">
                           <div

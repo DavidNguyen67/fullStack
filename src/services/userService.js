@@ -1,38 +1,60 @@
 import instance from '../axios';
+import * as constants from './../utils';
 
 export const getAllUsersService = async (id = 'all') => {
-  return await instance.get(`/user/read?id=${id}`);
+  return await instance.get(
+    `/${constants.crudUserPath}/${constants.readRoute}?${constants.queryPrefixId}=${id}`
+  );
 };
 
 export const createNewUserService = async (payload, file) => {
-  const response = await instance.post(`/user/create`, payload);
-  return response;
+  return await instance.post(
+    `/${constants.crudUserPath}/${constants.createRoute}`,
+    payload
+  );
 };
 
 export const deleteUsersService = async (id) => {
-  return await instance.delete(`/user/delete?id=${id}`);
+  return await instance.delete(
+    `/${constants.crudUserPath}/${constants.deleteRoute}?${constants.queryPrefixId}=${id}`
+  );
 };
 
 export const updateUsersService = async (payload) => {
-  return await instance.put(`/user/update`, payload);
+  return await instance.put(
+    `/${constants.crudUserPath}/${constants.updateRoute}`,
+    payload
+  );
 };
 
 export const handleLoginService = async (username, password) => {
-  return await instance.post('/auth/login', { username, password });
+  return await instance.post(`/${constants.authPath}/${constants.loginRoute}`, {
+    username,
+    password,
+  });
 };
 
 export const getAllCodeService = async (type) => {
-  return await instance.get(`allCode/read?type=${type}`);
+  return await instance.get(
+    `${constants.allCodePath}/${constants.readRoute}?${constants.queryPrefixType}=${type}`
+  );
 };
 
 export const getTopDoctorService = async (limit) => {
-  return await instance.get(`/doctor/read?limit=${limit}`);
+  return await instance.get(
+    `/${constants.crudDoctorPath}/${constants.readRoute}?${constants.queryPrefixLimit}=${limit}`
+  );
 };
 
 export const getAllDoctorsService = async (id = 'all') => {
-  return await instance.get(`/doctor/read?id=${id}`);
+  return await instance.get(
+    `/${constants.crudDoctorPath}/${constants.readRoute}?${constants.queryPrefixId}=${id}`
+  );
 };
 
 export const updateDoctorService = async (payload) => {
-  return await instance.put(`/doctor/update`, payload);
+  return await instance.put(
+    `/${constants.crudDoctorPath}/${constants.updateRoute}`,
+    payload
+  );
 };

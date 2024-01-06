@@ -230,7 +230,7 @@ export const readTopDoctors = (limit) => {
     try {
       dispatch({ type: actionTypes.READ_TOP_DOCTORS_START });
       const response = await getTopDoctorService(limit);
-
+      console.log(response);
       return response.data?.error
         ? dispatch(readDoctorsFailed())
         : dispatch(readDoctorsSuccess(response.data || response));
