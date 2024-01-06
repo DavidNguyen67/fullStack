@@ -52,6 +52,13 @@ export class DoctorsService {
         (doctor) =>
           exclude(doctor, ['password', 'createAt', 'updateAt']) || doctor,
       );
+      // we got error that axios cant decode the json response when we return image
+      // const response = await .... then log response we got a json string, not object
+      return doctors.map(
+        (doctor) =>
+          exclude(doctor, ['password', 'createAt', 'updateAt', 'image']) ||
+          doctor,
+      );
     } catch (error) {
       console.log(error);
       throw error;
@@ -146,7 +153,7 @@ export class DoctorsService {
           HttpStatus.NOT_FOUND,
         );
       }
-      return exclude(doctor, ['password', 'createAt', 'updateAt', 'image']);
+      return exclude(doctor, ['password', 'createAt', 'updateAt']);
     } catch (error) {
       console.log(error);
       throw error;

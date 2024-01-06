@@ -16,28 +16,30 @@ export class FetchUsersInterceptor implements NestInterceptor {
       return next.handle().pipe(
         map((responseBody: GlobalRes) => {
           // Check if any user object in the response contains a 'password' field
-
-          const hasPassword = responseBody.data?.some(
-            (user: FetchUsersResponseInterface) => user.password,
-          );
-
-          // If any user has a password field, throw an error
-          if (hasPassword)
-            console.log(
-              'Response contains sensitive information',
-              'FetchUsersInterceptor',
+          if (responseBody.data && responseBody.data.some) {
+            const hasPassword = responseBody.data?.some(
+              (user: FetchUsersResponseInterface) => user.password,
             );
 
-          // Filter out the 'password' field from each user object
-          const data = responseBody.data?.map(
-            (user: FetchUsersResponseInterface) => {
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              const { password, ...userWithoutPassword } = user;
+            // If any user has a password field, throw an error
+            if (hasPassword)
+              console.log(
+                'Response contains sensitive information',
+                'FetchUsersInterceptor',
+              );
 
-              return userWithoutPassword;
-            },
-          );
-          return { ...responseBody, data };
+            // Filter out the 'password' field from each user object
+            const data = responseBody.data?.map(
+              (user: FetchUsersResponseInterface) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const { password, ...userWithoutPassword } = user;
+
+                return userWithoutPassword;
+              },
+            );
+            return { ...responseBody, data };
+          }
+          return { ...responseBody };
         }),
         catchError((err) => {
           console.log(err);

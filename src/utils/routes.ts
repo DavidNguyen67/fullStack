@@ -8,6 +8,7 @@ export const crudDoctorPath = 'doctor';
 
 export const loginRoute = 'login';
 export const readRoute = 'read';
+export const readTopRoute = 'top/read';
 export const readDetailRoute = 'read/detail';
 export const updateRoute = 'update';
 export const deleteRoute = 'delete';

@@ -29,22 +29,33 @@ export class DoctorController {
   @UseInterceptors(FetchUsersInterceptor)
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
   async fetchDoctors(@Query() query: FetchDoctorInterface): Promise<GlobalRes> {
-    const limit = query.limit;
     const id = query?.id;
 
     let data: any;
-
-    if (limit) {
-      data = await this.doctorsService.getTopDoctorHome(+limit || 10);
+    if (id && id.length > 0) {
+      if (Array.isArray(id))
+        data = await this.doctorsService.getDoctors(id.map(Number));
+      if (id === 'all') data = await this.doctorsService.getAllDoctors();
       return {
         statusCode: HttpStatus.OK,
         data,
       };
     }
-    if (id && id.length > 0) {
-      if (Array.isArray(id))
-        data = await this.doctorsService.getDoctors(id.map(Number));
-      if (id === 'all') data = await this.doctorsService.getAllDoctors();
+    return {
+      statusCode: HttpStatus.NOT_FOUND,
+      message: 'Missing or invalid query parameters',
+    };
+  }
+
+  @Get(routes.readTopRoute)
+  @UseInterceptors(FetchUsersInterceptor)
+  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  async fetchTopDoctors(
+    @Query() query: FetchDoctorInterface,
+  ): Promise<GlobalRes> {
+    const limit = query.limit;
+    if (limit) {
+      const data = await this.doctorsService.getTopDoctorHome(+limit || 10);
       return {
         statusCode: HttpStatus.OK,
         data,
