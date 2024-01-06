@@ -4,6 +4,7 @@ export const path = {
   LOGIN: '/login',
   LOG_OUT: '/logout',
   SYSTEM: '/system',
+  DETAIL_DOCTOR: '/doctor/detail/:id',
 };
 
 export const LANGUAGES = {
@@ -43,6 +44,7 @@ export const crudDoctorPath = 'doctor';
 export const loginRoute = 'login';
 export const readRoute = 'read';
 export const readDetailRoute = 'read/detail';
+export const readTopRoute = 'top/read';
 export const updateRoute = 'update';
 export const deleteRoute = 'delete';
 export const createRoute = 'create';

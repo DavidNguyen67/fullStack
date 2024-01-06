@@ -42,13 +42,19 @@ export const getAllCodeService = async (type) => {
 
 export const getTopDoctorService = async (limit) => {
   return await instance.get(
-    `/${constants.crudDoctorPath}/${constants.readRoute}?${constants.queryPrefixLimit}=${limit}`
+    `/${constants.crudDoctorPath}/${constants.readTopRoute}?${constants.queryPrefixLimit}=${limit}`
   );
 };
 
 export const getAllDoctorsService = async (id = 'all') => {
   return await instance.get(
     `/${constants.crudDoctorPath}/${constants.readRoute}?${constants.queryPrefixId}=${id}`
+  );
+};
+
+export const getDoctorDetail = async (id) => {
+  return await instance.get(
+    `/${constants.crudDoctorPath}/${constants.readDetailRoute}?${constants.queryPrefixId}=${id}`
   );
 };
 

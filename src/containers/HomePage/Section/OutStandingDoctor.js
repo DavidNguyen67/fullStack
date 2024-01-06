@@ -4,6 +4,7 @@ import Slider from 'react-slick';
 import * as actions from './../../../store/actions';
 import * as constant from '../../../utils/';
 import { FormattedMessage } from 'react-intl';
+import { withRouter } from 'react-router-dom';
 class OutStandingDoctor extends Component {
   constructor(props) {
     super(props);
@@ -35,12 +36,14 @@ class OutStandingDoctor extends Component {
   // }
 
   handleViewDetailDoctor = (item) => {
-    console.log(item);
+    const { history } = this.props;
+    if (history) history.push(`/doctor/detail/${item.id}`);
+    // return <Redirect to={`/doctor/${item.id}`} push={true} />;
   };
 
   render() {
     const { lang } = this.props;
-    const { topDoctors } = this.state;
+    const { topDoctors } = this.props;
 
     return (
       <div className="section-share section-outstanding-doctor">
@@ -63,7 +66,7 @@ class OutStandingDoctor extends Component {
                   const nameEn = `${doctor.firstName} ${doctor.lastName}`;
 
                   const base64 = btoa(
-                    new Uint8Array(doctor.image?.data).reduce(
+                    new Uint8Array(doctor.image?.data)?.reduce(
                       (data, byte) => data + String.fromCharCode(byte),
                       ''
                     )
@@ -124,4 +127,6 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(OutStandingDoctor);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(OutStandingDoctor)
+);

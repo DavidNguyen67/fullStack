@@ -230,7 +230,6 @@ export const readTopDoctors = (limit) => {
     try {
       dispatch({ type: actionTypes.READ_TOP_DOCTORS_START });
       const response = await getTopDoctorService(limit);
-      console.log(response);
       return response.data?.error
         ? dispatch(readDoctorsFailed())
         : dispatch(readDoctorsSuccess(response.data || response));
@@ -256,6 +255,32 @@ export const readAllDoctors = () => {
     try {
       dispatch({ type: actionTypes.READ_DOCTORS_START });
       const response = await getAllDoctorsService();
+
+      return response.data?.error
+        ? dispatch(readDoctorsFailed())
+        : dispatch(readDoctorsSuccess(response.data || response));
+    } catch (error) {
+      console.log(error);
+      dispatch(readDoctorsFailed());
+    }
+  };
+};
+
+export const readDoctor = (id) => {
+  return async (dispatch, getState) => {
+    const readDoctorsSuccess = (payload) => {
+      return {
+        type: actionTypes.READ_DOCTORS_SUCCESS,
+        payload,
+      };
+    };
+    const readDoctorsFailed = () => ({
+      type: actionTypes.READ_DOCTORS_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.READ_DOCTORS_START });
+      const response = await getAllDoctorsService(id);
 
       return response.data?.error
         ? dispatch(readDoctorsFailed())

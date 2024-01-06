@@ -241,9 +241,6 @@ const appReducer = (state = initialState, action) => {
         isSuccessReadTopDoctor: false,
       };
     case actionTypes.READ_TOP_DOCTORS_SUCCESS:
-      console.log('====================================');
-      console.log(action.payload);
-      console.log('====================================');
       return {
         ...state,
         isErrorReadTopDoctor: false,
