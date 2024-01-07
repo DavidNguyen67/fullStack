@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
   Post,
   Put,
@@ -37,22 +38,27 @@ export class UsersController {
   // ! Guard in here is not used correctly as itself
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
   async fetchUsers(@Query() query: FetchUserInterface): Promise<GlobalRes> {
-    const id = query?.id;
-    let data = null;
+    try {
+      const id = query?.id;
+      let data = null;
 
-    if (id && id.length > 0) {
-      if (Array.isArray(id))
-        data = await this.usersService.fetchUser(id.map(Number));
-      if (id === 'all') data = await this.usersService.fetchUsers();
+      if (id && id.length > 0) {
+        if (Array.isArray(id))
+          data = await this.usersService.fetchUser(id.map(Number));
+        if (id === 'all') data = await this.usersService.fetchUsers();
+        return {
+          statusCode: HttpStatus.OK,
+          data,
+        };
+      }
       return {
-        statusCode: HttpStatus.OK,
-        data,
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Missing or invalid query parameters',
       };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return {
-      statusCode: HttpStatus.NOT_FOUND,
-      message: 'Missing or invalid query parameters',
-    };
   }
 
   @Post(routes.createRoute)
@@ -65,28 +71,38 @@ export class UsersController {
     @Body(new ValidationPipe({ transform: true }))
     body: CreateUsersDto,
   ): Promise<GlobalRes> {
-    const data: any = body.data || body;
-    return {
-      statusCode: HttpStatus.OK,
-      data: await this.usersService.createUsers(data),
-    };
+    try {
+      const data: any = body.data || body;
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.usersService.createUsers(data),
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Delete(routes.deleteRoute)
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
   async deleteUsers(@Query() query: DeleteUserInterface): Promise<GlobalRes> {
-    const ids: any = query?.id;
+    try {
+      const ids: any = query?.id;
 
-    if (ids && ids.length > 0) {
+      if (ids && ids.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          data: await this.usersService.deleteUsers(ids.map(Number)),
+        };
+      }
       return {
-        statusCode: HttpStatus.OK,
-        data: await this.usersService.deleteUsers(ids.map(Number)),
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Missing or invalid body parameters',
       };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return {
-      statusCode: HttpStatus.NOT_FOUND,
-      message: 'Missing or invalid body parameters',
-    };
   }
 
   @Put(routes.updateRoute)
@@ -99,79 +115,40 @@ export class UsersController {
   async updateUsers(
     @Body(new ValidationPipe({ transform: true })) body: UpdateUsersDto | any,
   ) {
-    const payload = processUserData(body);
-    if (payload.length > 0) {
-      let totalSuccessRecord = 0;
-      for (const item of payload) {
-        const response = await this.usersService.updateUsers(item);
+    try {
+      const payload = processUserData(body);
+      if (payload.length > 0) {
+        let totalSuccessRecord = 0;
+        for (const item of payload) {
+          const response = await this.usersService.updateUsers(item);
 
-        response && (totalSuccessRecord += 1);
+          response && (totalSuccessRecord += 1);
+        }
+        if (totalSuccessRecord)
+          return {
+            statusCode: HttpStatus.OK,
+            data: totalSuccessRecord,
+          };
       }
-      if (totalSuccessRecord)
-        return {
-          statusCode: HttpStatus.OK,
-          data: totalSuccessRecord,
-        };
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Invalid data received',
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return {
-      statusCode: HttpStatus.BAD_REQUEST,
-      message: 'Invalid data received',
-    };
-    // if (ids.length === payload.length) {
-    //   let totalSuccessRecord = 0;
-    //   for (let i = 0; i < payload.length; i++) {
-    //     const response = await this.usersService.updateUsers(
-    //       [ids[i]],
-    //       payload[i],
-    //     );
-    //     response && (totalSuccessRecord += response);
-    //   }
-    //   if (totalSuccessRecord)
-    //     return {
-    //       statusCode: HttpStatus.OK,
-    //       data: totalSuccessRecord,
-    //     };
-    // }
-    // if (payload.length === 1 && ids.length > 0) {
-    //   if (payload[0].email) {
-    //     return {
-    //       statusCode: HttpStatus.CONFLICT,
-    //       message: 'Email attribute cannot be updateMany',
-    //     };
-    //   }
-    //   const response = await this.usersService.updateUsers(ids, payload[0]);
-    //   return {
-    //     statusCode: HttpStatus.OK,
-    //     data: response,
-    //   };
-    // }
-    // return {
-    //   statusCode: HttpStatus.BAD_REQUEST,
-    //   message: 'Invalid data received',
-    // };
   }
 
-  // @Post(routes.createRoute)
-  // @FormDataRequest({ storage: MemoryStoredFile })
-  // @UsePipes(excludeIdFieldPipe)
-  // async createUsers(@Body() data) {
-  //   console.log('====================================');
-  //   console.log(data);
-  //   console.log('====================================');
-  // return {
-  //   statusCode: HttpStatus.OK,
-  //   data: await this.usersService.createUsers(data),
-  // };
-  // @UsePipes(excludeIdFieldPipe)
-  // async createUsers(@UploadedFile() file: Express.Multer.File) {
-  //   console.log('====================================');
-  //   console.log(file);
-  //   console.log('====================================');
-  // }
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   @UsePipes(FileSizeAndImageValidationPipe, RemoveBase64PrefixPipe)
   testFileUpload(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+    try {
+      console.log(file);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

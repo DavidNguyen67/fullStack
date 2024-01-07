@@ -13,7 +13,8 @@ export class RemoveBase64PrefixPipe implements PipeTransform {
     try {
       const data = value.map((val) => {
         if (val.image) {
-          const regex = /^data:image\/(jpeg|jpg|gif|png);base64,/;
+          const regex =
+            /^data:image\/(jpeg|jpg|gif|png|svg+xml|svg|xml);base64,/;
           val.image = val.image?.replace(regex, '');
         }
         return val;

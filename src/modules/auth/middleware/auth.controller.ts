@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   HttpStatus,
   Post,
   UsePipes,
@@ -23,11 +24,16 @@ export class AuthController {
   @Post(routes.loginRoute)
   @UsePipes(AuthPipe)
   async loginController(@Body() dataLogin: LoginInterface): Promise<GlobalRes> {
-    const { username, password } = dataLogin;
-    return {
-      statusCode: HttpStatus.OK,
-      data: await this.authService.loginService(username, password),
-      error: null,
-    };
+    try {
+      const { username, password } = dataLogin;
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.authService.loginService(username, password),
+        error: null,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

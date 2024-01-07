@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   HttpStatus,
   Put,
   Query,
@@ -29,22 +30,27 @@ export class DoctorController {
   @UseInterceptors(FetchUsersInterceptor)
   @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
   async fetchDoctors(@Query() query: FetchDoctorInterface): Promise<GlobalRes> {
-    const id = query?.id;
+    try {
+      const id = query?.id;
 
-    let data: any;
-    if (id && id.length > 0) {
-      if (Array.isArray(id))
-        data = await this.doctorsService.getDoctors(id.map(Number));
-      if (id === 'all') data = await this.doctorsService.getAllDoctors();
+      let data: any;
+      if (id && id.length > 0) {
+        if (Array.isArray(id))
+          data = await this.doctorsService.getDoctors(id.map(Number));
+        if (id === 'all') data = await this.doctorsService.getAllDoctors();
+        return {
+          statusCode: HttpStatus.OK,
+          data,
+        };
+      }
       return {
-        statusCode: HttpStatus.OK,
-        data,
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Missing or invalid query parameters',
       };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return {
-      statusCode: HttpStatus.NOT_FOUND,
-      message: 'Missing or invalid query parameters',
-    };
   }
 
   @Get(routes.readTopRoute)
@@ -53,18 +59,23 @@ export class DoctorController {
   async fetchTopDoctors(
     @Query() query: FetchDoctorInterface,
   ): Promise<GlobalRes> {
-    const limit = query.limit;
-    if (limit) {
-      const data = await this.doctorsService.getTopDoctorHome(+limit || 10);
+    try {
+      const limit = query.limit;
+      if (limit) {
+        const data = await this.doctorsService.getTopDoctorHome(+limit || 10);
+        return {
+          statusCode: HttpStatus.OK,
+          data,
+        };
+      }
       return {
-        statusCode: HttpStatus.OK,
-        data,
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Missing or invalid query parameters',
       };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return {
-      statusCode: HttpStatus.NOT_FOUND,
-      message: 'Missing or invalid query parameters',
-    };
   }
 
   @Put(routes.updateRoute)
@@ -72,24 +83,29 @@ export class DoctorController {
   async updateUsers(
     @Body(new ValidationPipe({ transform: true })) body: UpdateDoctorsDto | any,
   ) {
-    const payload = processUserData(body);
-    if (payload.length > 0) {
-      let totalSuccessRecord = 0;
-      for (const item of payload) {
-        const response = await this.doctorsService.updateDoctors(item);
+    try {
+      const payload = processUserData(body);
+      if (payload.length > 0) {
+        let totalSuccessRecord = 0;
+        for (const item of payload) {
+          const response = await this.doctorsService.updateDoctors(item);
 
-        response && (totalSuccessRecord += 1);
+          response && (totalSuccessRecord += 1);
+        }
+        if (totalSuccessRecord)
+          return {
+            statusCode: HttpStatus.OK,
+            data: totalSuccessRecord,
+          };
       }
-      if (totalSuccessRecord)
-        return {
-          statusCode: HttpStatus.OK,
-          data: totalSuccessRecord,
-        };
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Invalid data received',
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return {
-      statusCode: HttpStatus.BAD_REQUEST,
-      message: 'Invalid data received',
-    };
   }
 
   @Get(routes.readDetailRoute)
@@ -101,22 +117,27 @@ export class DoctorController {
   async fetchDoctorDetail(
     @Query() query: FetchDoctorInterface,
   ): Promise<GlobalRes> {
-    const id = query?.id;
+    try {
+      const id = query?.id;
 
-    let data: any;
+      let data: any;
 
-    if (id && id.length > 0) {
-      if (Array.isArray(id))
-        data = await this.doctorsService.getDoctorDetail(getMaxElement(id));
+      if (id && id.length > 0) {
+        if (Array.isArray(id))
+          data = await this.doctorsService.getDoctorDetail(getMaxElement(id));
 
+        return {
+          statusCode: HttpStatus.OK,
+          data,
+        };
+      }
       return {
-        statusCode: HttpStatus.OK,
-        data,
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Missing or invalid query parameters',
       };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return {
-      statusCode: HttpStatus.NOT_FOUND,
-      message: 'Missing or invalid query parameters',
-    };
   }
 }
