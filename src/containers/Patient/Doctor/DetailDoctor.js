@@ -36,7 +36,6 @@ class DetailDoctor extends Component {
   render() {
     const { doctor } = this.state;
     const { lang } = this.props;
-    console.log(doctor);
     if (Object.keys(doctor).length < 1) {
       return <>No data</>;
     }
@@ -71,13 +70,22 @@ class DetailDoctor extends Component {
                   ? `${doctor.positionData?.valueVi}, ${nameVi}`
                   : `${doctor.positionData?.valueEn} ${nameEn}`}
               </div>
-              <div className="down">{doctor.markDown?.description}</div>
+              <div className="down">
+                {lang === constant.LANGUAGES.VI
+                  ? doctor.markDown?.description_VI
+                  : doctor.markDown?.description_EN}
+              </div>
             </div>
           </div>
           <div className="schedule-doctor"></div>
           <div className="detail-info-doctor">
             <div
-              dangerouslySetInnerHTML={{ __html: doctor.markDown?.contentHTML }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  lang === constant.LANGUAGES.VI
+                    ? doctor.markDown?.contentHTML_VI
+                    : doctor.markDown?.contentHTML_EN,
+              }}
             ></div>
           </div>
           <div className="comment-doctor"></div>

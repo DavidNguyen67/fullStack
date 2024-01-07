@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './HomeHeader.scss';
-import logo from './../../assets/bookingCare.svg';
+import logo from './../../assets/images/reactLogo.jpg';
 import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from './../../utils/constant';
 import { changeLanguageApp } from '../../store/actions/appActions';
 import { LanguageUtils } from '../../utils';
-
+import { withRouter } from 'react-router-dom';
 class HomeHeader extends Component {
   changeLanguage = (lan) => {
     this.props.changeLanguageAppRedux(lan);
+  };
+  returnToHome = () => {
+    console.log(this.props);
+    const { history } = this.props;
+    if (history) {
+      history.push('/');
+    }
   };
 
   render() {
@@ -21,7 +28,14 @@ class HomeHeader extends Component {
             <div className="left-content">
               <i className="fas fa-bars"></i>
               <div className="mx-1" />
-              <img src={logo} alt="" />
+              <div
+                className="logo d-flex align-items-center"
+                onClick={this.returnToHome}
+                style={{ cursor: 'pointer' }}
+              >
+                <img src={logo} alt="" style={{ width: '20%' }} />
+                <h3>React</h3>
+              </div>
             </div>
             <div className="center-content">
               <div className="child-content">
@@ -187,4 +201,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeHeader);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(HomeHeader));

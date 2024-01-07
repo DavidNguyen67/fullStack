@@ -10,6 +10,10 @@ import Select from 'react-select';
 import * as actions from './../../store/actions';
 import * as constant from './../../utils';
 import { toast } from 'react-toastify';
+import {
+  getDoctorDetail,
+  updateDoctorService,
+} from '../../services/userService';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 class ManageDoctor extends Component {
@@ -21,56 +25,107 @@ class ManageDoctor extends Component {
       contentHTML: '',
       contentMarkdown: '',
       description: '',
+      hasOldData: false,
+      isLoading: false,
     };
   }
   handleEditorChange = ({ html, text }) => {
-    this.setState((prevState) => ({
-      ...prevState,
-      contentHTML: html,
-      contentMarkdown: text,
-    }));
+    const { lang } = this.props;
+    if (lang === constant.LANGUAGES.EN)
+      this.setState((prevState) => ({
+        ...prevState,
+        contentHTML_EN: html,
+        contentMarkdown_EN: text,
+      }));
+    else
+      this.setState((prevState) => ({
+        ...prevState,
+        contentHTML_VI: html,
+        contentMarkdown_VI: text,
+      }));
   };
-  handleSaveContentMarkdown = (event) => {
-    const { contentHTML, contentMarkdown, description, selectedDoctor } =
-      this.state;
+  handleSaveContentMarkdown = async (event) => {
+    const {
+      contentHTML_EN,
+      contentMarkdown_EN,
+      contentHTML_VI,
+      contentMarkdown_VI,
+      description_VI,
+      description_EN,
+      selectedDoctor,
+    } = this.state;
     const payload = {
-      contentHTML,
-      contentMarkdown,
-      description,
+      contentHTML_EN,
+      contentMarkdown_EN,
+      contentHTML_VI,
+      contentMarkdown_VI,
+      description_VI,
+      description_EN,
       doctorId: selectedDoctor?.value,
     };
     for (const key of Object.keys(payload)) {
       if (!payload[key]) delete payload[key];
     }
+
     if (!payload.doctorId) {
       toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
       return;
     }
-    if (!payload.contentHTML) {
-      toast.error(<FormattedMessage id="toast.contentHTMLRequired" />);
-      return;
-    }
-    if (!payload.contentMarkdown) {
-      toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
-      return;
-    }
-    this.props.updateDoctor(payload);
-    const { statusCode, isErrorUpdateDoctor } = this.props;
-    if (isErrorUpdateDoctor) {
-      if (statusCode === 500) {
-        toast.error(<FormattedMessage id={`toast.InternalError`} />);
+    const { lang } = this.props;
+    if (lang === constant.LANGUAGES.EN) {
+      if (!payload.contentHTML_EN) {
+        toast.error(<FormattedMessage id="toast.contentHTMLRequired" />);
         return;
       }
-      if (statusCode === 409) {
-        toast.error(
-          <FormattedMessage
-            id="toast.conflictEmail"
-            values={{
-              br: <br />,
-            }}
-            tagName="div"
-          />
-        );
+      if (!payload.contentMarkdown_EN) {
+        toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
+        return;
+      }
+    } else {
+      if (!payload.contentHTML_VI) {
+        toast.error(<FormattedMessage id="toast.contentHTMLRequired" />);
+        return;
+      }
+      if (!payload.contentMarkdown_VI) {
+        toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
+        return;
+      }
+    }
+    this.setState((prevState) => ({
+      ...prevState,
+      isLoading: true,
+    }));
+    const response = await updateDoctorService(payload);
+    this.setState((prevState) => ({
+      ...prevState,
+      isLoading: false,
+    }));
+
+    if (response.statusCode && response.data) {
+      toast.success(
+        <FormattedMessage
+          id="toast.successUpdateDoctor"
+          values={{
+            br: <br />,
+          }}
+          tagName="div"
+        />
+      );
+      this.setState((prevState) => ({
+        ...prevState,
+        selectedDoctor: '',
+        contentHTML_VI: '',
+        contentMarkdown_VI: '',
+        contentHTML_EN: '',
+        contentMarkdown_EN: '',
+        description_VI: '',
+        description_EN: '',
+        selectedOption: '',
+      }));
+      await this.props.readAllDoctors();
+    } else {
+      if (response.statusCode === 500) {
+        toast.error(<FormattedMessage id={`toast.InternalError`} />);
         return;
       }
       toast.error(
@@ -82,62 +137,89 @@ class ManageDoctor extends Component {
           tagName="div"
         />
       );
-    } else {
-      toast.success(
-        <FormattedMessage
-          id="toast.successUpdateDoctor"
-          values={{
-            br: <br />,
-          }}
-          tagName="div"
-        />
-      );
     }
-    this.setState((prevState) => ({
-      ...prevState,
-      selectedDoctor: '',
-      contentHTML: '',
-      contentMarkdown: '',
-      description: '',
-    }));
+
     return;
   };
-  handleChange = (selectedDoctor) => {
-    console.log(selectedDoctor);
-    this.setState({ selectedDoctor });
+  handleChange = async (selectedDoctor) => {
+    const response = await getDoctorDetail(selectedDoctor.value);
+
+    let newState = { selectedDoctor };
+
+    if (response.data) {
+      newState = {
+        ...newState,
+        doctor: response.data,
+      };
+      const { markDown } = response.data;
+      if (this.props.lang === constant.LANGUAGES.VI) {
+        newState = {
+          ...newState,
+          description_VI: markDown?.description_VI || '',
+          contentHTML_VI: markDown?.contentHTML_VI || '',
+          contentMarkdown_VI: markDown?.contentMarkdown_VI || '',
+          hasOldData: !!markDown?.contentHTML_VI,
+        };
+      } else
+        newState = {
+          ...newState,
+          description_EN: markDown?.description_EN || '',
+          contentHTML_EN: markDown?.contentHTML_EN || '',
+          contentMarkdown_EN: markDown?.contentMarkdown_EN || '',
+          hasOldData: !!markDown?.contentHTML_EN,
+        };
+    }
+
+    this.setState(newState);
   };
   handleOnChangeDesc = (event) => {
-    this.setState((prevState) => ({
-      ...prevState,
-      description: event.target.value,
-    }));
-  };
-  componentDidUpdate(prevProps) {
     const { lang } = this.props;
-    if (prevProps.lang !== lang) {
-      this.setState(
-        (prevState) => ({
-          ...prevState,
-          selectedDoctor: {
-            ...prevState.selectedDoctor,
-            label:
-              lang === constant.LANGUAGES.EN
-                ? prevState.selectedDoctor?.labelEn
-                : prevState.selectedDoctor?.labelVi,
-          },
-        }),
-        () => console.log(this.state)
-      );
-    }
-  }
+    if (lang === constant.LANGUAGES.VI)
+      this.setState((prevState) => ({
+        ...prevState,
+        description_VI: event.target.value,
+      }));
+    else
+      this.setState((prevState) => ({
+        ...prevState,
+        description_EN: event.target.value,
+      }));
+  };
+  // componentDidUpdate(prevProps) {
+  //   const { lang } = this.props;
+  //   if (prevProps.lang !== lang) {
+  //     this.setState(
+  //       (prevState) => ({
+  //         ...prevState,
+  //         selectedDoctor: {
+  //           ...prevState.selectedDoctor,
+  //           label:
+  //             lang === constant.LANGUAGES.EN
+  //               ? prevState.selectedDoctor?.labelEn
+  //               : prevState.selectedDoctor?.labelVi,
+  //         },
+  //       }),
+  //       () => console.log(this.state)
+  //     );
+  //   }
+  // }
 
   async componentDidMount() {
     await this.props.readAllDoctors();
   }
 
   render() {
-    const { selectedOption } = this.state;
+    let contentMarkdown = null;
+    let description = null;
+    const { selectedDoctor, hasOldData, isLoading } = this.state;
     const { doctors, lang } = this.props;
+    if (lang === constant.LANGUAGES.VI) {
+      contentMarkdown = this.state.contentMarkdown_VI;
+      description = this.state.description_VI;
+    } else {
+      description = this.state.description_EN;
+      contentMarkdown = this.state.contentMarkdown_EN;
+    }
     const listDoctors =
       doctors.length > 0 &&
       doctors.map &&
@@ -154,6 +236,7 @@ class ManageDoctor extends Component {
         };
       });
 
+    console.log(this.state);
     return (
       <>
         <div className="manage-doctor-container">
@@ -166,14 +249,9 @@ class ManageDoctor extends Component {
                 <label>
                   <FormattedMessage id={'title.doctor.SelectDoctor'} />
                 </label>
-                {selectedOption ? (
-                  <label>{selectedOption?.label}</label>
-                ) : (
-                  <></>
-                )}
 
                 <Select
-                  value={selectedOption}
+                  value={selectedDoctor}
                   onChange={this.handleChange}
                   options={listDoctors}
                 />
@@ -188,7 +266,7 @@ class ManageDoctor extends Component {
                   className="form-control"
                   rows="4"
                   onChange={this.handleOnChangeDesc}
-                  value={this.state.description}
+                  value={description}
                 ></textarea>
               </div>
             </div>
@@ -198,14 +276,20 @@ class ManageDoctor extends Component {
               style={{ height: '500px' }}
               renderHTML={(text) => mdParser.render(text)}
               onChange={this.handleEditorChange}
+              value={contentMarkdown}
             />
           </div>
           <div className="my-4" />
           <button
-            className="btn btn-success save-content-markdown"
+            className="btn btn-primary save-content-markdown"
             onClick={this.handleSaveContentMarkdown}
+            disabled={isLoading}
           >
-            <FormattedMessage id={'button.save'} />
+            {hasOldData ? (
+              <FormattedMessage id={'button.save'} />
+            ) : (
+              <FormattedMessage id={'button.create'} />
+            )}
           </button>
         </div>
       </>
