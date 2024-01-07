@@ -28,17 +28,21 @@ model User {
   roleData     AllCode   @relation("Role", fields: [roleId], references: [keyMap])
   markDown     Markdown? @relation("Markdown")
 }
+
 model Markdown {
-  id              Int       @id @default(autoincrement())
-  contentHTML     Json
-  contentMarkdown Json
-  description     Json?
-  doctorId        Int?      @unique
-  specialtyId     Int?
-  clinicId        Int?
-  createAt        DateTime? @default(now())
-  updateAt        DateTime? @default(now())
-  doctorMarkDown  User?     @relation("Markdown", fields: [doctorId], references: [id])
+  id                 Int       @id @default(autoincrement())
+  contentHTML_VI     Json?
+  contentHTML_EN     Json?
+  contentMarkdown_VI Json?
+  contentMarkdown_EN Json?
+  description_VI     Json?
+  description_EN     Json?
+  doctorId           Int?      @unique
+  specialtyId        Int?
+  clinicId           Int?
+  createAt           DateTime? @default(now())
+  updateAt           DateTime? @default(now())
+  doctorMarkDown     User?     @relation("Markdown", fields: [doctorId], references: [id])
 }
 
 model AllCode {

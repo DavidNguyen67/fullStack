@@ -3,8 +3,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { exclude } from 'src/utils/function';
 import * as role from '../../../../utils/constants';
 import { UpdateDoctorsDto } from 'src/utils/dto/User.dto';
-import * as bcrypt from 'bcrypt';
-const saltOrRounds = 10;
 
 @Injectable()
 export class DoctorsService {
@@ -133,9 +131,12 @@ export class DoctorsService {
           },
           markDown: {
             select: {
-              contentHTML: true,
-              contentMarkdown: true,
-              description: true,
+              contentHTML_VI: true,
+              contentHTML_EN: true,
+              contentMarkdown_VI: true,
+              contentMarkdown_EN: true,
+              description_VI: true,
+              description_EN: true,
             },
           },
         },
@@ -233,34 +234,22 @@ export class DoctorsService {
           HttpStatus.NOT_FOUND,
         );
 
-      let hash = null;
-      if (payload.password)
-        hash = await bcrypt.hash(payload.password, saltOrRounds);
+      payload = { ...payload, updateAt: new Date() };
+      payload.id && delete payload.id;
 
-      payload = hash
-        ? { ...payload, updateAt: new Date(), password: hash }
-        : { ...payload, updateAt: new Date() };
+      const user = await this.prisma.markdown.upsert({
+        where: {
+          doctorId: id,
+        },
+        update: payload,
+        create: payload,
+      });
 
-      if (!payload.email || !(await this.isExistEmail(payload.email))) {
-        payload.id && delete payload.id;
-        const user = await this.prisma.markdown.upsert({
-          where: {
-            id: id,
-          },
-          update: payload,
-          create: payload,
-        });
-
-        if (user) return user;
-        throw new HttpException(
-          'Doctor(s) not found or invalid Role',
-          HttpStatus.NOT_FOUND,
-        );
-      } else
-        throw new HttpException(
-          'Duplicate Doctor(s) data',
-          HttpStatus.CONFLICT,
-        );
+      if (user) return user;
+      throw new HttpException(
+        'Doctor(s) not found or invalid Role',
+        HttpStatus.NOT_FOUND,
+      );
     } catch (error) {
       console.log(error);
       throw error;
