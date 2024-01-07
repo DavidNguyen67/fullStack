@@ -62,6 +62,7 @@ function ModalUser(props) {
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [password, setPassword] = useState('');
   const [address, setAddress] = useState('');
   const [gender, setGender] = useState('');
   const [roleId, setRoleId] = useState('');
@@ -146,6 +147,10 @@ function ModalUser(props) {
       setEmail(event.target.value);
     },
 
+    password: (event) => {
+      setPassword(event.target.value);
+    },
+
     firstName: (event) => {
       setFirstName(event.target.value);
     },
@@ -177,43 +182,44 @@ function ModalUser(props) {
 
   const submitData = async (event) => {
     event.preventDefault();
-    setIsLoadingRequest(true);
+
     const validateFields = (dataUser) => {
       const { email, password, firstName, lastName, phoneNumber } = dataUser;
+      const { typeModal } = props;
 
       if (!email) {
         toast.error(<FormattedMessage id="validate.emailRequired" />);
         return false;
       }
-      // if (!password) {
-      //   toast.error(<FormattedMessage id="validate.passwordRequired" />);
-      //   return false;
-      // }
+      if (typeModal && typeModal === CREATE && !password) {
+        toast.error(<FormattedMessage id="validate.passwordRequired" />);
+        return false;
+      }
       if (!firstName) {
         toast.error(<FormattedMessage id="validate.firstNameRequired" />);
-        setIsLoadingRequest(false);
         return false;
       }
       if (!lastName) {
         toast.error(<FormattedMessage id="validate.lastNameRequired" />);
-        setIsLoadingRequest(false);
         return false;
       }
 
       if (!validator.isEmail(email)) {
         toast.error(<FormattedMessage id="validate.emailInvalid" />);
-        setIsLoadingRequest(false);
         return false;
       }
 
-      // if (!validator.isLength(password, { min: 6 })) {
-      //   toast.error(<FormattedMessage id="validate.passwordLength" />);
-      //   return false;
-      // }
+      if (
+        typeModal &&
+        typeModal === CREATE &&
+        !validator.isLength(password, { min: 6 })
+      ) {
+        toast.error(<FormattedMessage id="validate.passwordLength" />);
+        return false;
+      }
 
       if (validator.isNumeric(firstName) || validator.isNumeric(lastName)) {
         toast.error(<FormattedMessage id="validate.nameCharacters" />);
-        setIsLoadingRequest(false);
         return false;
       }
 
@@ -222,7 +228,6 @@ function ModalUser(props) {
         !validator.isMobilePhone(phoneNumber, 'any', { strictMode: false })
       ) {
         toast.error(<FormattedMessage id="validate.phoneNumberInvalid" />);
-        setIsLoadingRequest(false);
         return false;
       }
 
@@ -241,8 +246,9 @@ function ModalUser(props) {
       positionId,
       image,
       // image: JSON.stringify(await CommonUtils.getBase64(image[0].file)),
-      password: 'admin',
+      password,
     };
+
     if (!validateFields(dataUser)) {
       return;
     }
@@ -251,14 +257,12 @@ function ModalUser(props) {
 
     if (image[0] && image[0].file) {
       const file = image[0].file;
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith('image/') && !file.type.includes('svg')) {
         toast.error(<FormattedMessage id={'toast.NotImageFile'} />);
-        setIsLoadingRequest(false);
         return;
       }
       if (file?.size > MAX_FILE_SIZE) {
         toast.error(<FormattedMessage id={'toast.OverSizeFile'} />);
-        setIsLoadingRequest(false);
         return;
       }
     }
@@ -279,6 +283,10 @@ function ModalUser(props) {
     switch (props.typeModal) {
       case COPY:
       case CREATE:
+        for (const key of Object.keys(result)) {
+          if (!result[key]) delete result[key];
+        }
+        setIsLoadingRequest(true);
         response = await createNewUserService([result]);
         if (
           response.status === 500 ||
@@ -340,10 +348,13 @@ function ModalUser(props) {
           }
         });
         if (Object.keys(result).length < 2) {
-          setIsLoadingRequest(false);
           return;
         }
         result.email && delete result.email;
+        for (const key of Object.keys(result)) {
+          if (!result[key]) delete result[key];
+        }
+        setIsLoadingRequest(true);
         response = await updateUsersService([result]);
         if (!response || Object.keys(response).length < 1) {
           toast.error(
@@ -463,7 +474,7 @@ function ModalUser(props) {
                   <FormattedMessage id="manage-user.password" />
                 </label>
                 <input
-                  // onChange={handleChangeInput.}
+                  onChange={handleChangeInput.password}
                   type="password"
                   className="form-control"
                   id="inputPassword"
@@ -471,7 +482,7 @@ function ModalUser(props) {
                     'manage-user.passwordPlaceholder',
                     lang
                   )}
-                  // value={password}
+                  value={password}
                   name="password"
                 />
               </div>

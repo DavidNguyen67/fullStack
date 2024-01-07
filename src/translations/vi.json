@@ -67,6 +67,9 @@
       "manageSpecialty": "Quản lý chuyên khoa",
       "titleHandbook": "Cẩm nang",
       "manageHandbook": "Quản lý Cẩm nang"
+    },
+    "doctor": {
+      "manage-schedule": "Quản lý kế hoạch khám bệnh"
     }
   },
   "manage-user": {

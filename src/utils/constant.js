@@ -27,6 +27,12 @@ export const YesNoObj = {
   NO: 'N',
 };
 
+export const USER_ROLE = {
+  ADMIN: 'R1',
+  DOCTOR: 'R2',
+  PATIENT: 'R3',
+};
+
 // 20971520 byte = 20 MB
 export const MAX_FILE_SIZE = 20971520;
 export const MAX_NUMBER_OF_DOCTORS = 10;
