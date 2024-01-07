@@ -11,6 +11,8 @@ const initialState = {
   genders: [],
   roles: [],
   positions: [],
+  timeSchedule: [],
+
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -111,6 +113,29 @@ const appReducer = (state = initialState, action) => {
         ...state,
         isSuccess: true,
         roles: action.payload,
+        isLoading: false,
+        isError: false,
+      };
+
+    case actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_START:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: true,
+        isError: false,
+      };
+    case actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_FAILED:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: false,
+        isError: true,
+      };
+    case actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        timeSchedule: action.payload,
         isLoading: false,
         isError: false,
       };

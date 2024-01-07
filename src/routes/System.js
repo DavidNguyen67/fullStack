@@ -6,7 +6,7 @@ import ProductManage from '../containers/System/ProductManage';
 import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroupOrAcc';
 import Header from '../containers/Header/Header';
 import ActionUserPage from '../containers/System/Admin/ActionUserPage';
-import ManageDoctor from '../containers/System/ManageDoctor';
+import ManageDoctor from './../containers/System/Admin/ManageDoctor';
 class System extends Component {
   render() {
     const { systemMenuPath, isLoggedIn } = this.props;

@@ -35,6 +35,7 @@
     "doctor": {
       "introductoryInformation": "Introductory information",
       "SelectDoctor": "Select a doctor",
+      "SelectDate": "Choose date",
       "title": "CREATE MORE DOCTOR INFORMATION"
     }
   },
@@ -136,5 +137,9 @@
     "moreInfo": "More info"
   },
   "confirmDeleteUsers": "Do you wanna delete those users?",
-  "selectOneUserAtLeast": "Must be at least one user selected."
+  "selectOneUserAtLeast": "Must be at least one user selected.",
+
+  "manage-schedule": {
+    "title": "Manage doctor's medical examination"
+  }
 }

@@ -41,6 +41,7 @@
     "doctor": {
       "introductoryInformation": "Thông tin giới thiệu",
       "SelectDoctor": "Chọn bác sĩ",
+      "SelectDate": "Chọn ngày",
       "title": "TẠO THÊM THÔNG TÍN BÁC SĨ"
     }
   },
@@ -138,5 +139,9 @@
   },
   "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này không?",
   "selectOneUserAtLeast": "Phải chọn ít nhất một người dùng.",
-  "CancelBtn": "Hủy"
+  "CancelBtn": "Hủy",
+
+  "manage-schedule": {
+    "title": "Quản lý kế hoạch khám bệnh của bác sỹ"
+  }
 }

@@ -5,6 +5,7 @@ export const path = {
   LOG_OUT: '/logout',
   SYSTEM: '/system',
   DETAIL_DOCTOR: '/doctor/detail/:id',
+  DOCTOR: '/doctor',
 };
 
 export const LANGUAGES = {
@@ -16,6 +17,13 @@ export const manageActions = {
   ADD: 'ADD',
   EDIT: 'EDIT',
   DELETE: 'DELETE',
+};
+
+export const AllCodeType = {
+  GENDER: 'GENDER',
+  ROLE: 'ROLE',
+  POSITION: 'POSITION',
+  TIME: 'TIME',
 };
 
 export const dateFormat = {

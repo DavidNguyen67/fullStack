@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 import {
   createNewUserService,
   deleteUsersService,
@@ -10,6 +9,7 @@ import {
   updateUsersService,
 } from '../../services/userService';
 import actionTypes from './actionTypes';
+import * as constant from './../../utils';
 
 export const fetchGenderStart = () => {
   return async (dispatch, getState) => {
@@ -25,7 +25,7 @@ export const fetchGenderStart = () => {
 
     try {
       dispatch({ type: actionTypes.FETCH_GENDER_START });
-      const response = await getAllCodeService('GENDER');
+      const response = await getAllCodeService(constant.AllCodeType.GENDER);
       if (response.data?.length > 0)
         dispatch(fetchGenderSuccess(response.data));
       else dispatch(fetchGenderFailed());
@@ -50,7 +50,7 @@ export const fetchRoleStart = () => {
 
     try {
       dispatch({ type: actionTypes.FETCH_ROLE_START });
-      const response = await getAllCodeService('ROLE');
+      const response = await getAllCodeService(constant.AllCodeType.ROLE);
       if (response.data?.length > 0) dispatch(fetchRoleSuccess(response.data));
       else dispatch(fetchRoleFailed());
     } catch (error) {
@@ -74,7 +74,7 @@ export const fetchPositionStart = () => {
 
     try {
       dispatch({ type: actionTypes.FETCH_POSITION_START });
-      const response = await getAllCodeService('POSITION');
+      const response = await getAllCodeService(constant.AllCodeType.POSITION);
       if (response.data?.length > 0)
         dispatch(fetchPositionSuccess(response.data));
       else dispatch(fetchPositionFailed());
@@ -323,6 +323,31 @@ export const updateDoctor = (payload) => {
     } catch (error) {
       console.log(error);
       dispatch(updateDoctorFailed());
+    }
+  };
+};
+
+export const readAllScheduleHours = () => {
+  return async (dispatch, getState) => {
+    const readAllScheduleHoursSuccess = (payload) => {
+      return {
+        type: actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_SUCCESS,
+        payload,
+      };
+    };
+    const readAllScheduleHoursFailed = () => ({
+      type: actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.FETCH_ALL_CODE_SCHEDULE_TIME_START });
+      const response = await getAllCodeService(constant.AllCodeType.TIME);
+      if (response.data?.length > 0)
+        dispatch(readAllScheduleHoursSuccess(response.data));
+      else dispatch(readAllScheduleHoursFailed());
+    } catch (error) {
+      console.log(error);
+      dispatch(readAllScheduleHoursFailed());
     }
   };
 };

@@ -7,13 +7,13 @@ import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import './doctorsManage.scss';
 import Select from 'react-select';
-import * as actions from './../../store/actions';
-import * as constant from './../../utils';
+import * as actions from '../../../store/actions';
+import * as constant from '../../../utils';
 import { toast } from 'react-toastify';
 import {
   getDoctorDetail,
   updateDoctorService,
-} from '../../services/userService';
+} from '../../../services/userService';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 class ManageDoctor extends Component {
@@ -185,24 +185,27 @@ class ManageDoctor extends Component {
         description_EN: event.target.value,
       }));
   };
-  // componentDidUpdate(prevProps) {
-  //   const { lang } = this.props;
-  //   if (prevProps.lang !== lang) {
-  //     this.setState(
-  //       (prevState) => ({
-  //         ...prevState,
-  //         selectedDoctor: {
-  //           ...prevState.selectedDoctor,
-  //           label:
-  //             lang === constant.LANGUAGES.EN
-  //               ? prevState.selectedDoctor?.labelEn
-  //               : prevState.selectedDoctor?.labelVi,
-  //         },
-  //       }),
-  //       () => console.log(this.state)
-  //     );
-  //   }
-  // }
+
+  // IF get error at manageDoctor, check componentDidUpdate
+  componentDidUpdate(prevProps) {
+    const { lang } = this.props;
+    if (prevProps.lang !== lang) {
+      this.setState(
+        (prevState) => ({
+          ...prevState,
+          selectedDoctor: {
+            ...prevState.selectedDoctor,
+            label:
+              lang === constant.LANGUAGES.EN
+                ? prevState.selectedDoctor?.labelEn
+                : prevState.selectedDoctor?.labelVi,
+          },
+        }),
+        () => console.log(this.state)
+      );
+    }
+  }
+  //
 
   async componentDidMount() {
     await this.props.readAllDoctors();
@@ -236,7 +239,6 @@ class ManageDoctor extends Component {
         };
       });
 
-    console.log(this.state);
     return (
       <>
         <div className="manage-doctor-container">
@@ -249,7 +251,6 @@ class ManageDoctor extends Component {
                 <label>
                   <FormattedMessage id={'title.doctor.SelectDoctor'} />
                 </label>
-
                 <Select
                   value={selectedDoctor}
                   onChange={this.handleChange}

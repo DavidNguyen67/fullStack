@@ -38,6 +38,8 @@
         .menu-link {
           text-decoration: none;
           color: $text-in-light;
+          display: inline-block;
+          width: 100%;
         }
         .sub-menu-list {
           display: none;
@@ -71,7 +73,8 @@
         }
         &.active {
           a {
-            color: orange;
+            font-weight: 600;
+            color: #0000ff;
           }
           background-color: #ededed;
         }
