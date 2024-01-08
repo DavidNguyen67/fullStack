@@ -2,7 +2,7 @@ import { Controller, Get, HttpStatus, Query, UsePipes } from '@nestjs/common';
 import * as routes from '../../../utils/routes';
 import { AllCodeService } from './allCode.service';
 import { FetchAllCodeInterface } from 'src/utils/interfaces';
-import { GlobalRes } from 'src/utils/response.interface';
+import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { IsHasDataInQueryOrBodyPipe } from './pipes/IsHasDataInQueryOrBody.pipe';
 
 @Controller(`${routes.versionApi}/${routes.allCodePath}`)

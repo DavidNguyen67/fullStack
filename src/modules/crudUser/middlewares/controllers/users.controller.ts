@@ -17,17 +17,13 @@ import {
 import * as routes from '../../../../utils/routes';
 import { UsersService } from '../services/users.service';
 import { DeleteUserInterface, FetchUserInterface } from 'src/utils/interfaces';
-import { GlobalRes } from 'src/utils/response.interface';
-import { convertAnyStringArrToNumArrPipe } from '../pipes/convertAnyStringArrToNumArr.pipe';
+import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { CreateUsersDto, UpdateUsersDto } from 'src/utils/dto/User.dto';
-import { IsHasDataInQueryOrBodyPipe } from '../pipes/IsHasDataInQueryOrBody.pipe';
 import { processUserData } from 'src/utils/function';
-import { ExcludeIdFieldPipe } from '../pipes/creating.pipe';
 import { FetchUsersInterceptor } from '../interceptor/fetchUser.interceptor';
-import { RemoveBase64PrefixPipe } from '../pipes/removeImagePrefix.pipe';
-import { FileSizeAndImageValidationPipe } from '../pipes/FileSizeAndImage.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 // import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
+import { pipes } from '../pipes';
 
 @Controller(`${routes.versionApi}/${routes.crudUserPath}`)
 export class UsersController {
@@ -36,7 +32,10 @@ export class UsersController {
   @Get(routes.readRoute)
   @UseInterceptors(FetchUsersInterceptor)
   // ! Guard in here is not used correctly as itself
-  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  @UsePipes(
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.convertAnyStringArrToNumArrPipe,
+  )
   async fetchUsers(@Query() query: FetchUserInterface): Promise<GlobalRes> {
     try {
       const id = query?.id;
@@ -63,9 +62,10 @@ export class UsersController {
 
   @Post(routes.createRoute)
   @UsePipes(
-    ExcludeIdFieldPipe,
-    FileSizeAndImageValidationPipe,
-    RemoveBase64PrefixPipe,
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.ExcludeIdFieldPipe,
+    pipes.FileSizeAndImageValidationPipe,
+    pipes.RemoveBase64PrefixPipe,
   )
   async createUsers(
     @Body(new ValidationPipe({ transform: true }))
@@ -84,7 +84,10 @@ export class UsersController {
   }
 
   @Delete(routes.deleteRoute)
-  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  @UsePipes(
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.convertAnyStringArrToNumArrPipe,
+  )
   async deleteUsers(@Query() query: DeleteUserInterface): Promise<GlobalRes> {
     try {
       const ids: any = query?.id;
@@ -107,14 +110,14 @@ export class UsersController {
 
   @Put(routes.updateRoute)
   @UsePipes(
-    IsHasDataInQueryOrBodyPipe,
-    FileSizeAndImageValidationPipe,
-    RemoveBase64PrefixPipe,
-    convertAnyStringArrToNumArrPipe,
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.FileSizeAndImageValidationPipe,
+    pipes.RemoveBase64PrefixPipe,
+    pipes.convertAnyStringArrToNumArrPipe,
   )
   async updateUsers(
     @Body(new ValidationPipe({ transform: true })) body: UpdateUsersDto | any,
-  ) {
+  ): Promise<GlobalRes> {
     try {
       const payload = processUserData(body);
       if (payload.length > 0) {
@@ -142,7 +145,7 @@ export class UsersController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  @UsePipes(FileSizeAndImageValidationPipe, RemoveBase64PrefixPipe)
+  @UsePipes(pipes.FileSizeAndImageValidationPipe, pipes.RemoveBase64PrefixPipe)
   testFileUpload(@UploadedFile() file: Express.Multer.File) {
     try {
       console.log(file);

@@ -7,7 +7,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { FetchUsersResponseInterface } from 'src/utils/interfaces';
-import { GlobalRes } from 'src/utils/response.interface';
+import { GlobalRes } from 'src/utils/interfaces/response.interface';
 
 @Injectable()
 export class FetchUsersInterceptor implements NestInterceptor {

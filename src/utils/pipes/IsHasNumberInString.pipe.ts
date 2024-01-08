@@ -1,8 +1,8 @@
 import {
   ArgumentMetadata,
-  HttpException,
-  HttpStatus,
+  BadRequestException,
   Injectable,
+  InternalServerErrorException,
   PipeTransform,
 } from '@nestjs/common';
 import { hasNumber } from 'src/utils/function';
@@ -14,13 +14,12 @@ export class IsIdHasNumberInStringPipe implements PipeTransform {
     try {
       const { id } = value;
       if (id.some((item: string) => hasNumber(item))) return value;
-      throw new HttpException(
+      throw new BadRequestException(
         'Missing number parameter from IsHasNumberInStringPipe',
-        HttpStatus.BAD_REQUEST,
       );
     } catch (error) {
       console.log(error);
-      throw error;
+      throw new InternalServerErrorException(error);
     }
   }
 }

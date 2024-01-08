@@ -1,13 +1,13 @@
 import {
   ArgumentMetadata,
-  HttpException,
-  HttpStatus,
+  BadRequestException,
   Injectable,
+  InternalServerErrorException,
   PipeTransform,
 } from '@nestjs/common';
 
 @Injectable()
-export class isHasDoctorIdPipe implements PipeTransform {
+export class IsHasDoctorIdPipe implements PipeTransform {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform(value: any, metadata: ArgumentMetadata): any {
     try {
@@ -20,13 +20,10 @@ export class isHasDoctorIdPipe implements PipeTransform {
         return Array.isArray(value) ? value : [value];
       }
 
-      throw new HttpException(
-        'Missing parameter from isHasDoctorIdPipe',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('Missing parameter from IsHasDoctorIdPipe');
     } catch (error) {
       console.log(error);
-      throw error;
+      throw new InternalServerErrorException(error);
     }
   }
 }

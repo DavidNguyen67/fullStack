@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { exclude } from 'src/utils/function';
 import * as role from '../../../../utils/constants';
-import { UpdateDoctorsDto } from 'src/utils/dto/User.dto';
 
 @Injectable()
 export class DoctorsService {
@@ -218,38 +217,6 @@ export class DoctorsService {
         },
       });
       return !!users;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
-
-  async updateDoctors(payload: UpdateDoctorsDto | any) {
-    try {
-      const id = payload.id;
-      const isExist = !!(await this.getDoctors([id]));
-      if (!isExist)
-        throw new HttpException(
-          'Doctor(s) not found or invalid Role',
-          HttpStatus.NOT_FOUND,
-        );
-
-      payload = { ...payload, updateAt: new Date() };
-      payload.id && delete payload.id;
-
-      const user = await this.prisma.markdown.upsert({
-        where: {
-          doctorId: id,
-        },
-        update: payload,
-        create: payload,
-      });
-
-      if (user) return user;
-      throw new HttpException(
-        'Doctor(s) not found or invalid Role',
-        HttpStatus.NOT_FOUND,
-      );
     } catch (error) {
       console.log(error);
       throw error;

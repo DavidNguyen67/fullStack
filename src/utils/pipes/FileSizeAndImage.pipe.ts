@@ -2,8 +2,8 @@ import {
   PipeTransform,
   Injectable,
   ArgumentMetadata,
-  HttpException,
-  HttpStatus,
+  InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { MAX_FILE_SIZE } from 'src/utils/constants';
 import { calculateSizeBytes } from 'src/utils/function';
@@ -38,16 +38,13 @@ export class FileSizeAndImageValidationPipe implements PipeTransform {
       });
 
       if (!isValid) {
-        throw new HttpException(
-          'Invalid file type or size',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new BadRequestException('Invalid file type or size');
       }
 
       return value;
     } catch (error) {
       console.log(error);
-      throw error;
+      throw new InternalServerErrorException(error);
     }
   }
 }

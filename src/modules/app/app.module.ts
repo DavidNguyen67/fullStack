@@ -7,6 +7,8 @@ import { CrudModule } from '../crudUser/crud.module';
 import { allCodeModule } from '../allCode/allCode.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TimeoutInterceptor } from 'src/utils/interceptor/timeout.interceptor';
+import { MarkDownModule } from '../markDown/markdown.module';
+import { ScheduleModule } from '../schedule/Schedule.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { TimeoutInterceptor } from 'src/utils/interceptor/timeout.interceptor';
     AuthModule,
     CrudModule,
     allCodeModule,
+    MarkDownModule,
+    ScheduleModule,
   ],
   providers: [
     {

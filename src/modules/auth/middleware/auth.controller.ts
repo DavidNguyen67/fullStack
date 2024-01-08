@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import * as routes from './../../../utils/routes';
 import { LoginInterface } from 'src/utils/interfaces';
 import { AuthPipe } from './auth.pipe';
-import { GlobalRes } from 'src/utils/response.interface';
+import { GlobalRes } from 'src/utils/interfaces/response.interface';
 
 @Controller(`${routes.versionApi}/${routes.authPath}`)
 export class AuthController {

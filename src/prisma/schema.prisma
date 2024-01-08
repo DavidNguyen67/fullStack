@@ -90,7 +90,7 @@ model History {
 
 model Schedule {
   id         Int       @id @default(autoincrement())
-  currentNum Int
+  currentNum Int?
   maxNum     Int
   date       DateTime
   timeType   String

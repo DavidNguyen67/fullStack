@@ -1,26 +1,19 @@
 import {
-  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
-  Put,
   Query,
   UseInterceptors,
   UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
 import { DoctorsService } from '../services/doctors.service';
 import { FetchDoctorInterface } from 'src/utils/interfaces';
-import { IsHasDataInQueryOrBodyPipe } from '../pipes/IsHasDataInQueryOrBody.pipe';
-import { convertAnyStringArrToNumArrPipe } from '../pipes/convertAnyStringArrToNumArr.pipe';
-import { GlobalRes } from 'src/utils/response.interface';
+import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { FetchUsersInterceptor } from '../interceptor/fetchUser.interceptor';
-import { UpdateDoctorsDto } from 'src/utils/dto/User.dto';
-import { getMaxElement, processUserData } from 'src/utils/function';
-import { isHasDoctorIdPipe } from '../pipes/isHasDoctorId.pipe';
-import { IsIdHasNumberInStringPipe } from '../pipes/isHasNumberInString.pipe';
+import { getMaxElement } from 'src/utils/function';
+import { pipes } from '../pipes';
 
 @Controller(`${routes.versionApi}/${routes.crudDoctorPath}`)
 export class DoctorController {
@@ -28,7 +21,10 @@ export class DoctorController {
 
   @Get(routes.readRoute)
   @UseInterceptors(FetchUsersInterceptor)
-  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  @UsePipes(
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.convertAnyStringArrToNumArrPipe,
+  )
   async fetchDoctors(@Query() query: FetchDoctorInterface): Promise<GlobalRes> {
     try {
       const id = query?.id;
@@ -55,7 +51,10 @@ export class DoctorController {
 
   @Get(routes.readTopRoute)
   @UseInterceptors(FetchUsersInterceptor)
-  @UsePipes(IsHasDataInQueryOrBodyPipe, convertAnyStringArrToNumArrPipe)
+  @UsePipes(
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.convertAnyStringArrToNumArrPipe,
+  )
   async fetchTopDoctors(
     @Query() query: FetchDoctorInterface,
   ): Promise<GlobalRes> {
@@ -78,41 +77,11 @@ export class DoctorController {
     }
   }
 
-  @Put(routes.updateRoute)
-  @UsePipes(IsHasDataInQueryOrBodyPipe, isHasDoctorIdPipe)
-  async updateUsers(
-    @Body(new ValidationPipe({ transform: true })) body: UpdateDoctorsDto | any,
-  ) {
-    try {
-      const payload = processUserData(body);
-      if (payload.length > 0) {
-        let totalSuccessRecord = 0;
-        for (const item of payload) {
-          const response = await this.doctorsService.updateDoctors(item);
-
-          response && (totalSuccessRecord += 1);
-        }
-        if (totalSuccessRecord)
-          return {
-            statusCode: HttpStatus.OK,
-            data: totalSuccessRecord,
-          };
-      }
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Invalid data received',
-      };
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
   @Get(routes.readDetailRoute)
   @UsePipes(
-    IsHasDataInQueryOrBodyPipe,
-    convertAnyStringArrToNumArrPipe,
-    IsIdHasNumberInStringPipe,
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.convertAnyStringArrToNumArrPipe,
+    pipes.IsIdHasNumberInStringPipe,
   )
   async fetchDoctorDetail(
     @Query() query: FetchDoctorInterface,

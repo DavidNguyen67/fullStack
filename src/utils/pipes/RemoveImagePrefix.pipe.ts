@@ -2,8 +2,7 @@ import {
   ArgumentMetadata,
   Injectable,
   PipeTransform,
-  HttpException,
-  HttpStatus,
+  InternalServerErrorException,
 } from '@nestjs/common';
 
 @Injectable()
@@ -23,10 +22,7 @@ export class RemoveBase64PrefixPipe implements PipeTransform {
       return data;
     } catch (error) {
       console.log(error);
-      throw new HttpException(
-        'Failed to remove base64 prefix',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new InternalServerErrorException(error);
     }
   }
 }
