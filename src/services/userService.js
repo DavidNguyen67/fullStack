@@ -64,3 +64,16 @@ export const updateDoctorService = async (payload) => {
     payload
   );
 };
+export const updateMarkDownService = async (payload) => {
+  return await instance.put(
+    `/${constants.markdownPath}/${constants.updateRoute}`,
+    payload
+  );
+};
+
+export const createNewScheduleService = async (payload) => {
+  return await instance.post(
+    `/${constants.schedulePath}/${constants.createRoute}`,
+    payload
+  );
+};

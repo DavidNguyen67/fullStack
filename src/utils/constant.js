@@ -54,6 +54,8 @@ export const authPath = 'auth';
 export const crudUserPath = 'user';
 export const allCodePath = 'allCode';
 export const crudDoctorPath = 'doctor';
+export const schedulePath = 'schedule';
+export const markdownPath = 'markdown';
 
 export const loginRoute = 'login';
 export const readRoute = 'read';

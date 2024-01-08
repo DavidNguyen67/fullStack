@@ -6,9 +6,8 @@
     text-align: center;
     text-transform: uppercase;
   }
-  .pick-hour-container {
-    .btn-schedule {
-      display: inline-block;
+  .btn-schedule {
+    display: inline-block;
     font-weight: 400;
     line-height: 1.5;
     color: #212529;
@@ -23,11 +22,11 @@
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-      border: 1px solid gray;
-      &.active {
-        background-color: rgba(30, 143, 255, 0.4);
-      }
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    border: 1px solid gray;
+    &.active {
+      background-color: rgba(30, 143, 255, 0.4);
     }
   }
 }

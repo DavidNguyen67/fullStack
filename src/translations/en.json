@@ -35,7 +35,8 @@
     "doctor": {
       "introductoryInformation": "Introductory information",
       "SelectDoctor": "Select a doctor",
-      "SelectDate": "Choose date",
+      "SelectDate": "Choose a date",
+      "SelectTimeSchedule": "Choose a time schedule",
       "title": "CREATE MORE DOCTOR INFORMATION"
     }
   },
@@ -130,7 +131,9 @@
     "NotImageFile": "This is not a valid image",
     "contentMarkdownRequired": "ContentMarkdown is required!",
     "contentHTMLRequired": "ContentHTML is required!",
-    "selectDoctorIsRequired": "Doctor is missing!"
+    "selectDoctorIsRequired": "Doctor is missing!",
+    "selectDateIsRequired": "Date is missing",
+    "selectScheduleIsRequired": "Time schedule is missing"
   },
   "homePage": {
     "outStandingDoctor": "Last week top doctors",

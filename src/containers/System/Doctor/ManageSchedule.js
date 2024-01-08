@@ -6,6 +6,8 @@ import * as actions from './../../../store/actions';
 import Select from 'react-select';
 import * as constant from './../../../utils';
 import DatePicker from './../../../components/Input/DatePicker';
+import { toast } from 'react-toastify';
+import { createNewScheduleService } from '../../../services/userService';
 class ManageSchedule extends Component {
   constructor(props) {
     super(props);
@@ -15,6 +17,7 @@ class ManageSchedule extends Component {
       currentDate: null,
       timeSchedule: [],
       doctors: [],
+      selectedTime: [],
     };
   }
 
@@ -26,18 +29,61 @@ class ManageSchedule extends Component {
   };
 
   handleSave = async () => {
+    const { currentDate, selectedDoctor, selectedTime } = this.state;
+    const isValid = () => {
+      if (!selectedDoctor) {
+        toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
+        return false;
+      }
+      if (!currentDate) {
+        toast.error(<FormattedMessage id="toast.selectDateIsRequired" />);
+        return false;
+      }
+      if (selectedTime.length < 1) {
+        toast.error(<FormattedMessage id="toast.selectScheduleIsRequired" />);
+        return false;
+      }
+      return true;
+    };
+
+    if (!isValid) return;
+
+    const payload = {
+      date: currentDate,
+      doctorId: selectedDoctor?.value,
+      timeType: selectedTime?.map && selectedTime.map((item) => item.keyMap),
+    };
+    console.log('====================================');
+    console.log(this.props.userInfo);
+    console.log('====================================');
+
+    // filter the false value in payload
+    Object.keys(payload).forEach((key) => {
+      if (typeof new Date().getMonth === 'function') return;
+      if (Array.isArray(payload[key])) {
+        payload[key] = payload[key].filter(
+          (item) => item || Object.keys(item).length > 0
+        );
+        return;
+      }
+      if (Object.keys(payload[key]).length < 1) delete payload[key];
+    });
+
     this.setState((prevState) => ({
       ...prevState,
       isLoading: true,
     }));
-    console.log('====================================');
-    console.log(this.state);
-    console.log('====================================');
+    const response = await createNewScheduleService(payload);
     this.setState((prevState) => ({
       ...prevState,
       isLoading: false,
-      selectedTime: null,
+      selectedTime: [],
+      selectedDoctor: null,
     }));
+
+    console.log('====================================');
+    console.log(response);
+    console.log('====================================');
   };
 
   handleChangeDatePicker = ([date]) => {
@@ -55,11 +101,18 @@ class ManageSchedule extends Component {
     }
   };
 
-  handleSelectTime = (id) => {
-    this.setState((prevState) => ({
-      ...prevState,
-      selectedTime: id,
-    }));
+  handleSelectTime = (itemData) => {
+    this.setState((prevState) => {
+      const { selectedTime } = prevState;
+      const updatedSelected = selectedTime.includes(itemData)
+        ? selectedTime.filter((selectedId) => selectedId !== itemData)
+        : [...selectedTime, itemData];
+
+      return {
+        ...prevState,
+        selectedTime: updatedSelected,
+      };
+    });
   };
 
   async componentDidMount() {
@@ -116,11 +169,11 @@ class ManageSchedule extends Component {
       });
 
     return (
-      <div className="manage-schedule-container">
-        <div className="manage-schedule-title">
-          <FormattedMessage id={'manage-schedule.title'} />
-        </div>
-        <div className="container">
+      <div className="manage-schedule-container row">
+        <div className="col-12">
+          <div className="manage-schedule-title">
+            <FormattedMessage id={'manage-schedule.title'} />
+          </div>
           <div className="row">
             <div className="col-6 form-group">
               <label>
@@ -142,27 +195,32 @@ class ManageSchedule extends Component {
                 minDate={new Date()}
               />
             </div>
-            <div className="col-12 pick-hour-container my-4 d-flex flex-wrap row">
-              {timeSchedule.length > 0 &&
-                timeSchedule.map((item) => {
-                  return (
-                    <div key={item.id} className="col-3 mb-3">
-                      <button
-                        className={
-                          selectedTime === item.id
-                            ? `btn-schedule active w-100`
-                            : `btn-schedule w-100`
-                        }
-                        onClick={() => this.handleSelectTime(item.id)}
-                      >
-                        {lang === constant.LANGUAGES.VI
-                          ? item.valueVi
-                          : item.valueEn}
-                      </button>
-                    </div>
-                  );
-                })}
-            </div>
+          </div>
+          <div className="row mt-2">
+            <label>
+              <FormattedMessage id={'title.doctor.SelectTimeSchedule'} />
+            </label>
+            {timeSchedule.length > 0 &&
+              timeSchedule.map((item) => {
+                return (
+                  <div key={item.id} className="col-12 col-sm-6 col-lg-3 mb-3">
+                    <button
+                      className={
+                        selectedTime.includes(item)
+                          ? `btn-schedule active w-100`
+                          : `btn-schedule w-100`
+                      }
+                      onClick={() => this.handleSelectTime(item)}
+                    >
+                      {lang === constant.LANGUAGES.VI
+                        ? item.valueVi
+                        : item.valueEn}
+                    </button>
+                  </div>
+                );
+              })}
+          </div>
+          <div className="row">
             <div className="col-12">
               <button
                 className="btn btn-primary"
@@ -186,6 +244,7 @@ const mapStateToProps = (state) => {
     doctors: state.admin.doctors,
     lang: state.app.language,
     timeSchedule: state.admin.timeSchedule,
+    userInfo: state.user.userInfo,
   };
 };
 

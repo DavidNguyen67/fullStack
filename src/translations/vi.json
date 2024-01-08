@@ -42,6 +42,7 @@
       "introductoryInformation": "Thông tin giới thiệu",
       "SelectDoctor": "Chọn bác sĩ",
       "SelectDate": "Chọn ngày",
+      "SelectTimeSchedule": "Chọn giờ khám",
       "title": "TẠO THÊM THÔNG TÍN BÁC SĨ"
     }
   },
@@ -131,7 +132,9 @@
     "NotImageFile": "File ảnh không phù hợp",
     "contentHTMLRequired": "contentHTML không được bỏ trống",
     "contentMarkdownRequired": "contentMarkdown không được bỏ trống",
-    "selectDoctorIsRequired": "Chưa chọn bác sỹ"
+    "selectDoctorIsRequired": "Chưa chọn bác sỹ",
+    "selectDateIsRequired": "Chưa chọn ngày",
+    "selectScheduleIsRequired": "Chưa chọn giờ khám"
   },
   "homePage": {
     "outStandingDoctor": "Bác sĩ nổi bật tuần qua",

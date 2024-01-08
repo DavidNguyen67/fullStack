@@ -12,7 +12,7 @@ import * as constant from '../../../utils';
 import { toast } from 'react-toastify';
 import {
   getDoctorDetail,
-  updateDoctorService,
+  updateMarkDownService,
 } from '../../../services/userService';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
@@ -95,7 +95,7 @@ class ManageDoctor extends Component {
       ...prevState,
       isLoading: true,
     }));
-    const response = await updateDoctorService(payload);
+    const response = await updateMarkDownService(payload);
     this.setState((prevState) => ({
       ...prevState,
       isLoading: false,
