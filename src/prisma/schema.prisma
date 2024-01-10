@@ -46,16 +46,17 @@ model Markdown {
 }
 
 model AllCode {
-  id           Int       @id @default(autoincrement())
-  keyMap       String    @unique
+  id           Int        @id @default(autoincrement())
+  keyMap       String     @unique
   type         String
   valueEn      String
   valueVi      String
-  createAt     DateTime? @default(now())
-  updateAt     DateTime? @default(now())
-  genderUser   User[]    @relation("Gender")
-  positionUser User[]    @relation("Position")
-  roleUser     User[]    @relation("Role")
+  createAt     DateTime?  @default(now())
+  updateAt     DateTime?  @default(now())
+  genderUser   User[]     @relation("Gender")
+  positionUser User[]     @relation("Position")
+  roleUser     User[]     @relation("Role")
+  schedule     Schedule[] @relation("Schedule")
 }
 
 model Booking {
@@ -97,6 +98,7 @@ model Schedule {
   doctorId   Int
   createAt   DateTime? @default(now())
   updateAt   DateTime? @default(now())
+  time       AllCode   @relation("Schedule", fields: [timeType], references: [keyMap])
 }
 
 model Specialty {
@@ -109,8 +111,24 @@ model Specialty {
 }
 
 model doctor_clinic_specialty {
-  id          Int @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   doctorId    Int
   specialtyId Int
   clinicId    Int
+  createAt    DateTime @default(now())
+  updateAt    DateTime @default(now())
+}
+
+model Doctor_info {
+  id            Int      @id @default(autoincrement())
+  doctorId      Int
+  priceId       String
+  provindeId    String
+  paymentId     String
+  nameClinic    Json?
+  addressClinic Json?
+  note          String?
+  count         Int      @default(0)
+  createAt      DateTime @default(now())
+  updateAt      DateTime @default(now())
 }

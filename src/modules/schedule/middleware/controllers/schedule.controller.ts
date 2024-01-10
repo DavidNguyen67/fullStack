@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Post,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,6 +17,7 @@ import { Schedule } from '@prisma/client';
 import { IsHasFieldRequiredSchedulePipe } from '../pipes/IsHasFieldRequiredSchedule.pipe';
 import { HandleRawDataPipe } from '../pipes/HandleRawDataPipe.pipe';
 import { BookSchedulesDto } from 'src/utils/dto/schedule.dto';
+import { TimeStampToDatePipe } from '../pipes/TimeStampToDatePipe.pipe';
 
 @Controller(`${routes.versionApi}/${routes.schedulePath}`)
 export class ScheDuleController {
@@ -35,7 +38,30 @@ export class ScheDuleController {
       const payload: Schedule[] = body.map((item: any) => !!item && item);
       return {
         statusCode: HttpStatus.OK,
-        data: await this.scheduleService.createScheDule(payload),
+        data: await this.scheduleService.createSchedule(payload),
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get(routes.readRoute)
+  @UsePipes(
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.ExcludeIdFieldPipe,
+    pipes.IsHasDoctorIdPipe,
+    pipes.IsHasDatePipe,
+    TimeStampToDatePipe,
+  )
+  async readSchedules(@Query() query: any) {
+    try {
+      const [param] = query;
+      const { doctorId, date } = param;
+
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.scheduleService.getSchedule(+doctorId, date),
       };
     } catch (error) {
       console.log(error);

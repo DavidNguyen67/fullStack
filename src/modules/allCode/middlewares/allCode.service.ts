@@ -17,7 +17,7 @@ export class AllCodeService {
         : await this.prisma.allCode.findMany({
             take: 25,
           });
-      if (allCode.length < 0) throw new NotFoundException('Not found all code');
+      if (allCode.length < 1) throw new NotFoundException('Not found all code');
       return allCode;
     } catch (error) {
       console.log(error);

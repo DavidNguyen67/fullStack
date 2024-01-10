@@ -17,7 +17,7 @@ export class UsersService {
           id: 'asc',
         },
       });
-      if (users.length < 0)
+      if (users.length < 1)
         throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
 
       return users.map(
