@@ -3,7 +3,7 @@ import * as constants from './../utils';
 
 export const getAllUsersService = async (id = 'all') => {
   return await instance.get(
-    `/${constants.crudUserPath}/${constants.readRoute}?${constants.queryPrefixId}=${id}`
+    `/${constants.crudUserPath}/${constants.readRoute}?${constants.queryPrefix.id}=${id}`
   );
 };
 
@@ -16,7 +16,7 @@ export const createNewUserService = async (payload, file) => {
 
 export const deleteUsersService = async (id) => {
   return await instance.delete(
-    `/${constants.crudUserPath}/${constants.deleteRoute}?${constants.queryPrefixId}=${id}`
+    `/${constants.crudUserPath}/${constants.deleteRoute}?${constants.queryPrefix.id}=${id}`
   );
 };
 
@@ -36,25 +36,25 @@ export const handleLoginService = async (username, password) => {
 
 export const getAllCodeService = async (type) => {
   return await instance.get(
-    `${constants.allCodePath}/${constants.readRoute}?${constants.queryPrefixType}=${type}`
+    `${constants.allCodePath}/${constants.readRoute}?${constants.queryPrefix.type}=${type}`
   );
 };
 
 export const getTopDoctorService = async (limit) => {
   return await instance.get(
-    `/${constants.crudDoctorPath}/${constants.readTopRoute}?${constants.queryPrefixLimit}=${limit}`
+    `/${constants.crudDoctorPath}/${constants.readTopRoute}?${constants.queryPrefix.limit}=${limit}`
   );
 };
 
 export const getAllDoctorsService = async (id = 'all') => {
   return await instance.get(
-    `/${constants.crudDoctorPath}/${constants.readRoute}?${constants.queryPrefixId}=${id}`
+    `/${constants.crudDoctorPath}/${constants.readRoute}?${constants.queryPrefix.id}=${id}`
   );
 };
 
 export const getDoctorDetail = async (id) => {
   return await instance.get(
-    `/${constants.crudDoctorPath}/${constants.readDetailRoute}?${constants.queryPrefixId}=${id}`
+    `/${constants.crudDoctorPath}/${constants.readDetailRoute}?${constants.queryPrefix.id}=${id}`
   );
 };
 
@@ -75,5 +75,11 @@ export const createNewScheduleService = async (payload) => {
   return await instance.post(
     `/${constants.schedulePath}/${constants.createRoute}`,
     payload
+  );
+};
+
+export const getWeekDaysSchedule = async (doctorId, date) => {
+  return await instance.get(
+    `/${constants.schedulePath}/${constants.readRoute}?${constants.queryPrefix.doctorId}=${doctorId}&${constants.queryPrefix.date}=${date}`
   );
 };

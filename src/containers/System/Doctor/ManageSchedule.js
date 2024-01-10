@@ -8,6 +8,8 @@ import * as constant from './../../../utils';
 import DatePicker from './../../../components/Input/DatePicker';
 import { toast } from 'react-toastify';
 import { createNewScheduleService } from '../../../services/userService';
+import moment from 'moment';
+
 class ManageSchedule extends Component {
   constructor(props) {
     super(props);
@@ -30,23 +32,19 @@ class ManageSchedule extends Component {
 
   handleSave = async () => {
     const { currentDate, selectedDoctor, selectedTime } = this.state;
-    const isValid = () => {
-      if (!selectedDoctor) {
-        toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
-        return false;
-      }
-      if (!currentDate) {
-        toast.error(<FormattedMessage id="toast.selectDateIsRequired" />);
-        return false;
-      }
-      if (selectedTime.length < 1) {
-        toast.error(<FormattedMessage id="toast.selectScheduleIsRequired" />);
-        return false;
-      }
-      return true;
-    };
 
-    if (!isValid) return;
+    if (!selectedDoctor) {
+      toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
+      return;
+    }
+    if (!currentDate) {
+      toast.error(<FormattedMessage id="toast.selectDateIsRequired" />);
+      return;
+    }
+    if (selectedTime.length < 1) {
+      toast.error(<FormattedMessage id="toast.selectScheduleIsRequired" />);
+      return;
+    }
 
     const payload = {
       date: currentDate,
@@ -78,12 +76,20 @@ class ManageSchedule extends Component {
       ...prevState,
       isLoading: false,
       selectedTime: [],
-      selectedDoctor: null,
     }));
-
-    console.log('====================================');
-    console.log(response);
-    console.log('====================================');
+    if (response && response.statusCode === 200) {
+      toast.success(<FormattedMessage id={`toast.successBookSchedule`} />);
+    } else {
+      if (response.data.status === 409) {
+        toast.error(<FormattedMessage id={`toast.conflictSchedule`} />);
+        return;
+      }
+      if (response.data.status === 500) {
+        toast.error(<FormattedMessage id={`toast.InternalError`} />);
+        return;
+      }
+      toast.error(<FormattedMessage id={`toast.errorBookSchedule`} />);
+    }
   };
 
   handleChangeDatePicker = ([date]) => {
@@ -192,7 +198,7 @@ class ManageSchedule extends Component {
               <DatePicker
                 onChange={this.handleChangeDatePicker}
                 className="form-control"
-                minDate={new Date()}
+                minDate={new Date().setDate(new Date().getDate() - 1)}
               />
             </div>
           </div>

@@ -12,6 +12,9 @@ const initialState = {
   roles: [],
   positions: [],
   timeSchedule: [],
+  prices: [],
+  provinces: [],
+  payments: [],
 
   isLoading: false,
   isError: false,
@@ -113,6 +116,75 @@ const appReducer = (state = initialState, action) => {
         ...state,
         isSuccess: true,
         roles: action.payload,
+        isLoading: false,
+        isError: false,
+      };
+
+    case actionTypes.FETCH_PROVINCE_START:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: true,
+        isError: false,
+      };
+    case actionTypes.FETCH_PROVINCE_FAILED:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: false,
+        isError: true,
+      };
+    case actionTypes.FETCH_PROVINCE_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        provinces: action.payload,
+        isLoading: false,
+        isError: false,
+      };
+
+    case actionTypes.FETCH_PAYMENT_START:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: true,
+        isError: false,
+      };
+    case actionTypes.FETCH_PAYMENT_FAILED:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: false,
+        isError: true,
+      };
+    case actionTypes.FETCH_PAYMENT_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        payments: action.payload,
+        isLoading: false,
+        isError: false,
+      };
+
+    case actionTypes.FETCH_PRICE_START:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: true,
+        isError: false,
+      };
+    case actionTypes.FETCH_PRICE_FAILED:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: false,
+        isError: true,
+      };
+    case actionTypes.FETCH_PRICE_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        prices: action.payload,
         isLoading: false,
         isError: false,
       };

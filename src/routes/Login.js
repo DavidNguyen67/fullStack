@@ -19,6 +19,9 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.btnLogin = React.createRef();
+    this.state = {
+      isDisable: false,
+    };
   }
 
   initialState = {
@@ -56,9 +59,20 @@ class Login extends Component {
 
     if (username && password) {
       try {
+        this.setState((prevState) => ({
+          ...prevState,
+          isDisable: true,
+        }));
         const response = await handleLoginService(username, password);
-
-        if (!response)
+        this.setState((prevState) => ({
+          ...prevState,
+          isDisable: false,
+        }));
+        if (response.statusCode === 200) {
+          this.props.userLoginSuccess(response.data);
+          toast.success(<FormattedMessage id="toast.successLogin" />);
+          return;
+        }
         if (
           response.status === 500 ||
           response.data?.statusCode === 500 ||
@@ -68,11 +82,6 @@ class Login extends Component {
           return;
         }
 
-        if (!response.data?.error) {
-          this.props.userLoginSuccess(response.data);
-          toast.success(<FormattedMessage id="toast.successLogin" />);
-          return;
-        }
         toast.error(<FormattedMessage id="toast.failedLogin" />);
       } catch (error) {
         this.setState({ ...this.state, loginError: error.message });
@@ -104,7 +113,7 @@ class Login extends Component {
   }
 
   render() {
-    const { username, password, loginError } = this.state;
+    const { username, password, loginError, isDisable } = this.state;
     const { lang } = this.props;
 
     return (
@@ -157,6 +166,7 @@ class Login extends Component {
                 className="btn"
                 value={LanguageUtils.getMessageByKey('login.login', lang)}
                 onClick={this.processLogin}
+                disabled={isDisable}
               />
             </div>
           </div>

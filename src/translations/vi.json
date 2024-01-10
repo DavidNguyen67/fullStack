@@ -134,7 +134,10 @@
     "contentMarkdownRequired": "contentMarkdown không được bỏ trống",
     "selectDoctorIsRequired": "Chưa chọn bác sỹ",
     "selectDateIsRequired": "Chưa chọn ngày",
-    "selectScheduleIsRequired": "Chưa chọn giờ khám"
+    "selectScheduleIsRequired": "Chưa chọn giờ khám",
+    "successBookSchedule": "Đặt lịch khám thành công",
+    "errorBookSchedule": "Đặt lịch thất bại",
+    "conflictSchedule": "Đã có người đặt khám"
   },
   "homePage": {
     "outStandingDoctor": "Bác sĩ nổi bật tuần qua",
@@ -146,5 +149,14 @@
 
   "manage-schedule": {
     "title": "Quản lý kế hoạch khám bệnh của bác sỹ"
+  },
+  "scheduleDoctor": {
+    "NoData": "Không có lịch hẹn trong thời gian này, vui lòng chọn thời gian khác",
+    "schedule": "Lịch Khám",
+    "bookFree": {
+      "choose": "Chọn",
+      "bookFree": "và đặt (miễn phí)"
+    },
+    "test": "Chọn <i className='far fa-hand-point-up'></i> và đặt miễn phí"
   }
 }

@@ -85,6 +85,80 @@ export const fetchPositionStart = () => {
   };
 };
 
+export const fetchPriceStart = () => {
+  return async (dispatch, getState) => {
+    const fetchPriceSuccess = (payload) => {
+      return {
+        type: actionTypes.FETCH_PRICE_SUCCESS,
+        payload,
+      };
+    };
+    const fetchPriceFailed = () => ({
+      type: actionTypes.FETCH_PRICE_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.FETCH_PRICE_START });
+      const response = await getAllCodeService(constant.AllCodeType.PRICE);
+      if (response.data?.length > 0) dispatch(fetchPriceSuccess(response.data));
+      else dispatch(fetchPriceFailed());
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchPriceFailed());
+    }
+  };
+};
+
+export const fetchPaymentStart = () => {
+  return async (dispatch, getState) => {
+    const fetchPaymentSuccess = (payload) => {
+      return {
+        type: actionTypes.FETCH_PAYMENT_SUCCESS,
+        payload,
+      };
+    };
+    const fetchPaymentFailed = () => ({
+      type: actionTypes.FETCH_PAYMENT_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.FETCH_PAYMENT_START });
+      const response = await getAllCodeService(constant.AllCodeType.PAYMENT);
+      if (response.data?.length > 0)
+        dispatch(fetchPaymentSuccess(response.data));
+      else dispatch(fetchPaymentFailed());
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchPaymentFailed());
+    }
+  };
+};
+
+export const fetchProvinceStart = () => {
+  return async (dispatch, getState) => {
+    const fetchProvinceSuccess = (payload) => {
+      return {
+        type: actionTypes.FETCH_PROVINCE_SUCCESS,
+        payload,
+      };
+    };
+    const fetchProvinceFailed = () => ({
+      type: actionTypes.FETCH_PROVINCE_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.FETCH_PROVINCE_START });
+      const response = await getAllCodeService(constant.AllCodeType.PROVINCE);
+      if (response.data?.length > 0)
+        dispatch(fetchProvinceSuccess(response.data));
+      else dispatch(fetchProvinceFailed());
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchProvinceFailed());
+    }
+  };
+};
+
 export const createNewUser = (payload) => {
   return async (dispatch, getState) => {
     const createNewUserSuccess = () => {

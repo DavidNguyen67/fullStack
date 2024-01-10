@@ -24,6 +24,9 @@ export const AllCodeType = {
   ROLE: 'ROLE',
   POSITION: 'POSITION',
   TIME: 'TIME',
+  PRICE: 'PRICE',
+  PAYMENT: 'PAYMENT',
+  PROVINCE: 'PROVINCE',
 };
 
 export const dateFormat = {
@@ -65,6 +68,10 @@ export const updateRoute = 'update';
 export const deleteRoute = 'delete';
 export const createRoute = 'create';
 
-export const queryPrefixId = 'id';
-export const queryPrefixType = 'type';
-export const queryPrefixLimit = 'limit';
+export const queryPrefix = {
+  id: 'id',
+  type: 'type',
+  limit: 'limit',
+  doctorId: 'doctorId',
+  date: 'date',
+};

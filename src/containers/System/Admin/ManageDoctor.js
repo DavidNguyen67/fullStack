@@ -27,6 +27,17 @@ class ManageDoctor extends Component {
       description: '',
       hasOldData: false,
       isLoading: false,
+
+      prices: [],
+      payments: [],
+      provinces: [],
+
+      selectedProvince: '',
+      selectedPayment: '',
+      selectedPrice: '',
+      nameClinic: '',
+      addressClinic: '',
+      note: '',
     };
   }
   handleEditorChange = ({ html, text }) => {
@@ -188,33 +199,58 @@ class ManageDoctor extends Component {
 
   // IF get error at manageDoctor, check componentDidUpdate
   componentDidUpdate(prevProps) {
-    const { lang } = this.props;
+    const { lang, prices, provinces, payments } = this.props;
+    const updateState = {};
+
     if (prevProps.lang !== lang) {
-      this.setState(
-        (prevState) => ({
-          ...prevState,
-          selectedDoctor: {
-            ...prevState.selectedDoctor,
-            label:
-              lang === constant.LANGUAGES.EN
-                ? prevState.selectedDoctor?.labelEn
-                : prevState.selectedDoctor?.labelVi,
-          },
-        }),
-        () => console.log(this.state)
-      );
+      updateState.selectedDoctor = {
+        ...this.state.selectedDoctor,
+        label:
+          lang === constant.LANGUAGES.EN
+            ? this.state.selectedDoctor?.labelEn
+            : this.state.selectedDoctor?.labelVi,
+      };
     }
+
+    if (prevProps.prices !== prices) {
+      updateState.prices = prices;
+    }
+
+    if (prevProps.provinces !== provinces) {
+      updateState.provinces = provinces;
+    }
+
+    if (prevProps.payments !== payments) {
+      updateState.payments = payments;
+    }
+
+    if (Object.keys(updateState).length > 0)
+      this.setState((prevState) => ({
+        ...prevState,
+        ...updateState,
+      }));
   }
+
   //
 
   async componentDidMount() {
     await this.props.readAllDoctors();
+    await this.props.fetchProvinceStart();
+    await this.props.fetchPaymentStart();
+    await this.props.fetchPriceStart();
   }
 
   render() {
     let contentMarkdown = null;
     let description = null;
-    const { selectedDoctor, hasOldData, isLoading } = this.state;
+    const {
+      selectedDoctor,
+      hasOldData,
+      isLoading,
+      prices,
+      provinces,
+      payments,
+    } = this.state;
     const { doctors, lang } = this.props;
     if (lang === constant.LANGUAGES.VI) {
       contentMarkdown = this.state.contentMarkdown_VI;
@@ -239,13 +275,15 @@ class ManageDoctor extends Component {
         };
       });
 
+    console.log(prices, provinces, payments);
+
     return (
       <>
-        <div className="manage-doctor-container">
+        <div className="manage-doctor-container row">
           <div className="manage-doctor-title text-center my-4">
             <FormattedMessage id={'title.doctor.title'} />
           </div>
-          <div className="more-info mb-4 d-flex">
+          <div className="more-info mb-4">
             <div className="row col-12">
               <div className="content-left form-group col-5">
                 <label>
@@ -255,6 +293,9 @@ class ManageDoctor extends Component {
                   value={selectedDoctor}
                   onChange={this.handleChange}
                   options={listDoctors}
+                  placeholder={
+                    <FormattedMessage id={'title.doctor.SelectDoctor'} />
+                  }
                 />
               </div>
               <div className="content-right form-group col-7">
@@ -272,26 +313,58 @@ class ManageDoctor extends Component {
               </div>
             </div>
           </div>
-          <div className="manage-doctor-editor">
-            <MdEditor
-              style={{ height: '500px' }}
-              renderHTML={(text) => mdParser.render(text)}
-              onChange={this.handleEditorChange}
-              value={contentMarkdown}
-            />
+          <div className="more-info-extract row">
+            <div className="col-4 mb-2 form-group">
+              <label>Chon gia</label>
+              <input className="form-control" />
+            </div>
+            <div className="col-4 mb-2 form-group">
+              <label>Chon gia</label>
+              <input className="form-control" />
+            </div>
+            <div className="col-4 mb-2 form-group">
+              <label>Chon gia</label>
+              <input className="form-control" />
+            </div>
+            <div className="col-4 mb-2 form-group">
+              <label>Chon gia</label>
+              <input className="form-control" />
+            </div>
+            <div className="col-4 mb-2 form-group">
+              <label>Chon gia</label>
+              <input className="form-control" />
+            </div>
+            <div className="col-4 mb-2 form-group">
+              <label>Chon gia</label>
+              <input className="form-control" />
+            </div>
+            <div className="my-2" />
           </div>
-          <div className="my-4" />
-          <button
-            className="btn btn-primary save-content-markdown"
-            onClick={this.handleSaveContentMarkdown}
-            disabled={isLoading}
-          >
-            {hasOldData ? (
-              <FormattedMessage id={'button.save'} />
-            ) : (
-              <FormattedMessage id={'button.create'} />
-            )}
-          </button>
+          <div className="manage-doctor-editor row">
+            <div className="col-12">
+              <MdEditor
+                style={{ height: '500px' }}
+                renderHTML={(text) => mdParser.render(text)}
+                onChange={this.handleEditorChange}
+                value={contentMarkdown}
+              />
+            </div>
+          </div>
+          <div className="row" />
+          <div className="my-2" />
+          <div className="col-6">
+            <button
+              className="btn btn-primary save-content-markdown"
+              onClick={this.handleSaveContentMarkdown}
+              disabled={isLoading}
+            >
+              {hasOldData ? (
+                <FormattedMessage id={'button.save'} />
+              ) : (
+                <FormattedMessage id={'button.create'} />
+              )}
+            </button>
+          </div>
         </div>
       </>
     );
@@ -305,6 +378,10 @@ const mapStateToProps = (state) => {
     isErrorUpdateDoctor: state.admin.isErrorUpdateDoctor,
     isSuccessUpdateDoctor: state.admin.isSuccessUpdateDoctor,
     statusCode: state.admin.statusCode,
+
+    prices: state.admin.prices,
+    provinces: state.admin.provinces,
+    payments: state.admin.payments,
   };
 };
 
@@ -312,6 +389,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     readAllDoctors: () => dispatch(actions.readAllDoctors()),
     updateDoctor: (payload) => dispatch(actions.updateDoctor(payload)),
+    fetchProvinceStart: () => dispatch(actions.fetchProvinceStart()),
+    fetchPaymentStart: () => dispatch(actions.fetchPaymentStart()),
+    fetchPriceStart: () => dispatch(actions.fetchPriceStart()),
   };
 };
 

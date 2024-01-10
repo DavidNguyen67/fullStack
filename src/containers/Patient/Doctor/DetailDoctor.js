@@ -5,6 +5,7 @@ import HomeHeader from '../../HomePage/HomeHeader';
 import './DetailDoctor.scss';
 import { getDoctorDetail } from '../../../services/userService';
 import * as constant from './../../../utils';
+import DoctorSchedule from '../../System/Doctor/DoctorSchedule';
 
 class DetailDoctor extends Component {
   constructor(props) {
@@ -77,7 +78,12 @@ class DetailDoctor extends Component {
               </div>
             </div>
           </div>
-          <div className="schedule-doctor"></div>
+          <div className="schedule-doctor row">
+            <div className="content-left col-12 col-lg-6">
+              <DoctorSchedule />
+            </div>
+            <div className="content-right col-12 col-lg-6"></div>
+          </div>
           <div className="detail-info-doctor">
             <div
               dangerouslySetInnerHTML={{

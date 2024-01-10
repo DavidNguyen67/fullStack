@@ -26,14 +26,13 @@ class HomeHeader extends Component {
         <div className="home-header-container">
           <div className="home-header-content">
             <div className="left-content">
-              <i className="fas fa-bars"></i>
+              {/* <i className="fas fa-bars"></i> */}
               <div className="mx-1" />
               <div
                 className="logo d-flex align-items-center"
                 onClick={this.returnToHome}
                 style={{ cursor: 'pointer' }}
               >
-                <img src={logo} alt="" style={{ width: '20%' }} />
                 <h3>React</h3>
               </div>
             </div>

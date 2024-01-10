@@ -133,7 +133,10 @@
     "contentHTMLRequired": "ContentHTML is required!",
     "selectDoctorIsRequired": "Doctor is missing!",
     "selectDateIsRequired": "Date is missing",
-    "selectScheduleIsRequired": "Time schedule is missing"
+    "selectScheduleIsRequired": "Time schedule is missing",
+    "successBookSchedule": "Success to schedule",
+    "errorBookSchedule": "Failed to schedule",
+    "conflictSchedule": "Already scheduled"
   },
   "homePage": {
     "outStandingDoctor": "Last week top doctors",
@@ -144,5 +147,14 @@
 
   "manage-schedule": {
     "title": "Manage doctor's medical examination"
+  },
+  "scheduleDoctor": {
+    "NoData": "There are no appointments available during this time, please choose another time",
+    "schedule": "medical examination schedule",
+    "bookFree": {
+      "choose": "Choose",
+      "bookFree": "book free"
+    },
+    "test": "Chọn <i className='far fa-hand-point-up'></i> và đặt miễn phí"
   }
 }
