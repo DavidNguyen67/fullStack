@@ -36,7 +36,7 @@ class UserManage extends Component {
   }
 
   async componentDidMount() {
-    const response = await this.props.readUsers();
+    const response = await this.props.readUsers(false);
     this.setState((prevState) => ({
       ...prevState,
       response,

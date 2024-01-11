@@ -57,6 +57,7 @@
     "cancel": "Hủy",
     "copy": "Sao chép",
     "back": "Quay lại",
+    "book": "Đặt",
     "addRow": "Thêm hàng",
     "removeRow": "Xóa hàng"
   },
@@ -84,18 +85,21 @@
     }
   },
   "manage-user": {
+    "name": "Họ tên",
     "add": "Thêm mới",
     "password": "Mật khẩu",
     "firstName": "Tên",
     "lastName": "Họ",
     "phoneNumber": "Số điện thoại",
     "address": "Địa chỉ",
+    "who": "Đặt cho?",
     "gender": "Giới tính",
     "position": "Chức danh",
     "role": "Vai trò",
     "image": "Ảnh đại diện",
     "save": "Lưu",
-    "email": "Email",
+    "reason": "Lý do khám bệnh",
+    "email": "Địa chỉ Email",
     "emailPlaceholder": "Nhập địa chỉ email",
     "passwordPlaceholder": "Nhập mật khẩu",
     "firstNamePlaceholder": "Nhập tên",
@@ -183,5 +187,16 @@
     "nameClinic": "Tên phòng khám",
     "addressClinic": "Địa chỉ phòng khám",
     "note": "Ghi chú"
+  },
+  "clinic": {
+    "address": "ĐỊA CHỈ KHÁM",
+    "cost": "GIÁ KHÁM",
+    "costInfo": "Giá khám đã bao gồm phí đặt lịch hẹn trước (Giá niêm yết của phòng khám)",
+    "PaymentMethod": "Người bệnh có thể thanh toán chi phí bằng hình thức",
+    "more": "Xem thêm",
+    "hide": "Ẩn"
+  },
+  "profileDoctor": {
+    "free": "Miễn phí đặt lịch"
   }
 }

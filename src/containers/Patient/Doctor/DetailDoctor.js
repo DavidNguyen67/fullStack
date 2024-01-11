@@ -100,7 +100,7 @@ class DetailDoctor extends Component {
               <DoctorSchedule />
             </div>
             <div className="content-right col-12 col-lg-6">
-              <ExtraInfo />
+              <ExtraInfo info={doctor.doctorInfo} />
             </div>
           </div>
           <div className="detail-info-doctor">

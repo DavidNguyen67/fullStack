@@ -60,10 +60,12 @@ export const crudDoctorPath = 'doctor';
 export const schedulePath = 'schedule';
 export const markdownPath = 'markdown';
 export const doctorInfo = `${crudDoctorPath}Info`;
+export const patientPath = 'patient';
 
 export const loginRoute = 'login';
 export const readRoute = 'read';
 export const readDetailRoute = 'read/detail';
+export const readCommonRoute = 'read/common';
 export const readTopRoute = 'top/read';
 export const updateRoute = 'update';
 export const deleteRoute = 'delete';

@@ -90,3 +90,8 @@ export const createUpdateNewDoctorInfo = async (payload) => {
     payload
   );
 };
+export const readProfileDoctor = async (id) => {
+  return await instance.get(
+    `/${constants.crudDoctorPath}/${constants.readCommonRoute}?${constants.queryPrefix.id}=${id}`
+  );
+};

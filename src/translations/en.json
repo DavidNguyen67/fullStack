@@ -57,6 +57,7 @@
     "cancel": "Cancel",
     "copy": "Copy",
     "back": "Back",
+    "book": "Book",
     "addRow": "Add Row",
     "removeRow": "Remove Row"
   },
@@ -84,6 +85,7 @@
     }
   },
   "manage-user": {
+    "name": "Full name",
     "add": "Add User",
     "password": "Password",
     "firstName": "First Name",
@@ -92,6 +94,8 @@
     "address": "Address",
     "gender": "Gender",
     "position": "Position",
+    "who": "Book for?",
+    "reason": "Reason for booking",
     "role": "Role",
     "image": "Avatar",
     "save": "Save",
@@ -180,5 +184,16 @@
     "nameClinic": "Clinic Name",
     "addressClinic": "Clinic Address",
     "note": "Note"
+  },
+  "clinic": {
+    "address": "EXAMINATION ADDRESS",
+    "cost": "EXAMINATION PRICE",
+    "costInfo": "Examination price includes advance appointment fee (clinic's listed price)",
+    "PaymentMethod": "Patients can pay costs in form",
+    "more": "More",
+    "hide": "Hide"
+  },
+  "profileDoctor": {
+    "free": "Free to book"
   }
 }

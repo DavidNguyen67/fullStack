@@ -8,13 +8,15 @@ import * as constants from './../../../utils';
 import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
 import * as services from './../../../services';
 import { FormattedMessage } from 'react-intl';
-
+import BookingModal from '../../Patient/Doctor/Modal/BookingModal';
 class DoctorSchedule extends Component {
   constructor(props) {
     super(props);
     this.state = {
       allDay: [],
       allAvailableTime: [],
+      isShow: false,
+      dataTime: null,
     };
   }
 
@@ -84,69 +86,97 @@ class DoctorSchedule extends Component {
     const date = event.target.value;
     await this.fetchSchedule(date);
   };
+
+  handleBook = (item) => {
+    this.toggleModal();
+    this.setState((prevState) => ({
+      ...prevState,
+      dataTime: item,
+    }));
+  };
+
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      ...prevState,
+      isShow: !prevState.isShow,
+    }));
+  };
   render() {
-    const { allDay, allAvailableTime } = this.state;
+    const { allDay, allAvailableTime, isShow, dataTime } = this.state;
     const { lang } = this.props;
-    const currentTime = Math.floor(Date.now() / 1000);
 
     return (
-      <div className="doctor-schedule-container row">
-        <div className="all-schedule col-12 col-md-6">
-          <select
-            onChange={this.handleSelectWeekDays}
-            className="text-capitalize form-select"
-          >
-            {allDay.length > 0 &&
-              allDay.map((day) => {
-                return (
-                  <option key={day.value} value={day.value}>
-                    {day.label}
-                  </option>
-                );
-              })}
-          </select>
-        </div>
-        <div className="all-available-time">
-          <div className="text-calendar">
-            <i className="fas fa-calendar-alt my-3">
-              <span className="text-uppercase mx-2">
-                <FormattedMessage id={'scheduleDoctor.schedule'} />
-              </span>
-            </i>
-          </div>
-          <div className="time-content">
-            {allAvailableTime.length > 0 ? (
-              <div className="row">
-                {allAvailableTime.map((item) => {
-                  const timeDisplay =
-                    lang === constants.LANGUAGES.EN
-                      ? item.time?.valueEn
-                      : item.time?.valueVi;
+      <>
+        <div className="doctor-schedule-container row">
+          <div className="all-schedule col-12 col-md-6">
+            <select
+              onChange={this.handleSelectWeekDays}
+              className="text-capitalize form-select"
+            >
+              {allDay.length > 0 &&
+                allDay.map((day) => {
                   return (
-                    <div
-                      className="col-12 col-sm-6 col-md-4 my-2"
-                      key={item.id}
-                    >
-                      <button className="btn col-12">{timeDisplay}</button>
-                    </div>
+                    <option key={day.value} value={day.value}>
+                      {day.label}
+                    </option>
                   );
                 })}
-                <div className="book-free">
-                  <span>
-                    <FormattedMessage id={'scheduleDoctor.bookFree.choose'} />{' '}
-                    <i className="far fa-hand-point-up" />{' '}
-                    <FormattedMessage id={'scheduleDoctor.bookFree.bookFree'} />
-                  </span>
+            </select>
+          </div>
+          <div className="all-available-time">
+            <div className="text-calendar">
+              <i className="fas fa-calendar-alt my-3">
+                <span className="text-uppercase mx-2">
+                  <FormattedMessage id={'scheduleDoctor.schedule'} />
+                </span>
+              </i>
+            </div>
+            <div className="time-content">
+              {allAvailableTime.length > 0 ? (
+                <div className="row">
+                  {allAvailableTime.map((item) => {
+                    const timeDisplay =
+                      lang === constants.LANGUAGES.EN
+                        ? item.time?.valueEn
+                        : item.time?.valueVi;
+                    return (
+                      <div
+                        className="col-12 col-sm-6 col-md-4 my-2"
+                        key={item.id}
+                      >
+                        <button
+                          className="btn col-12"
+                          onClick={() => this.handleBook(item)}
+                        >
+                          {timeDisplay}
+                        </button>
+                      </div>
+                    );
+                  })}
+                  <div className="book-free">
+                    <span>
+                      <FormattedMessage id={'scheduleDoctor.bookFree.choose'} />{' '}
+                      <i className="far fa-hand-point-up" />{' '}
+                      <FormattedMessage
+                        id={'scheduleDoctor.bookFree.bookFree'}
+                      />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="col-12">
-                <FormattedMessage id={'scheduleDoctor.NoData'} />
-              </div>
-            )}
+              ) : (
+                <div className="col-12">
+                  <FormattedMessage id={'scheduleDoctor.NoData'} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+        <BookingModal
+          isShow={isShow}
+          toggleModal={this.toggleModal}
+          dataTime={dataTime}
+        />
+      </>
     );
   }
 }
