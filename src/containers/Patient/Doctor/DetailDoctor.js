@@ -6,6 +6,7 @@ import './DetailDoctor.scss';
 import { getDoctorDetail } from '../../../services/userService';
 import * as constant from './../../../utils';
 import DoctorSchedule from '../../System/Doctor/DoctorSchedule';
+import ExtraInfo from './ExtraInfo';
 
 class DetailDoctor extends Component {
   constructor(props) {
@@ -21,22 +22,35 @@ class DetailDoctor extends Component {
 
     if (id)
       if (doctor.length < 1) {
-        const response = await getDoctorDetail(id);
-        if (response.data)
-          if (!response.data.message && !response.data.error) {
-            this.setState((prevState) => ({
-              ...prevState,
-              doctor: response.data,
-            }));
-          }
+        await this.fetchDoctorDetails(id);
       }
   }
 
-  async componentDidUpdate(prevProps, prevState) {}
+  async componentDidUpdate(prevProps, prevState) {
+    const { id: newId } = this.props.match?.params;
+    const { id: prevId } = prevProps.match?.params;
+
+    if (newId !== prevId) {
+      await this.fetchDoctorDetails(newId);
+    }
+  }
+
+  async fetchDoctorDetails(id) {
+    if (id) {
+      const response = await getDoctorDetail(id);
+      if (response.data && !response.data.message && !response.data.error) {
+        this.setState((prevState) => ({
+          ...prevState,
+          doctor: response.data,
+        }));
+      }
+    }
+  }
 
   render() {
     const { doctor } = this.state;
     const { lang } = this.props;
+
     if (Object.keys(doctor).length < 1) {
       return <>No data</>;
     }
@@ -79,10 +93,15 @@ class DetailDoctor extends Component {
             </div>
           </div>
           <div className="schedule-doctor row">
-            <div className="content-left col-12 col-lg-6">
+            <div
+              className="content-left col-12 col-lg-6"
+              style={{ borderRight: '1px solid black' }}
+            >
               <DoctorSchedule />
             </div>
-            <div className="content-right col-12 col-lg-6"></div>
+            <div className="content-right col-12 col-lg-6">
+              <ExtraInfo />
+            </div>
           </div>
           <div className="detail-info-doctor">
             <div

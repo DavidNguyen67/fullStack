@@ -83,3 +83,10 @@ export const getWeekDaysSchedule = async (doctorId, date) => {
     `/${constants.schedulePath}/${constants.readRoute}?${constants.queryPrefix.doctorId}=${doctorId}&${constants.queryPrefix.date}=${date}`
   );
 };
+
+export const createUpdateNewDoctorInfo = async (payload) => {
+  return await instance.put(
+    `/${constants.doctorInfo}/${constants.updateRoute}`,
+    payload
+  );
+};

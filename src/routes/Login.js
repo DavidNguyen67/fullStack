@@ -73,11 +73,11 @@ class Login extends Component {
           toast.success(<FormattedMessage id="toast.successLogin" />);
           return;
         }
-        if (
-          response.status === 500 ||
-          response.data?.statusCode === 500 ||
-          response.statusCode === 500
-        ) {
+        if (response.data?.statusCode === 401 || response.statusCode === 401) {
+          toast.error(<FormattedMessage id={`toast.wrongInfo`} />);
+          return;
+        }
+        if (response.data?.statusCode === 500 || response.statusCode === 500) {
           toast.error(<FormattedMessage id={`toast.InternalError`} />);
           return;
         }
@@ -134,7 +134,7 @@ class Login extends Component {
                 name="username"
                 type="text"
                 className="form-control"
-                value={username}
+                value={username || ''}
                 onChange={this.onUsernameChange}
               />
             </div>
@@ -149,7 +149,7 @@ class Login extends Component {
                 name="password"
                 type="password"
                 className="form-control"
-                value={password}
+                value={password || ''}
                 onChange={this.onPasswordChange}
               />
             </div>

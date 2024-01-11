@@ -424,6 +424,8 @@ function ModalUser(props) {
 
   const { modal, toggleModal, typeModal } = props;
 
+  console.log(props);
+
   return (
     <>
       <Modal
@@ -567,6 +569,7 @@ function ModalUser(props) {
                   name="gender"
                   onChange={handleChangeInput.genderKey}
                 >
+                  <option>-----</option>
                   {genders?.length > 0 &&
                     genders.map((item, index) => (
                       <option
@@ -592,18 +595,21 @@ function ModalUser(props) {
                   name="position"
                   onChange={handleChangeInput.positionKey}
                 >
+                  <option>-----</option>
                   {positions?.length > 0 &&
-                    positions.map((item, index) => (
-                      <option
-                        key={item.id}
-                        defaultChecked={item.key === positionId}
-                        value={item.keyMap}
-                      >
-                        {lang.toLowerCase() === 'en'
-                          ? item.valueEn
-                          : item.valueVi}
-                      </option>
-                    ))}
+                    positions.map((item, index) => {
+                      return (
+                        <option
+                          key={item.id}
+                          defaultChecked={item.key === positionId}
+                          value={item.keyMap}
+                        >
+                          {lang.toLowerCase() === 'en'
+                            ? item.valueEn
+                            : item.valueVi}
+                        </option>
+                      );
+                    })}
                 </select>
               </div>
               <div className="form-group col-6 col-lg-4 position-relative">
@@ -617,6 +623,7 @@ function ModalUser(props) {
                   name="role"
                   onChange={handleChangeInput.roleKey}
                 >
+                  <option>-----</option>
                   {roles?.length > 0 &&
                     roles.map((item, index) => {
                       return (

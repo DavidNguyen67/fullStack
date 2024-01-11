@@ -59,6 +59,7 @@ export const allCodePath = 'allCode';
 export const crudDoctorPath = 'doctor';
 export const schedulePath = 'schedule';
 export const markdownPath = 'markdown';
+export const doctorInfo = `${crudDoctorPath}Info`;
 
 export const loginRoute = 'login';
 export const readRoute = 'read';

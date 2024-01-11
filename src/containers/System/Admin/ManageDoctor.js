@@ -10,10 +10,7 @@ import Select from 'react-select';
 import * as actions from '../../../store/actions';
 import * as constant from '../../../utils';
 import { toast } from 'react-toastify';
-import {
-  getDoctorDetail,
-  updateMarkDownService,
-} from '../../../services/userService';
+import * as services from '../../../services/userService';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 class ManageDoctor extends Component {
@@ -64,55 +61,95 @@ class ManageDoctor extends Component {
       description_VI,
       description_EN,
       selectedDoctor,
+      selectedProvince,
+      selectedPayment,
+      selectedPrice,
+      nameClinic,
+      addressClinic,
+      note,
     } = this.state;
-    const payload = {
+
+    const filterEmptyValues = (obj) =>
+      Object.fromEntries(
+        Object.entries(obj).filter(
+          ([key, value]) =>
+            value !== undefined && value !== null && value !== ''
+        )
+      );
+    const doctorId = selectedDoctor?.value;
+
+    const payloadMarkDown = filterEmptyValues({
       contentHTML_EN,
       contentMarkdown_EN,
       contentHTML_VI,
       contentMarkdown_VI,
       description_VI,
       description_EN,
-      doctorId: selectedDoctor?.value,
-    };
-    for (const key of Object.keys(payload)) {
-      if (!payload[key]) delete payload[key];
-    }
+      doctorId,
+    });
 
-    if (!payload.doctorId) {
+    const payloadDoctorInfo = filterEmptyValues({
+      provinceId: selectedProvince?.value,
+      paymentId: selectedPayment?.value,
+      priceId: selectedPrice?.value,
+      nameClinic,
+      addressClinic,
+      note,
+      doctorId,
+    });
+
+    if (!doctorId) {
       toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
       return;
     }
+
     const { lang } = this.props;
     if (lang === constant.LANGUAGES.EN) {
-      if (!payload.contentHTML_EN) {
+      if (!payloadMarkDown.contentHTML_EN) {
         toast.error(<FormattedMessage id="toast.contentHTMLRequired" />);
         return;
       }
-      if (!payload.contentMarkdown_EN) {
-        toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
+      if (!payloadMarkDown.contentMarkdown_EN) {
+        toast.error(<FormattedMessage id="toast.contentMarkdownRequired" />);
         return;
       }
     } else {
-      if (!payload.contentHTML_VI) {
+      if (!payloadMarkDown.contentHTML_VI) {
         toast.error(<FormattedMessage id="toast.contentHTMLRequired" />);
         return;
       }
-      if (!payload.contentMarkdown_VI) {
-        toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
+      if (!payloadMarkDown.contentMarkdown_VI) {
+        toast.error(<FormattedMessage id="toast.contentMarkdownRequired" />);
         return;
       }
+    }
+    if (!payloadDoctorInfo.priceId) {
+      toast.error(<FormattedMessage id="toast.PriceRequired" />);
+      return;
+    }
+    if (!payloadDoctorInfo.paymentId) {
+      toast.error(<FormattedMessage id="toast.PaymentMethodRequired" />);
+      return;
+    }
+    if (!payloadDoctorInfo.provinceId) {
+      toast.error(<FormattedMessage id="toast.ProvinceRequired" />);
+      return;
     }
     this.setState((prevState) => ({
       ...prevState,
       isLoading: true,
     }));
-    const response = await updateMarkDownService(payload);
+    const response = await services.updateMarkDownService(payloadMarkDown);
+    const res = await services.createUpdateNewDoctorInfo(payloadDoctorInfo);
     this.setState((prevState) => ({
       ...prevState,
       isLoading: false,
     }));
 
-    if (response.statusCode && response.data) {
+    if (
+      (response.statusCode === 200 || response.data?.statusCode === 200) &&
+      (res.statusCode === 200 || res.data?.statusCode === 200)
+    ) {
       toast.success(
         <FormattedMessage
           id="toast.successUpdateDoctor"
@@ -124,19 +161,40 @@ class ManageDoctor extends Component {
       );
       this.setState((prevState) => ({
         ...prevState,
-        selectedDoctor: '',
-        contentHTML_VI: '',
-        contentMarkdown_VI: '',
         contentHTML_EN: '',
         contentMarkdown_EN: '',
         description_VI: '',
         description_EN: '',
         selectedOption: '',
+        contentHTML: '',
+        contentMarkdown: '',
+        description: '',
+
+        selectedProvince: '',
+        selectedPayment: '',
+        selectedPrice: '',
+        nameClinic: '',
+        addressClinic: '',
+        note: '',
       }));
       await this.props.readAllDoctors();
     } else {
-      if (response.statusCode === 500) {
+      if (
+        response.statusCode === 500 ||
+        response.data?.statusCode === 500 ||
+        res.statusCode === 500 ||
+        res.data?.statusCode === 500
+      ) {
         toast.error(<FormattedMessage id={`toast.InternalError`} />);
+        return;
+      }
+      if (
+        response.statusCode === 400 ||
+        response.data?.statusCode === 400 ||
+        res.statusCode === 400 ||
+        res.data?.statusCode === 400
+      ) {
+        toast.error(<FormattedMessage id={`toast.BadRequest`} />);
         return;
       }
       toast.error(
@@ -152,36 +210,107 @@ class ManageDoctor extends Component {
 
     return;
   };
-  handleChange = async (selectedDoctor) => {
-    const response = await getDoctorDetail(selectedDoctor.value);
+  handleChange = {
+    doctor: async (selectedDoctor) => {
+      const response = await services.getDoctorDetail(selectedDoctor.value);
 
-    let newState = { selectedDoctor };
+      let newState = { selectedDoctor };
 
-    if (response.data) {
-      newState = {
-        ...newState,
-        doctor: response.data,
-      };
-      const { markDown } = response.data;
-      if (this.props.lang === constant.LANGUAGES.VI) {
+      if (response.data) {
         newState = {
           ...newState,
-          description_VI: markDown?.description_VI || '',
-          contentHTML_VI: markDown?.contentHTML_VI || '',
-          contentMarkdown_VI: markDown?.contentMarkdown_VI || '',
-          hasOldData: !!markDown?.contentHTML_VI,
+          doctor: response.data,
         };
-      } else
+        const { markDown, doctorInfo } = response.data;
         newState = {
           ...newState,
-          description_EN: markDown?.description_EN || '',
-          contentHTML_EN: markDown?.contentHTML_EN || '',
-          contentMarkdown_EN: markDown?.contentMarkdown_EN || '',
-          hasOldData: !!markDown?.contentHTML_EN,
+          addressClinic: doctorInfo?.addressClinic || '',
+          nameClinic: doctorInfo?.nameClinic || '',
+          note: doctorInfo?.note || '',
         };
-    }
+        console.log(doctorInfo);
+        if (this.props.lang === constant.LANGUAGES.VI) {
+          newState = {
+            ...newState,
+            description_VI: markDown?.description_VI || '',
+            contentHTML_VI: markDown?.contentHTML_VI || '',
+            contentMarkdown_VI: markDown?.contentMarkdown_VI || '',
+            hasOldData: !!markDown?.contentHTML_VI || '',
 
-    this.setState(newState);
+            selectedPayment: {
+              label: doctorInfo?.paymentInfo.valueVi,
+              value: doctorInfo?.paymentInfo.keyMap,
+            },
+            selectedProvince: {
+              label: doctorInfo?.provinceInfo.valueVi,
+              value: doctorInfo?.provinceInfo.keyMap,
+            },
+            selectedPrice: {
+              label: `${doctorInfo?.priceInfo.valueVi} VND`,
+              value: doctorInfo?.priceInfo.keyMap,
+            },
+          };
+        } else
+          newState = {
+            ...newState,
+            description_EN: markDown?.description_EN || '',
+            contentHTML_EN: markDown?.contentHTML_EN || '',
+            contentMarkdown_EN: markDown?.contentMarkdown_EN || '',
+            hasOldData: !!markDown?.contentHTML_EN || '',
+
+            selectedPayment: {
+              label: doctorInfo?.paymentInfo.valueEn,
+              value: doctorInfo?.paymentInfo.keyMap,
+            },
+            selectedProvince: {
+              label: doctorInfo?.provinceInfo.valueEn,
+              value: doctorInfo?.provinceInfo.keyMap,
+            },
+            selectedPrice: {
+              label: `$ ${doctorInfo?.priceInfo.valueEn}`,
+              value: doctorInfo?.priceInfo.keyMap,
+            },
+          };
+      }
+
+      this.setState(newState);
+    },
+    price: (selectedPrice) => {
+      this.setState((prevState) => ({
+        ...prevState,
+        selectedPrice: selectedPrice,
+      }));
+    },
+    payment: (selectedPayment) => {
+      this.setState((prevState) => ({
+        ...prevState,
+        selectedPayment: selectedPayment,
+      }));
+    },
+    province: (selectedProvince) => {
+      this.setState((prevState) => ({
+        ...prevState,
+        selectedProvince: selectedProvince,
+      }));
+    },
+    nameClinic: (event) => {
+      this.setState((prevState) => ({
+        ...prevState,
+        nameClinic: event.target.value,
+      }));
+    },
+    addressClinic: (event) => {
+      this.setState((prevState) => ({
+        ...prevState,
+        addressClinic: event.target.value,
+      }));
+    },
+    note: (event) => {
+      this.setState((prevState) => ({
+        ...prevState,
+        note: event.target.value,
+      }));
+    },
   };
   handleOnChangeDesc = (event) => {
     const { lang } = this.props;
@@ -198,11 +327,15 @@ class ManageDoctor extends Component {
   };
 
   // IF get error at manageDoctor, check componentDidUpdate
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     const { lang, prices, provinces, payments } = this.props;
+
     const updateState = {};
 
     if (prevProps.lang !== lang) {
+      const { selectedDoctor } = this.state;
+      if (selectedDoctor) await this.handleChange.doctor(selectedDoctor);
+
       updateState.selectedDoctor = {
         ...this.state.selectedDoctor,
         label:
@@ -250,16 +383,23 @@ class ManageDoctor extends Component {
       prices,
       provinces,
       payments,
+      selectedProvince,
+      selectedPayment,
+      selectedPrice,
+      nameClinic,
+      addressClinic,
+      note,
     } = this.state;
     const { doctors, lang } = this.props;
     if (lang === constant.LANGUAGES.VI) {
-      contentMarkdown = this.state.contentMarkdown_VI;
-      description = this.state.description_VI;
+      contentMarkdown = this.state?.contentMarkdown_VI;
+      description = this.state?.description_VI;
     } else {
-      description = this.state.description_EN;
-      contentMarkdown = this.state.contentMarkdown_EN;
+      description = this.state?.description_EN;
+      contentMarkdown = this.state?.contentMarkdown_EN;
     }
-    const listDoctors =
+
+    const listDoctor =
       doctors.length > 0 &&
       doctors.map &&
       doctors.map((doctor) => {
@@ -275,7 +415,42 @@ class ManageDoctor extends Component {
         };
       });
 
-    console.log(prices, provinces, payments);
+    const listProvince =
+      provinces.length > 0 &&
+      provinces.map &&
+      provinces.map((province) => {
+        return {
+          value: province.keyMap,
+          label:
+            lang === constant.LANGUAGES.VI
+              ? `${province.valueVi}`
+              : `${province.valueEn}`,
+        };
+      });
+    const listPayment =
+      payments.length > 0 &&
+      payments.map &&
+      payments.map((payment) => {
+        return {
+          value: payment.keyMap,
+          label:
+            lang === constant.LANGUAGES.VI
+              ? `${payment.valueVi}`
+              : `${payment.valueEn}`,
+        };
+      });
+    const listPrice =
+      prices.length > 0 &&
+      prices.map &&
+      prices.map((price) => {
+        return {
+          value: price.keyMap,
+          label:
+            lang === constant.LANGUAGES.VI
+              ? `${price.valueVi} VND`
+              : `$ ${price.valueEn}`,
+        };
+      });
 
     return (
       <>
@@ -291,8 +466,8 @@ class ManageDoctor extends Component {
                 </label>
                 <Select
                   value={selectedDoctor}
-                  onChange={this.handleChange}
-                  options={listDoctors}
+                  onChange={this.handleChange.doctor}
+                  options={listDoctor}
                   placeholder={
                     <FormattedMessage id={'title.doctor.SelectDoctor'} />
                   }
@@ -314,29 +489,80 @@ class ManageDoctor extends Component {
             </div>
           </div>
           <div className="more-info-extract row">
-            <div className="col-4 mb-2 form-group">
-              <label>Chon gia</label>
-              <input className="form-control" />
+            <div className="col-12 col-lg-4 mb-2 form-group">
+              <label>
+                <FormattedMessage id={'doctor.price'} />
+              </label>
+              <Select
+                value={selectedPrice}
+                onChange={this.handleChange.price}
+                options={listPrice}
+                placeholder={<FormattedMessage id={'title.doctor.price'} />}
+              />
             </div>
-            <div className="col-4 mb-2 form-group">
-              <label>Chon gia</label>
-              <input className="form-control" />
+            <div className="col-12 col-lg-4 mb-2 form-group">
+              <label>
+                <FormattedMessage id={'doctor.payment'} />
+              </label>
+              <Select
+                value={selectedPayment}
+                onChange={this.handleChange.payment}
+                options={listPayment}
+                placeholder={<FormattedMessage id={'title.doctor.payment'} />}
+              />
             </div>
-            <div className="col-4 mb-2 form-group">
-              <label>Chon gia</label>
-              <input className="form-control" />
+            <div className="col-12 col-lg-4 mb-2 form-group">
+              <label>
+                <FormattedMessage id={'doctor.province'} />
+              </label>
+              <Select
+                value={selectedProvince}
+                onChange={this.handleChange.province}
+                options={listProvince}
+                placeholder={<FormattedMessage id={'title.doctor.province'} />}
+              />
             </div>
-            <div className="col-4 mb-2 form-group">
-              <label>Chon gia</label>
-              <input className="form-control" />
+            <div className="col-12 col-lg-4 mb-2 form-group">
+              <label>
+                <FormattedMessage id={'doctor.nameClinic'} />
+              </label>
+              <input
+                className="form-control"
+                value={nameClinic || ''}
+                onChange={this.handleChange.nameClinic}
+                placeholder={constant.LanguageUtils.getMessageByKey(
+                  'manage-user.nameClinicPlaceholder',
+                  lang
+                )}
+              />
             </div>
-            <div className="col-4 mb-2 form-group">
-              <label>Chon gia</label>
-              <input className="form-control" />
+            <div className="col-12 col-lg-4 mb-2 form-group">
+              <label>
+                <FormattedMessage id={'doctor.addressClinic'} />
+              </label>
+              <input
+                className="form-control"
+                value={addressClinic || ''}
+                onChange={this.handleChange.addressClinic}
+                placeholder={constant.LanguageUtils.getMessageByKey(
+                  'manage-user.addressClinicPlaceholder',
+                  lang
+                )}
+              />
             </div>
-            <div className="col-4 mb-2 form-group">
-              <label>Chon gia</label>
-              <input className="form-control" />
+            <div className="col-12 col-lg-4 mb-2 form-group">
+              <label>
+                <FormattedMessage id={'doctor.note'} />
+              </label>
+              <input
+                className="form-control"
+                value={note || ''}
+                onChange={this.handleChange.note}
+                placeholder={constant.LanguageUtils.getMessageByKey(
+                  'manage-user.notePlaceholder',
+                  lang
+                )}
+              />
             </div>
             <div className="my-2" />
           </div>

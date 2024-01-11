@@ -43,7 +43,10 @@
       "SelectDoctor": "Chọn bác sĩ",
       "SelectDate": "Chọn ngày",
       "SelectTimeSchedule": "Chọn giờ khám",
-      "title": "TẠO THÊM THÔNG TÍN BÁC SĨ"
+      "title": "TẠO THÊM THÔNG TÍN BÁC SĨ",
+      "price": "Chọn giá",
+      "payment": "Chọn phương thức thanh toán",
+      "province": "Chọn tỉnh thành"
     }
   },
   "button": {
@@ -71,7 +74,13 @@
       "manageHandbook": "Quản lý Cẩm nang"
     },
     "doctor": {
-      "manage-schedule": "Quản lý kế hoạch khám bệnh"
+      "manage-schedule": "Quản lý kế hoạch khám bệnh",
+      "price": "Giá khám bệnh",
+      "payment": "Phương thức thanh toán",
+      "province": "Tỉnh thành",
+      "nameClinic": "Tên phòng khám",
+      "addressClinic": "Địa chỉ phòng khám",
+      "note": "Ghi chú"
     }
   },
   "manage-user": {
@@ -92,6 +101,9 @@
     "firstNamePlaceholder": "Nhập tên",
     "lastNamePlaceholder": "Nhập họ",
     "addressPlaceholder": "Nhập địa chỉ",
+    "nameClinicPlaceholder": "Nhập tên phòng khám",
+    "addressClinicPlaceholder": "Nhập địa chỉ phòng khám",
+    "notePlaceholder": "Nhập ghi chú",
     "phoneNumberPlaceholder": "Nhập số điện thoại",
     "filePlaceholder": "Kéo & Thả tệp  hoặc <span class='filepond--label-action'>Duyệt tệp</span>"
   },
@@ -123,6 +135,7 @@
     "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này?",
     "confirmDeleteUser": "Bạn có muốn xóa người dùng này?",
     "InternalError": "Lỗi nội bộ server",
+    "BadRequest": "Dữ liệu không hợp lệ",
     "confirmYes": "Có",
     "confirmNo": "Không",
     "conflictEmail": "Email đã tồn tại!",
@@ -132,12 +145,16 @@
     "NotImageFile": "File ảnh không phù hợp",
     "contentHTMLRequired": "contentHTML không được bỏ trống",
     "contentMarkdownRequired": "contentMarkdown không được bỏ trống",
+    "PriceRequired": "Giá khám không được bỏ trống",
+    "PaymentMethodRequired": "Phương thức thanh toán không được bỏ trống",
+    "ProvinceRequired": "Tỉnh thành không được bỏ trống",
     "selectDoctorIsRequired": "Chưa chọn bác sỹ",
     "selectDateIsRequired": "Chưa chọn ngày",
     "selectScheduleIsRequired": "Chưa chọn giờ khám",
     "successBookSchedule": "Đặt lịch khám thành công",
     "errorBookSchedule": "Đặt lịch thất bại",
-    "conflictSchedule": "Đã có người đặt khám"
+    "conflictSchedule": "Đã có người đặt khám",
+    "wrongInfo": "Sai thông tin đăng nhập"
   },
   "homePage": {
     "outStandingDoctor": "Bác sĩ nổi bật tuần qua",
@@ -158,5 +175,13 @@
       "bookFree": "và đặt (miễn phí)"
     },
     "test": "Chọn <i className='far fa-hand-point-up'></i> và đặt miễn phí"
+  },
+  "doctor": {
+    "price": "Giá khám bệnh",
+    "payment": "Phương thức thanh toán",
+    "province": "Tỉnh thành",
+    "nameClinic": "Tên phòng khám",
+    "addressClinic": "Địa chỉ phòng khám",
+    "note": "Ghi chú"
   }
 }
