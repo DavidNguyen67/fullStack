@@ -1,4 +1,11 @@
-import { Controller, Get, HttpStatus, Query, UsePipes } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Query,
+  UsePipes,
+} from '@nestjs/common';
 import * as routes from '../../../utils/routes';
 import { AllCodeService } from './allCode.service';
 import { FetchAllCodeInterface } from 'src/utils/interfaces';
@@ -12,15 +19,20 @@ export class AllCodeController {
   @Get(routes.readRoute)
   @UsePipes(IsHasDataInQueryOrBodyPipe)
   async getAllCode(@Query() query: FetchAllCodeInterface): Promise<GlobalRes> {
-    const type = query.type;
-    let data = null;
-    type.toLowerCase() === 'all' || !type
-      ? (data = await this.allCodeService.getAllCode())
-      : (data = await this.allCodeService.getAllCode(type.toUpperCase()));
+    try {
+      const type = query.type;
+      let data = null;
+      type.toLowerCase() === 'all' || !type
+        ? (data = await this.allCodeService.getAllCode())
+        : (data = await this.allCodeService.getAllCode(type.toUpperCase()));
 
-    return {
-      statusCode: HttpStatus.OK,
-      data,
-    };
+      return {
+        statusCode: HttpStatus.OK,
+        data,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

@@ -27,7 +27,6 @@ export class ScheDuleController {
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.ExcludeIdFieldPipe,
-    pipes.IsHasDoctorIdPipe,
     IsHasFieldRequiredSchedulePipe,
     HandleRawDataPipe,
   )

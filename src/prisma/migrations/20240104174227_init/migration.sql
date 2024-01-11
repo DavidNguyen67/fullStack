@@ -1,8 +1,0 @@
--- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_gender_fkey` FOREIGN KEY (`gender`) REFERENCES `AllCode`(`keyMap`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_positionId_fkey` FOREIGN KEY (`positionId`) REFERENCES `AllCode`(`keyMap`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `AllCode`(`keyMap`) ON DELETE RESTRICT ON UPDATE CASCADE;
