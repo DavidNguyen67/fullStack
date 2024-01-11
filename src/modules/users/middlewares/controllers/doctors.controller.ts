@@ -109,4 +109,39 @@ export class DoctorController {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @Get(routes.readCommonRoute)
+  @UsePipes(
+    pipes.IsHasDataInQueryOrBodyPipe,
+    pipes.convertAnyStringArrToNumArrPipe,
+    pipes.IsIdHasNumberInStringPipe,
+  )
+  async fetchDoctorCommonInfo(
+    @Query() query: FetchDoctorInterface,
+  ): Promise<GlobalRes> {
+    try {
+      const id = query?.id;
+
+      let data: any;
+
+      if (id && id.length > 0) {
+        if (Array.isArray(id))
+          data = await this.doctorsService.getDoctorCommonInfo(
+            getMaxElement(id),
+          );
+
+        return {
+          statusCode: HttpStatus.OK,
+          data,
+        };
+      }
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Missing or invalid query parameters',
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

@@ -21,7 +21,8 @@ export class UsersService {
         throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
 
       return users.map(
-        (user) => exclude(user, ['password', 'createAt', 'updateAt']) || user,
+        (user) =>
+          exclude(user, ['password', 'createAt', 'updateAt', 'image']) || user,
       );
       // return users;
     } catch (error) {
