@@ -11,12 +11,26 @@ import { MarkDownModule } from '../markDown/markdown.module';
 import { ScheduleModule } from '../schedule/Schedule.module';
 import { InfoModule } from '../info/info.module';
 import { BookingModule } from '../booking/booking.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { env } from 'process';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration, databaseConfig],
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: env.EMAIL_HOST,
+        port: 465,
+        secure: true,
+        auth: {
+          user: env.EMAIL_USERNAME,
+          pass: env.EMAIL_PASSWORD,
+        },
+      },
+    }),
+
     AuthModule,
     UsersModule,
     allCodeModule,

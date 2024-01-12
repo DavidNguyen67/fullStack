@@ -26,6 +26,7 @@ model User {
   roleData     AllCode      @relation("Role", fields: [roleId], references: [keyMap])
   markDown     Markdown?    @relation("Markdown")
   doctorInfo   Doctor_info? @relation("Info")
+  schedules    Schedule[]   @relation("ScheduleUser")
 }
 
 model Markdown {
@@ -63,9 +64,9 @@ model AllCode {
 
 model Booking {
   id        Int       @id @default(autoincrement())
-  statusId  String @default("S1")
+  statusId  String    @default("S1")
   doctorId  Int
-  patientId Int @unique()
+  patientId Int       @unique()
   date      DateTime
   timeType  String
   createAt  DateTime? @default(now())
@@ -100,7 +101,8 @@ model Schedule {
   doctorId   Int
   createAt   DateTime? @default(now())
   updateAt   DateTime? @default(now())
-  time       AllCode   @relation("Schedule", fields: [timeType], references: [keyMap])
+  time       AllCode?  @relation("Schedule", fields: [timeType], references: [keyMap])
+  user       User?     @relation("ScheduleUser", fields: [doctorId], references: [id])
 }
 
 model Specialty {

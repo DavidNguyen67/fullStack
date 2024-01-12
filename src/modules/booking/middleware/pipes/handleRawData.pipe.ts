@@ -19,7 +19,8 @@ export class HandleRawDataPipe implements PipeTransform {
           email: item.email,
           password: uuid(),
           firstName,
-          lastName: lastName.length > 0 ? lastName.join(' ') : 'None',
+          lastName:
+            lastName.length > 0 && lastName[0] ? lastName.join(' ') : 'None',
           updateAt: new Date(),
         };
       });
@@ -30,14 +31,19 @@ export class HandleRawDataPipe implements PipeTransform {
           date: item.date,
         };
       });
-
-      const isValidUserTbl = dataForUserTbl.every((item: User) => {
-        return this.hasRequiredUserFields(item);
+      const appInfo = payload.map((item) => {
+        return {
+          lang: item.lang,
+          dataTime: item.dataTime,
+          doctorData: item.doctorData,
+        };
       });
-      const isValidBookingTbl = dataForBookingTbl.every(
-        (item: Booking | any) => {
-          return this.hasRequiredBookingFields(item);
-        },
+
+      const isValidUserTbl = dataForUserTbl.every((item: User) =>
+        this.hasRequiredUserFields(item),
+      );
+      const isValidBookingTbl = dataForBookingTbl.every((item: Booking | any) =>
+        this.hasRequiredBookingFields(item),
       );
 
       if (!isValidUserTbl) {
@@ -52,7 +58,11 @@ export class HandleRawDataPipe implements PipeTransform {
         throw new BadRequestException(errorMessage);
       }
 
-      return { patient: dataForUserTbl[0], booking: dataForBookingTbl[0] };
+      return {
+        patient: dataForUserTbl[0],
+        booking: dataForBookingTbl[0],
+        appInfo: appInfo[0],
+      };
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error);

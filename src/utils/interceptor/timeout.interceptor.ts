@@ -8,7 +8,7 @@ import {
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 
-const MAX_TIME_OUT = 5000;
+const MAX_TIME_OUT = 15000;
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {

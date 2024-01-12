@@ -9,6 +9,7 @@ export const schedulePath = 'schedule';
 export const bookingPath = 'booking';
 export const markdownPath = 'markdown';
 export const doctorInfo = `${crudDoctorPath}Info`;
+export const verifyPath = `verify`;
 
 export const loginRoute = 'login';
 export const readRoute = 'read';
@@ -18,3 +19,4 @@ export const readCommonRoute = 'read/common';
 export const updateRoute = 'update';
 export const deleteRoute = 'delete';
 export const createRoute = 'create';
+export const sendRoute = 'send';
