@@ -63,9 +63,9 @@ model AllCode {
 
 model Booking {
   id        Int       @id @default(autoincrement())
-  statusId  String
+  statusId  String @default("S1")
   doctorId  Int
-  patientId Int
+  patientId Int @unique()
   date      DateTime
   timeType  String
   createAt  DateTime? @default(now())

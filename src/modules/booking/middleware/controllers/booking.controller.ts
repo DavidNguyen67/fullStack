@@ -7,22 +7,21 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
-import { PatientsService } from '../services/patient.service';
+import { BookingService } from '../services/booking.service';
 import { pipes } from '../pipes';
-import { IsHasFieldRequiredSchedulePipe } from '../pipes/IsHasFieldRequiredSchedule.pipe';
+import { HandleRawDataPipe } from '../pipes/handleRawData.pipe';
 
-@Controller(`${routes.versionApi}/${routes.patientPath}`)
-export class PatientsController {
-  constructor(private readonly patientsService: PatientsService) {}
+@Controller(`${routes.versionApi}/${routes.bookingPath}`)
+export class BookingController {
+  constructor(private readonly bookingService: BookingService) {}
 
   @Post(routes.createRoute)
-  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe, IsHasFieldRequiredSchedulePipe)
+  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe, HandleRawDataPipe)
   async PatientBookAppointments(@Body() body: any) {
     try {
-      // const
       return {
         statusCode: HttpStatus.OK,
-        data: await this.patientsService.PatientBookAppointments(2),
+        data: await this.bookingService.PatientBookAppointments(body),
       };
     } catch (error) {
       console.log(error);

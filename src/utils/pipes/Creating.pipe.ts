@@ -2,8 +2,8 @@ import {
   ArgumentMetadata,
   Injectable,
   PipeTransform,
-  InternalServerErrorException,
-  BadRequestException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { excludeAndNullVal } from 'src/utils/function';
 
@@ -24,10 +24,10 @@ export class ExcludeIdFieldPipe implements PipeTransform {
         }
       });
       if (data.length > 0) return data;
-      throw new BadRequestException('Validate failed');
+      throw new HttpException('Validate failed', HttpStatus.BAD_REQUEST);
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -1,8 +1,8 @@
 import {
   ArgumentMetadata,
-  BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
-  InternalServerErrorException,
   PipeTransform,
 } from '@nestjs/common';
 import { getMaxElement } from 'src/utils/function';
@@ -55,12 +55,13 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
         }
       }
 
-      throw new BadRequestException(
+      throw new HttpException(
         'Missing parameter from convertAnyStringArrToNumArrPipe',
+        HttpStatus.BAD_REQUEST,
       );
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

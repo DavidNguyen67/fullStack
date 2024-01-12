@@ -2,7 +2,8 @@ import {
   ArgumentMetadata,
   Injectable,
   PipeTransform,
-  InternalServerErrorException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 @Injectable()
@@ -18,11 +19,14 @@ export class RemoveBase64PrefixPipe implements PipeTransform {
         }
         return val;
       });
-
-      return data;
+      if (data.length > 0) return data;
+      throw new HttpException(
+        'Cant remove images prefix',
+        HttpStatus.BAD_REQUEST,
+      );
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

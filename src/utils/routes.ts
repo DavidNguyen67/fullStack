@@ -6,7 +6,7 @@ export const crudUserPath = 'user';
 export const allCodePath = 'allCode';
 export const crudDoctorPath = 'doctor';
 export const schedulePath = 'schedule';
-export const patientPath = 'patient';
+export const bookingPath = 'booking';
 export const markdownPath = 'markdown';
 export const doctorInfo = `${crudDoctorPath}Info`;
 

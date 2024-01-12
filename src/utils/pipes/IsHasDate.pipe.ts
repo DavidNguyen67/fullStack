@@ -1,8 +1,8 @@
 import {
   ArgumentMetadata,
-  BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
-  InternalServerErrorException,
   PipeTransform,
 } from '@nestjs/common';
 
@@ -19,11 +19,13 @@ export class IsHasDatePipe implements PipeTransform {
       if (date) {
         return Array.isArray(value) ? value : [value];
       }
-
-      throw new BadRequestException('Missing parameter from IsHasDatePipe');
+      throw new HttpException(
+        'Missing parameter from IsHasDatePipe',
+        HttpStatus.BAD_REQUEST,
+      );
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

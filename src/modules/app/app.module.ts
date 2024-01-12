@@ -10,7 +10,7 @@ import { TimeoutInterceptor } from 'src/utils/interceptor/timeout.interceptor';
 import { MarkDownModule } from '../markDown/markdown.module';
 import { ScheduleModule } from '../schedule/Schedule.module';
 import { InfoModule } from '../info/info.module';
-import { PatientsModule } from '../patients/patient.module';
+import { BookingModule } from '../booking/booking.module';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { PatientsModule } from '../patients/patient.module';
     MarkDownModule,
     ScheduleModule,
     InfoModule,
-    PatientsModule,
+    BookingModule,
   ],
   providers: [
     {

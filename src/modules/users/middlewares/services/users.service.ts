@@ -16,6 +16,29 @@ export class UsersService {
         orderBy: {
           id: 'asc',
         },
+        include: {
+          positionData: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+              keyMap: true,
+            },
+          },
+          roleData: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+              keyMap: true,
+            },
+          },
+          genderData: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+              keyMap: true,
+            },
+          },
+        },
       });
       if (users.length < 1)
         throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
@@ -41,6 +64,29 @@ export class UsersService {
         },
         orderBy: {
           id: 'asc',
+        },
+        include: {
+          positionData: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+              keyMap: true,
+            },
+          },
+          roleData: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+              keyMap: true,
+            },
+          },
+          genderData: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+              keyMap: true,
+            },
+          },
         },
       });
       if (!users || users.length === 0) {

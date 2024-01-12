@@ -2,8 +2,8 @@ import {
   Injectable,
   PipeTransform,
   ArgumentMetadata,
-  InternalServerErrorException,
-  BadRequestException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { isEmpty } from 'src/utils/function';
 
@@ -13,15 +13,16 @@ export class IsHasDataInQueryOrBodyPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
     try {
       if (!value || isEmpty(value)) {
-        throw new BadRequestException(
+        throw new HttpException(
           'Missing or invalid parameters from IsHasDataInQueryOrBodyPipe',
+          HttpStatus.BAD_REQUEST,
         );
       }
 
       return value;
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
