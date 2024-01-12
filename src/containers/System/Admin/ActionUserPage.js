@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import {
   CommonUtils,
+  LANGUAGES,
   LanguageUtils,
   MAX_FILE_SIZE,
   PNG_PREFIX,
@@ -19,6 +20,7 @@ import {
 } from '../../../services/userService';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
+import Select from 'react-select';
 
 const COPY = 'COPY';
 const UPDATE = 'UPDATE';
@@ -40,7 +42,7 @@ class ActionUserPage extends Component {
     };
   }
   handleChangeInput = (event, key) => {
-    if (event.target.type.toLowerCase() === 'file') {
+    if (event.target?.type?.toLowerCase() === 'file') {
       const onSelectFile = (event) => {
         if (!event.target.files || event.target.files.length === 0) {
           this.setState((prevState) => ({
@@ -86,6 +88,20 @@ class ActionUserPage extends Component {
       },
     }));
   };
+
+  handleChangeSelect = (data, key, name) => {
+    this.setState((prevState) => ({
+      ...prevState,
+      users: {
+        ...prevState.users,
+        [key]: {
+          ...prevState.users[key],
+          [name]: data,
+        },
+      },
+    }));
+  };
+
   submitData = async (event) => {
     event.preventDefault();
 
@@ -291,7 +307,9 @@ class ActionUserPage extends Component {
           )}`;
           newItem.image = bufferToBase64;
         } else newItem.image = '';
-
+        newItem.positionId = newItem?.positionId?.value;
+        newItem.roleId = newItem?.roleId?.value;
+        newItem.gender = newItem?.gender?.value;
         result.push(newItem);
       }
       // if (!isSameData) {
@@ -378,6 +396,18 @@ class ActionUserPage extends Component {
 
       result.forEach((data) => {
         if (data && data.previewImgUrl) delete data.previewImgUrl;
+        if (data && data.roleData) {
+          data.roleId = data.roleData.value;
+          delete data.roleData;
+        }
+        if (data && data.positionData) {
+          data.positionId = data.positionData.value;
+          delete data.positionData;
+        }
+        if (data && data.genderData) {
+          data.gender = data.genderData.value;
+          delete data.genderData;
+        }
       });
 
       if (result.length > 0 && result.some((data) => data)) {
@@ -391,12 +421,13 @@ class ActionUserPage extends Component {
             ...prevState,
             isLoadingRequest: !prevState.isLoadingRequest,
           }));
-          const isErrorUpdate = await this.props.updateUsers(result);
+          await this.props.updateUsers(result);
+
           this.setState((prevState) => ({
             ...prevState,
             isLoadingRequest: !prevState.isLoadingRequest,
           }));
-
+          const { isErrorUpdate } = this.props;
           if (isErrorUpdate) {
             toast.error(
               <FormattedMessage
@@ -459,11 +490,13 @@ class ActionUserPage extends Component {
       }
     }
   };
+
   componentWillUnmount() {
     if (this.state.previewImgUrl) {
       URL.revokeObjectURL(this.state.previewImgUrl);
     }
   }
+
   async componentDidMount() {
     this.props.getGenderStart();
     this.props.getPositionStart();
@@ -471,7 +504,7 @@ class ActionUserPage extends Component {
     if (this.props.match?.params?.id) {
       const response = await getAllUsersService(this.props.match.params.id);
       if (response.data && Array.isArray(response.data)) {
-        const users = response.data.reduce((accumulator, value) => {
+        const users = response?.data?.reduce((accumulator, value) => {
           return { ...accumulator, [uuidv4()]: value };
         }, {});
         this.setState((prevState) => ({
@@ -494,17 +527,27 @@ class ActionUserPage extends Component {
       }
     }
   }
+
   componentDidUpdate(prevProps, prevState) {
     const newState = {};
 
+    const { lang, genders, positions, roles } = this.props;
     if (prevProps.genders !== this.props.genders) {
       const updatedUsersGenders = { ...this.state.users };
       Object.keys(updatedUsersGenders).forEach((key) => {
-        updatedUsersGenders[key].genders = this.props.genders[0]?.key;
+        updatedUsersGenders[key].genders = {
+          value: genders[0]?.keyMap,
+          label:
+            lang === LANGUAGES.VI ? genders[0]?.valueVi : genders[0]?.valueEn,
+        };
       });
 
-      newState.genders = this.props.genders;
-      newState.gender = this.props.genders[0]?.key;
+      newState.genders = genders;
+      newState.gender = {
+        value: genders[0]?.keyMap,
+        label:
+          lang === LANGUAGES.VI ? genders[0]?.valueVi : genders[0]?.valueEn,
+      };
       newState.users = updatedUsersGenders;
     }
 
@@ -512,21 +555,37 @@ class ActionUserPage extends Component {
       // Similar updates for positions, modifying newState.positions and newState.position as needed
       const updatedUsersPositions = { ...this.state.users };
       Object.keys(updatedUsersPositions).forEach((key) => {
-        updatedUsersPositions[key].positions = this.props.positions[0]?.key;
+        updatedUsersPositions[key].positions = {
+          value: positions[0]?.keyMap,
+          label:
+            lang === LANGUAGES.VI
+              ? positions[0]?.valueVi
+              : positions[0]?.valueEn,
+        };
       });
-      newState.positions = this.props.positions;
-      newState.position = this.props.positions[0]?.key;
+      newState.positions = positions;
+      newState.position = {
+        value: positions[0]?.keyMap,
+        label:
+          lang === LANGUAGES.VI ? positions[0]?.valueVi : positions[0]?.valueEn,
+      };
       newState.users = updatedUsersPositions;
     }
 
     if (prevProps.roles !== this.props.roles) {
       const updatedUsersRoles = { ...this.state.users };
       Object.keys(updatedUsersRoles).forEach((key) => {
-        updatedUsersRoles[key].roles = this.props.roles[0]?.key;
+        updatedUsersRoles[key].roles = {
+          value: roles[0]?.keyMap,
+          label: lang === LANGUAGES.VI ? roles[0]?.valueVi : roles[0]?.valueEn,
+        };
       });
 
-      newState.roles = this.props.roles;
-      newState.role = this.props.roles[0]?.key;
+      newState.roles = roles;
+      newState.role = {
+        value: roles[0]?.keyMap,
+        label: lang === LANGUAGES.VI ? roles[0]?.valueVi : roles[0]?.valueEn,
+      };
       newState.users = updatedUsersRoles;
     }
 
@@ -534,12 +593,15 @@ class ActionUserPage extends Component {
       this.setState((prevState) => ({ ...prevState, ...newState }));
     }
   }
+
   goBack = () => {
     const { history } = this.props;
     history.goBack();
   };
+
   handleAddRow = () => {
     const { users, genders, positions, roles } = this.state;
+    const { lang } = this.props;
     const keys = Object.keys(users);
     let newObject = {};
     Object.keys(users[keys[0]]).forEach(
@@ -552,13 +614,28 @@ class ActionUserPage extends Component {
         ...prevState.users,
         [uuidv4()]: {
           ...newObject,
-          roleId: roles[0].keyMap,
-          positionId: positions[0].keyMap,
-          gender: genders[0].keyMap,
+          roleId: {
+            value: roles[0]?.keyMap,
+            label:
+              lang === LANGUAGES.VI ? roles[0]?.valueVi : roles[0]?.valueEn,
+          },
+          positionId: {
+            value: positions[0]?.keyMap,
+            label:
+              lang === LANGUAGES.VI
+                ? positions[0]?.valueVi
+                : positions[0]?.valueEn,
+          },
+          gender: {
+            value: genders[0]?.keyMap,
+            label:
+              lang === LANGUAGES.VI ? genders[0]?.valueVi : genders[0]?.valueEn,
+          },
         },
       },
     }));
   };
+
   handleRemoveRow = (key) => {
     const { users } = this.state;
     delete users[key];
@@ -567,6 +644,7 @@ class ActionUserPage extends Component {
       users,
     }));
   };
+
   render() {
     const isDeleteForm = this.props.location?.pathname?.includes(
       DELETE.toLocaleLowerCase()
@@ -580,6 +658,35 @@ class ActionUserPage extends Component {
     const isCreateForm =
       location?.pathname.includes(CREATE.toLocaleLowerCase()) ||
       location?.pathname.includes(COPY.toLocaleLowerCase());
+
+    const listGender =
+      genders &&
+      genders.length > 0 &&
+      genders.map((item) => {
+        return {
+          value: item.keyMap,
+          label: lang === LANGUAGES.EN ? item.valueEn : item.valueVi,
+        };
+      });
+    const listPosition =
+      positions &&
+      positions.length > 0 &&
+      positions.map((item) => {
+        return {
+          value: item.keyMap,
+          label: lang === LANGUAGES.EN ? item.valueEn : item.valueVi,
+        };
+      });
+    const listRole =
+      roles &&
+      roles.length > 0 &&
+      roles.map((item) => {
+        return {
+          value: item.keyMap,
+          label: lang === LANGUAGES.EN ? item.valueEn : item.valueVi,
+        };
+      });
+
     if (isLoading) {
       return <>Loading...</>;
     }
@@ -607,6 +714,30 @@ class ActionUserPage extends Component {
               )
             );
             const imageSrc = base64 ? `${PNG_PREFIX}${base64}` : '';
+            const currentGender = {
+              value: user.genderData?.value || user.genderData?.keyMap,
+              label:
+                user.genderData?.label ||
+                (lang === LANGUAGES.EN
+                  ? user.genderData?.valueEn
+                  : user.genderData?.valueVi),
+            };
+            const currentPosition = {
+              value: user.positionData?.value || user.positionData?.keyMap,
+              label:
+                user.positionData?.label ||
+                (lang === LANGUAGES.EN
+                  ? user.positionData?.valueEn
+                  : user.positionData?.valueVi),
+            };
+            const currentRole = {
+              value: user.roleData?.value || user.roleData?.keyMap,
+              label:
+                user.roleData?.label ||
+                (lang === LANGUAGES.EN
+                  ? user.roleData?.valueEn
+                  : user.roleData?.valueVi),
+            };
 
             return (
               <div key={key} className="d-lg-flex user-form">
@@ -739,78 +870,48 @@ class ActionUserPage extends Component {
                         <FormattedMessage id="manage-user.gender" />
                       </label>
                       <i className="fa fa-chevron-down position-absolute arrows"></i>
-                      <select
+                      <Select
+                        value={currentGender}
                         id={`inputGender${key}`}
-                        className="form-control"
                         disabled={isDeleteForm}
                         name="gender"
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                      >
-                        {genders?.length > 0 &&
-                          genders.map((item, index) => (
-                            <option
-                              key={item.id}
-                              defaultChecked={index === 0}
-                              value={item.keyMap || ''}
-                            >
-                              {lang.toLowerCase() === 'en'
-                                ? item.valueEn
-                                : item.valueVi}
-                            </option>
-                          ))}
-                      </select>
+                        onChange={(event) =>
+                          this.handleChangeSelect(event, key, 'genderData')
+                        }
+                        options={listGender}
+                      />
                     </div>
                     <div className="form-group col-md-6 col-lg-3 position-relative">
                       <label htmlFor={`inputPosition${key}`}>
                         <FormattedMessage id="manage-user.position" />
                       </label>
                       <i className="fa fa-chevron-down position-absolute arrows"></i>
-                      <select
+                      <Select
+                        value={currentPosition}
                         id={`inputPosition${key}`}
-                        className="form-control"
                         disabled={isDeleteForm}
-                        name="position"
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                      >
-                        {positions?.length > 0 &&
-                          positions.map((item, index) => (
-                            <option
-                              key={item.id}
-                              defaultChecked={index === 0}
-                              value={item.keyMap || ''}
-                            >
-                              {lang.toLowerCase() === 'en'
-                                ? item.valueEn
-                                : item.valueVi}
-                            </option>
-                          ))}
-                      </select>
+                        name="positionId"
+                        onChange={(event) =>
+                          this.handleChangeSelect(event, key, 'positionData')
+                        }
+                        options={listPosition}
+                      />
                     </div>
                     <div className="form-group col-md-6 col-lg-3 position-relative">
                       <label htmlFor={`inputRoleId${key}`}>
                         <FormattedMessage id="manage-user.role" />
                       </label>
                       <i className="fa fa-chevron-down position-absolute arrows"></i>
-                      <select
+                      <Select
+                        value={currentRole}
                         id={`inputRoleId${key}`}
-                        className="form-control"
                         disabled={isDeleteForm}
-                        name="role"
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                      >
-                        {roles?.length > 0 &&
-                          roles.map((item, index) => (
-                            <option
-                              key={item.id}
-                              defaultChecked={index === 0}
-                              value={item.keyMap || ''}
-                            >
-                              {lang.toLowerCase() === 'en'
-                                ? item.valueEn
-                                : item.valueVi}
-                            </option>
-                          ))}
-                      </select>
+                        name="roleId"
+                        onChange={(event) =>
+                          this.handleChangeSelect(event, key, 'roleData')
+                        }
+                        options={listRole}
+                      />
                     </div>
                     <div className="form-group col-md-6 col-lg-3 inputImage-container">
                       <div className="d-flex">

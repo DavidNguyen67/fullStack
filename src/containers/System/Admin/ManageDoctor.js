@@ -236,20 +236,34 @@ class ManageDoctor extends Component {
             contentHTML_VI: markDown?.contentHTML_VI || '',
             contentMarkdown_VI: markDown?.contentMarkdown_VI || '',
             hasOldData: !!markDown?.contentHTML_VI || '',
-
-            selectedPayment: {
-              label: doctorInfo?.paymentInfo.valueVi,
-              value: doctorInfo?.paymentInfo.keyMap,
-            },
-            selectedProvince: {
-              label: doctorInfo?.provinceInfo.valueVi,
-              value: doctorInfo?.provinceInfo.keyMap,
-            },
-            selectedPrice: {
-              label: `${doctorInfo?.priceInfo.valueVi} VND`,
-              value: doctorInfo?.priceInfo.keyMap,
-            },
           };
+          if (doctorInfo?.priceInfo.valueVi) {
+            newState = {
+              ...newState,
+              selectedPrice: {
+                label: doctorInfo?.priceInfo.valueVi,
+                value: doctorInfo?.priceInfo.keyMap,
+              },
+            };
+          }
+          if (doctorInfo?.provinceInfo.valueVi) {
+            newState = {
+              ...newState,
+              selectedProvince: {
+                label: doctorInfo?.provinceInfo.valueVi,
+                value: doctorInfo?.provinceInfo.keyMap,
+              },
+            };
+          }
+          if (doctorInfo?.selectedPayment.valueVi) {
+            newState = {
+              ...newState,
+              selectedPayment: {
+                label: doctorInfo?.paymentInfo.valueVi,
+                value: doctorInfo?.paymentInfo.keyMap,
+              },
+            };
+          }
         } else
           newState = {
             ...newState,
@@ -257,20 +271,34 @@ class ManageDoctor extends Component {
             contentHTML_EN: markDown?.contentHTML_EN || '',
             contentMarkdown_EN: markDown?.contentMarkdown_EN || '',
             hasOldData: !!markDown?.contentHTML_EN || '',
-
-            selectedPayment: {
-              label: doctorInfo?.paymentInfo.valueEn,
-              value: doctorInfo?.paymentInfo.keyMap,
+          };
+        if (doctorInfo?.priceInfo.valueEn) {
+          newState = {
+            ...newState,
+            selectedPrice: {
+              label: doctorInfo?.priceInfo.valueEn,
+              value: doctorInfo?.priceInfo.keyMap,
             },
+          };
+        }
+        if (doctorInfo?.paymentInfo.valueEn) {
+          newState = {
+            ...newState,
             selectedProvince: {
               label: doctorInfo?.provinceInfo.valueEn,
               value: doctorInfo?.provinceInfo.keyMap,
             },
-            selectedPrice: {
-              label: `$ ${doctorInfo?.priceInfo.valueEn}`,
-              value: doctorInfo?.priceInfo.keyMap,
+          };
+        }
+        if (doctorInfo?.provinceInfo.valueEn) {
+          newState = {
+            ...newState,
+            selectedPayment: {
+              label: doctorInfo?.paymentInfo.valueEn,
+              value: doctorInfo?.paymentInfo.keyMap,
             },
           };
+        }
       }
 
       this.setState(newState);

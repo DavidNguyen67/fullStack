@@ -92,11 +92,11 @@
     "lastName": "Last Name",
     "phoneNumber": "Phone Number",
     "address": "Address",
-    "gender": "Gender",
-    "position": "Position",
-    "who": "Book for?",
+    "gender": "Choose Gender",
+    "position": "Choose Position",
+    "dob": "Date of birth",
     "reason": "Reason for booking",
-    "role": "Role",
+    "role": "Choose Role",
     "image": "Avatar",
     "save": "Save",
     "email": "Email",
@@ -112,6 +112,7 @@
     "filePlaceholder": "Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
   },
   "validate": {
+    "nameRequired": "Name is required",
     "emailInvalid": "Invalid email",
     "passwordLength": "Password must be at least 6 characters",
     "nameCharacters": "First and last names can only contain alphabetical characters",
@@ -126,6 +127,8 @@
     "failedLogin": "Login failed. <br /> Please check your information",
     "failedCreateUser": "Failed to create user.",
     "successCreateUser": "User created successfully",
+    "successCreateAppointment": "Appointment created successfully",
+    "failedCreateAppointment": "Failed to create appointment.",
     "errorCreateUser": "Failed to create user",
     "errorDeleteUser": "Failed to delete user",
     "successDeleteUser": "User deleted successfully",
@@ -192,6 +195,9 @@
     "PaymentMethod": "Patients can pay costs in form",
     "more": "More",
     "hide": "Hide"
+  },
+  "booking": {
+    "title": "Scheduling information"
   },
   "profileDoctor": {
     "free": "Free to book"

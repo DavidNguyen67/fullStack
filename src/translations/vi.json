@@ -92,10 +92,10 @@
     "lastName": "Họ",
     "phoneNumber": "Số điện thoại",
     "address": "Địa chỉ",
-    "who": "Đặt cho?",
-    "gender": "Giới tính",
-    "position": "Chức danh",
-    "role": "Vai trò",
+    "dob": "Ngày sinh",
+    "gender": "Chọn Giới tính",
+    "position": "Chọn Chức danh",
+    "role": "Chọn Vai trò",
     "image": "Ảnh đại diện",
     "save": "Lưu",
     "reason": "Lý do khám bệnh",
@@ -112,6 +112,7 @@
     "filePlaceholder": "Kéo & Thả tệp  hoặc <span class='filepond--label-action'>Duyệt tệp</span>"
   },
   "validate": {
+    "nameRequired": "Trường Tên không được bỏ trống",
     "emailInvalid": "Email không hợp lệ",
     "passwordLength": "Password phải có ít nhất 6 ký tự",
     "nameCharacters": "Tên và họ chỉ được chứa các ký tự chữ cái",
@@ -126,6 +127,8 @@
     "failedLogin": "Đăng nhập thất bại. <br /> Vui lòng kiểm tra lại thông tin",
     "failedCreateUser": "Tạo người dùng thất bại.",
     "successCreateUser": "Tạo người dùng thành công.",
+    "successCreateAppointment": "Đặt lịch thành công.",
+    "failedCreateAppointment": "Đặt lịch thất bại.",
     "errorCreateUser": "Tạo người dùng thất bại",
     "errorReadUser": "Fetch người dùng thất bại",
     "errorNotFoundUser": "Người dùng không tồn tại",
@@ -195,6 +198,9 @@
     "PaymentMethod": "Người bệnh có thể thanh toán chi phí bằng hình thức",
     "more": "Xem thêm",
     "hide": "Ẩn"
+  },
+  "booking": {
+    "title": "Thông tin đặt lịch"
   },
   "profileDoctor": {
     "free": "Miễn phí đặt lịch"

@@ -51,9 +51,9 @@ class DetailDoctor extends Component {
     const { doctor } = this.state;
     const { lang } = this.props;
 
-    if (Object.keys(doctor).length < 1) {
-      return <>No data</>;
-    }
+    // if (Object.keys(doctor).length < 1) {
+    //   return <>No data</>;
+    // }
 
     const nameVi = `${doctor.lastName} ${doctor.firstName}`;
     const nameEn = `${doctor.firstName} ${doctor.lastName}`;

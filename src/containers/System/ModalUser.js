@@ -3,7 +3,12 @@ import './userManage.scss';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { FormattedMessage } from 'react-intl';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { CommonUtils, LanguageUtils, MAX_FILE_SIZE } from '../../utils';
+import {
+  CommonUtils,
+  LANGUAGES,
+  LanguageUtils,
+  MAX_FILE_SIZE,
+} from '../../utils';
 import * as actions from './../../store/actions';
 import validator from 'validator';
 import { toast } from 'react-toastify';
@@ -17,6 +22,7 @@ import {
   createNewUserService,
   updateUsersService,
 } from '../../services/userService';
+import Select from 'react-select';
 
 // Register the plugins
 registerPlugin(
@@ -72,22 +78,9 @@ function ModalUser(props) {
   const [isLoadingRequest, setIsLoadingRequest] = useState(false);
 
   const { language: lang } = useSelector((state) => state.app);
-  const {
-    isError,
-    isLoading,
-    genders,
-    positions,
-    roles,
-    statusCode,
-    isSuccessCreate,
-    isErrorCreate,
-    isSuccessRead,
-    isErrorRead,
-    isSuccessUpdate,
-    isErrorUpdate,
-    isSuccessDelete,
-    isErrorDelete,
-  } = useSelector((state) => state.admin);
+  const { isError, isLoading, genders, positions, roles } = useSelector(
+    (state) => state.admin
+  );
   const dispatch = useDispatch();
 
   const fetchFormInput = () => {
@@ -110,9 +103,9 @@ function ModalUser(props) {
           lastName: initLastName,
           address: initAddress,
           phoneNumber: initPhoneNumber,
-          gender,
-          roleId,
-          positionId,
+          genderData,
+          roleData,
+          positionData,
         } = props?.user;
 
         setId(initId || '');
@@ -121,9 +114,43 @@ function ModalUser(props) {
         setLastName(initLastName || '');
         setAddress(initAddress || '');
         setPhoneNumber(initPhoneNumber || '');
-        setGender(gender || genders[0]?.keyMap);
-        setRoleId(roleId || roles[0]?.keyMap);
-        setPositionId(positionId || positions[0]?.keyMap);
+        setGender(
+          {
+            value: genderData?.keyMap,
+            label:
+              lang === LANGUAGES.VI ? genderData?.valueVi : genderData?.valueEn,
+          } || {
+            value: genders[0]?.keyMap,
+            label:
+              lang === LANGUAGES.VI ? genders[0]?.valueVi : genders[0]?.valueEn,
+          }
+        );
+        setRoleId(
+          {
+            value: roleData?.keyMap,
+            label:
+              lang === LANGUAGES.VI ? roleData?.valueVi : roleData?.valueEn,
+          } || {
+            value: roles[0]?.keyMap,
+            label:
+              lang === LANGUAGES.VI ? roles[0]?.valueVi : roles[0]?.valueEn,
+          }
+        );
+        setPositionId(
+          {
+            value: positionData?.keyMap,
+            label:
+              lang === LANGUAGES.VI
+                ? positionData?.valueVi
+                : positionData?.valueEn,
+          } || {
+            value: positions[0]?.keyMap,
+            label:
+              lang === LANGUAGES.VI
+                ? positions[0]?.valueVi
+                : positions[0]?.valueEn,
+          }
+        );
       }
     } catch (error) {
       console.log(error);
@@ -163,20 +190,20 @@ function ModalUser(props) {
       setAddress(event.target.value);
     },
 
-    genderKey: (event) => {
-      setGender(event.target.value);
+    genderKey: (selectedGender) => {
+      setGender(selectedGender);
     },
 
-    roleKey: (event) => {
-      setRoleId(event.target.value);
+    roleKey: (selectedRole) => {
+      setRoleId(selectedRole);
     },
 
     phoneNumber: (event) => {
       setPhoneNumber(event.target.value);
     },
 
-    positionKey: (event) => {
-      setPositionId(event.target.value);
+    positionKey: (selectedPosition) => {
+      setPositionId(selectedPosition);
     },
   };
 
@@ -240,10 +267,10 @@ function ModalUser(props) {
       firstName,
       lastName,
       address,
-      gender,
-      roleId,
+      gender: gender.value,
+      roleId: roleId.value,
       phoneNumber,
-      positionId,
+      positionId: positionId.value,
       image,
       // image: JSON.stringify(await CommonUtils.getBase64(image[0].file)),
       password,
@@ -253,6 +280,7 @@ function ModalUser(props) {
       return;
     }
     let result = { ...dataUser };
+
     let response = null;
 
     if (image[0] && image[0].file) {
@@ -287,6 +315,7 @@ function ModalUser(props) {
           if (!result[key]) delete result[key];
         }
         setIsLoadingRequest(true);
+
         response = await createNewUserService([result]);
         if (
           response.status === 500 ||
@@ -356,6 +385,7 @@ function ModalUser(props) {
         }
         setIsLoadingRequest(true);
         response = await updateUsersService([result]);
+
         if (!response || Object.keys(response).length < 1) {
           toast.error(
             <FormattedMessage
@@ -424,8 +454,24 @@ function ModalUser(props) {
 
   const { modal, toggleModal, typeModal } = props;
 
-  console.log(props);
-
+  const listGender = genders.map((item) => {
+    return {
+      value: item.keyMap,
+      label: lang === LANGUAGES.EN ? item.valueEn : item.valueVi,
+    };
+  });
+  const listPosition = positions.map((item) => {
+    return {
+      value: item.keyMap,
+      label: lang === LANGUAGES.EN ? item.valueEn : item.valueVi,
+    };
+  });
+  const listRole = roles.map((item) => {
+    return {
+      value: item.keyMap,
+      label: lang === LANGUAGES.EN ? item.valueEn : item.valueVi,
+    };
+  });
   return (
     <>
       <Modal
@@ -563,82 +609,39 @@ function ModalUser(props) {
                   <FormattedMessage id="manage-user.gender" />
                 </label>
                 <i className="fa fa-chevron-down position-absolute arrows"></i>
-                <select
-                  id="inputGender"
-                  className="form-control"
+                <Select
+                  value={gender}
                   name="gender"
                   onChange={handleChangeInput.genderKey}
-                >
-                  <option>-----</option>
-                  {genders?.length > 0 &&
-                    genders.map((item, index) => (
-                      <option
-                        key={item.id}
-                        defaultChecked={item.key === gender}
-                        value={item.keyMap}
-                      >
-                        {lang.toLowerCase() === 'en'
-                          ? item.valueEn
-                          : item.valueVi}
-                      </option>
-                    ))}
-                </select>
+                  options={listGender}
+                  id="inputGender"
+                />
               </div>
               <div className="form-group col-6 col-lg-4 position-relative">
                 <label htmlFor="inputPosition" className="labelInputModal">
                   <FormattedMessage id="manage-user.position" />
                 </label>
                 <i className="fa fa-chevron-down position-absolute arrows"></i>
-                <select
-                  id="inputPosition"
-                  className="form-control"
-                  name="position"
+                <Select
+                  value={positionId}
+                  name="positionId"
                   onChange={handleChangeInput.positionKey}
-                >
-                  <option>-----</option>
-                  {positions?.length > 0 &&
-                    positions.map((item, index) => {
-                      return (
-                        <option
-                          key={item.id}
-                          defaultChecked={item.key === positionId}
-                          value={item.keyMap}
-                        >
-                          {lang.toLowerCase() === 'en'
-                            ? item.valueEn
-                            : item.valueVi}
-                        </option>
-                      );
-                    })}
-                </select>
+                  options={listPosition}
+                  id="inputPosition"
+                />
               </div>
               <div className="form-group col-6 col-lg-4 position-relative">
                 <label htmlFor="inputRoleId" className="labelInputModal">
                   <FormattedMessage id="manage-user.role" />
                 </label>
                 <i className="fa fa-chevron-down position-absolute arrows"></i>
-                <select
-                  id="inputRoleId"
-                  className="form-control"
-                  name="role"
+                <Select
+                  value={roleId}
                   onChange={handleChangeInput.roleKey}
-                >
-                  <option>-----</option>
-                  {roles?.length > 0 &&
-                    roles.map((item, index) => {
-                      return (
-                        <option
-                          key={item.id}
-                          defaultChecked={roleId === item.key}
-                          value={item.keyMap}
-                        >
-                          {lang.toLowerCase() === 'en'
-                            ? item.valueEn
-                            : item.valueVi}
-                        </option>
-                      );
-                    })}
-                </select>
+                  options={listRole}
+                  id="inputRoleId"
+                  name="roleId"
+                />
               </div>
             </div>
             <div className="form-row my-2 row">

@@ -25,7 +25,6 @@ class ProfileDoctor extends Component {
   async componentDidUpdate(prevProps) {
     if (prevProps.id !== this.props.id) {
       const { id } = this.props;
-      console.log(id);
       if (id) await this.fetchDoctorProfile(id);
     }
   }

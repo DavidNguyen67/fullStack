@@ -144,6 +144,7 @@ class UserManage extends Component {
         handleDeleteUsers();
         return;
       }
+
       this.toggleModal(dataUser, typeModal);
     } else {
       if (hasSelected) {
