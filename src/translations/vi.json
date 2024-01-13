@@ -160,7 +160,7 @@
     "selectScheduleIsRequired": "Chưa chọn giờ khám",
     "successBookSchedule": "Đặt lịch khám thành công",
     "errorBookSchedule": "Đặt lịch thất bại",
-    "conflictSchedule": "Đã có người đặt khám",
+    "conflictSchedule": "Lịch mới có ít nhất 1 cái trùng lặp",
     "wrongInfo": "Sai thông tin đăng nhập"
   },
   "homePage": {

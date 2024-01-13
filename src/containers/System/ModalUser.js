@@ -272,7 +272,6 @@ function ModalUser(props) {
       phoneNumber,
       positionId: positionId.value,
       image,
-      // image: JSON.stringify(await CommonUtils.getBase64(image[0].file)),
       password,
     };
 

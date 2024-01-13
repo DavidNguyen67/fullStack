@@ -7,6 +7,7 @@ import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroup
 import Header from '../containers/Header/Header';
 import ActionUserPage from '../containers/System/Admin/ActionUserPage';
 import ManageDoctor from './../containers/System/Admin/ManageDoctor';
+import ManageSpecialty from './../containers/System/Specialty/ManageSpecialty';
 class System extends Component {
   render() {
     const { systemMenuPath, isLoggedIn } = this.props;
@@ -36,6 +37,7 @@ class System extends Component {
                   path="/system/product-manage"
                   component={ProductManage}
                 />
+                <Route path="/system/specialties" component={ManageSpecialty} />
                 <Route
                   path="/system/register-package-group-or-account"
                   component={RegisterPackageGroupOrAcc}

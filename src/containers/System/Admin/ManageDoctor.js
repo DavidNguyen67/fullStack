@@ -228,7 +228,6 @@ class ManageDoctor extends Component {
           nameClinic: doctorInfo?.nameClinic || '',
           note: doctorInfo?.note || '',
         };
-        console.log(doctorInfo);
         if (this.props.lang === constant.LANGUAGES.VI) {
           newState = {
             ...newState,
@@ -255,7 +254,7 @@ class ManageDoctor extends Component {
               },
             };
           }
-          if (doctorInfo?.selectedPayment.valueVi) {
+          if (doctorInfo?.selectedPayment?.valueVi) {
             newState = {
               ...newState,
               selectedPayment: {

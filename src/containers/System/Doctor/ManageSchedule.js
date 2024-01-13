@@ -51,9 +51,6 @@ class ManageSchedule extends Component {
       doctorId: selectedDoctor?.value,
       timeType: selectedTime?.map && selectedTime.map((item) => item.keyMap),
     };
-    console.log('====================================');
-    console.log(this.props.userInfo);
-    console.log('====================================');
 
     // filter the false value in payload
     Object.keys(payload).forEach((key) => {

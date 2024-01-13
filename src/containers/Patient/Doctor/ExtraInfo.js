@@ -35,9 +35,13 @@ class ExtraInfo extends Component {
             <strong>
               {`${info?.addressClinic} ${
                 lang === LANGUAGES.EN
-                  ? `${info?.provinceInfo?.valueEn}`
-                  : `${info?.provinceInfo?.valueVi}`
-              }` || ''}
+                  ? info?.provinceInfo?.valueEn
+                    ? `${info?.provinceInfo?.valueEn}`
+                    : ' '
+                  : info?.provinceInfo?.valueVi
+                  ? `${info?.provinceInfo?.valueVi}`
+                  : ' '
+              }`}
             </strong>
           </h6>
         </div>
@@ -65,19 +69,25 @@ class ExtraInfo extends Component {
                     <div className="col-2 d-flex">
                       <span className="m-auto">
                         {lang === LANGUAGES.EN ? (
-                          <NumberFormat
-                            value={info?.priceInfo?.valueEn}
-                            displayType={'text'}
-                            thousandSeparator={true}
-                            prefix={'$'}
-                          />
-                        ) : (
+                          info?.priceInfo?.valueEn ? (
+                            <NumberFormat
+                              value={info?.priceInfo?.valueEn}
+                              displayType={'text'}
+                              thousandSeparator={true}
+                              prefix={'$'}
+                            />
+                          ) : (
+                            ' '
+                          )
+                        ) : info?.priceInfo?.valueVi ? (
                           <NumberFormat
                             value={info?.priceInfo?.valueVi}
                             displayType={'text'}
                             thousandSeparator={true}
                             suffix={'VND'}
                           />
+                        ) : (
+                          ' '
                         )}
                       </span>
                     </div>
@@ -87,8 +97,12 @@ class ExtraInfo extends Component {
                       <p className="text-justify m-0 mt-2 mx-2 item">
                         <FormattedMessage id={`clinic.PaymentMethod`} />:{' '}
                         {lang === LANGUAGES.EN
-                          ? `${info?.paymentInfo?.valueEn}`
-                          : `${info?.paymentInfo?.valueVi}`}
+                          ? info?.paymentInfo?.valueEn
+                            ? `${info?.paymentInfo?.valueEn}`
+                            : ''
+                          : info?.paymentInfo?.valueVi
+                          ? `${info?.paymentInfo?.valueVi}`
+                          : ''}
                       </p>
                     </div>
                   </div>

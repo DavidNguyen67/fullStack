@@ -40,9 +40,9 @@ export const getAllCodeService = async (type) => {
   );
 };
 
-export const getTopDoctorService = async (limit) => {
+export const getTopDoctorService = async () => {
   return await instance.get(
-    `/${constants.crudDoctorPath}/${constants.readTopRoute}?${constants.queryPrefix.limit}=${limit}`
+    `/${constants.crudDoctorPath}/${constants.readTopRoute}`
   );
 };
 
@@ -107,5 +107,17 @@ export const createAppointment = async (payload) => {
 export const verifyAppointment = async (tokenString) => {
   return instance.get(
     `/${constants.bookingPath}/${constants.verifyPath}?${constants.queryPrefix.token}=${tokenString}`
+  );
+};
+
+export const createSpecialty = async (payload) => {
+  return await instance.post(
+    `/${constants.specialtyPath}/${constants.createRoute}`,
+    payload
+  );
+};
+export const readSpecialty = async () => {
+  return await instance.get(
+    `/${constants.specialtyPath}/${constants.readRoute}`
   );
 };

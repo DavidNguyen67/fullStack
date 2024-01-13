@@ -12,6 +12,10 @@ const instance = axios.create({
   // headers: {
   //   'Contetnt-Type': 'multipart/form-data',
   // },
+  transitional: {
+    silentJSONParsing: false,
+  },
+  responseType: 'json',
 });
 
 axiosRetry(instance, {
