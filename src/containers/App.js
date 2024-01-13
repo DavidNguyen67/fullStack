@@ -21,6 +21,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import CustomScrollbars from '../components/CustomScrollbars';
 import DetailDoctor from './Patient/Doctor/DetailDoctor';
 import Doctor from '../routes/Doctor';
+import VerifyEmail from './Patient/VerifyEmail';
 class App extends Component {
   handlePersistorState = () => {
     const { persistor } = this.props;
@@ -64,7 +65,7 @@ class App extends Component {
                     path={path.DOCTOR}
                     component={userIsAuthenticated(Doctor)}
                   />
-                  <Route path={path.VERIFY} component={HomePage} />
+                  <Route path={path.VERIFY} component={VerifyEmail} />
                   <Route path={path.HOMEPAGE} component={HomePage} />
                 </Switch>
               </CustomScrollbars>
