@@ -24,6 +24,7 @@ import { FetchUsersInterceptor } from '../interceptor/fetchUser.interceptor';
 import { FileInterceptor } from '@nestjs/platform-express';
 // import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
 import { pipes } from '../pipes';
+import { HandleRawDataCreate } from 'src/modules/specialty/middleware/pipes/handleRawDataCreate.pipe';
 
 @Controller(`${routes.versionApi}/${routes.crudUserPath}`)
 export class UsersController {
@@ -66,6 +67,7 @@ export class UsersController {
     pipes.ExcludeIdFieldPipe,
     pipes.FileSizeAndImageValidationPipe,
     pipes.RemoveBase64PrefixPipe,
+    HandleRawDataCreate,
   )
   async createUsers(
     @Body(new ValidationPipe({ transform: true }))

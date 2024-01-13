@@ -13,6 +13,7 @@ import { InfoModule } from '../info/info.module';
 import { BookingModule } from '../booking/booking.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { env } from 'process';
+import { SpecialtyModule } from '../specialty/specialty.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { env } from 'process';
     ScheduleModule,
     InfoModule,
     BookingModule,
+    SpecialtyModule,
   ],
   providers: [
     {

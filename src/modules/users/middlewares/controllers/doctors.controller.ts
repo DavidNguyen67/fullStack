@@ -51,25 +51,14 @@ export class DoctorController {
 
   @Get(routes.readTopRoute)
   @UseInterceptors(FetchUsersInterceptor)
-  @UsePipes(
-    pipes.IsHasDataInQueryOrBodyPipe,
-    pipes.convertAnyStringArrToNumArrPipe,
-  )
-  async fetchTopDoctors(
-    @Query() query: FetchDoctorInterface,
-  ): Promise<GlobalRes> {
+  // @UsePipes()
+  async fetchTopDoctors(): Promise<GlobalRes> {
     try {
-      const limit = query.limit;
-      if (limit) {
-        const data = await this.doctorsService.getTopDoctorHome(+limit || 10);
-        return {
-          statusCode: HttpStatus.OK,
-          data,
-        };
-      }
+      const data = await this.doctorsService.getTopDoctorHome();
+
       return {
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Missing or invalid query parameters',
+        statusCode: HttpStatus.OK,
+        data: data,
       };
     } catch (error) {
       console.log(error);

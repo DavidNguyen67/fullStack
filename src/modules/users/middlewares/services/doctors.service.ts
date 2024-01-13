@@ -2,12 +2,13 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { exclude } from 'src/utils/function';
 import * as role from '../../../../utils/constants';
+import { env } from 'process';
 
 @Injectable()
 export class DoctorsService {
   constructor(private prisma: PrismaService) {}
 
-  async getTopDoctorHome(limit: number) {
+  async getTopDoctorHome() {
     try {
       const doctors = await this.prisma.user.findMany({
         include: {
@@ -30,7 +31,7 @@ export class DoctorsService {
             },
           },
         },
-        take: limit,
+        take: +env.MAX_RECORD_LENGTH,
         where: {
           roleId: role.ROLE_DOCTOR_CODE,
         },

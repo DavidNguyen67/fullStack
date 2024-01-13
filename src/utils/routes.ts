@@ -10,6 +10,7 @@ export const bookingPath = 'booking';
 export const markdownPath = 'markdown';
 export const doctorInfo = `${crudDoctorPath}Info`;
 export const verifyPath = `verify`;
+export const specialtyPath = 'specialty';
 
 export const loginRoute = 'login';
 export const readRoute = 'read';

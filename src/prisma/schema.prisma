@@ -107,12 +107,15 @@ model Schedule {
 }
 
 model Specialty {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description Json
-  image       Bytes
-  createAt    DateTime? @default(now())
-  updateAt    DateTime? @default(now())
+  id                 Int       @id @default(autoincrement())
+  name               String
+  contentMarkdown_VI Json?
+  contentMarkdown_EN Json?
+  descriptionHTML_VI Json?
+  descriptionHTML_EN Json?
+  image              Bytes?
+  createAt           DateTime? @default(now())
+  updateAt           DateTime? @default(now())
 }
 
 model doctor_clinic_specialty {
@@ -127,6 +130,8 @@ model doctor_clinic_specialty {
 model Doctor_info {
   id            Int      @id @default(autoincrement())
   doctorId      Int      @unique
+  specialtyId   Int?
+  clinicId      Int?
   priceId       String
   provinceId    String
   paymentId     String

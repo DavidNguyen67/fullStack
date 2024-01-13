@@ -40,7 +40,7 @@ export class BookingService {
         <p><strong>Hẹn khám: </strong>${scheduleTime}</p>
         <p><strong>Bác sỹ: </strong>${doctorData.nameVi}</p>
         <p><strong>Giá khám: </strong>${doctorData.priceInfo?.valueVi} VND</p>
-        <p>Nếu các thông tin trên là <strong>ĐÚNG</strong> sự thật. Vui lòng click vào <a href=${redirectLink}"
+        <p>Nếu các thông tin trên là <strong>ĐÚNG</strong> sự thật. Vui lòng click vào <a href="${redirectLink}"
             target="_blank">đây</a> để xác nhận và hoàn tất thủ tục đặt lịch khám trong phút</p>
         <p>Đường dẫn chỉ tồn tại trong <strong>${this.coolDownVerify}</strong> phút kể từ lúc gửi</p>
         <h4>Xin chân thành cảm ơn</h4>
@@ -50,7 +50,7 @@ export class BookingService {
       <div>
         <br>
         Hello <strong>${customerName}</strong>
-        <p>This is the appointment information you previously booked on <a href="${redirectLink}"
+        <p>This is the appointment information you previously booked on <a href="https://www.youtube.com/"
             target="_blank">Youtube</a></p>
         <p><strong>Booked at: </strong>${bookAt}</p>
         <p><strong>Scheduled time: </strong>${scheduleTime}</p>
@@ -99,14 +99,13 @@ export class BookingService {
         },
       });
 
-      const payloadBooking = {
-        ...booking,
-        patientId: userInfo.id,
-        updateAt: new Date(),
-      };
-      const uniqueString = uuid();
-
       if (userInfo) {
+        const payloadBooking = {
+          ...booking,
+          patientId: userInfo.id,
+          updateAt: new Date(),
+        };
+        const uniqueString = uuid();
         const appointments = await this.prisma.booking.upsert({
           where: {
             patientId: userInfo.id,
@@ -166,7 +165,7 @@ export class BookingService {
             html: contentMail,
           });
 
-        return !!appointments && !!mailInfo;
+        return !!(appointments && mailInfo);
       }
       throw new HttpException(
         'No schedules were created. Not allow to book.',
@@ -198,7 +197,7 @@ export class BookingService {
             },
           });
           if (booking) {
-            return booking;
+            return !!booking;
           }
           throw new HttpException(
             'Failed to confirm',
