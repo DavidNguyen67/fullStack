@@ -17,6 +17,7 @@ class DoctorSchedule extends Component {
       allAvailableTime: [],
       isShow: false,
       dataTime: null,
+      doctor: null,
     };
   }
 
@@ -76,6 +77,7 @@ class DoctorSchedule extends Component {
   componentDidMount() {
     this.getDays();
   }
+
   componentDidUpdate(prevProps) {
     if (prevProps.lang !== this.props.lang) {
       this.getDays(false);
@@ -103,8 +105,7 @@ class DoctorSchedule extends Component {
   };
   render() {
     const { allDay, allAvailableTime, isShow, dataTime } = this.state;
-    const { lang } = this.props;
-
+    const { lang, doctorData } = this.props;
     return (
       <>
         <div className="doctor-schedule-container row">
@@ -175,6 +176,7 @@ class DoctorSchedule extends Component {
           isShow={isShow}
           toggleModal={this.toggleModal}
           dataTime={dataTime}
+          doctorData={doctorData}
         />
       </>
     );

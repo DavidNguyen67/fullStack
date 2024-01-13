@@ -6,6 +6,7 @@ export const path = {
   SYSTEM: '/system',
   DETAIL_DOCTOR: '/doctor/detail/:id',
   DOCTOR: '/doctor',
+  VERIFY: '/verify',
 };
 
 export const LANGUAGES = {
@@ -62,6 +63,7 @@ export const schedulePath = 'schedule';
 export const markdownPath = 'markdown';
 export const doctorInfo = `${crudDoctorPath}Info`;
 export const patientPath = 'patient';
+export const verifyPath = `verify`;
 
 export const loginRoute = 'login';
 export const readRoute = 'read';
@@ -71,6 +73,7 @@ export const readTopRoute = 'top/read';
 export const updateRoute = 'update';
 export const deleteRoute = 'delete';
 export const createRoute = 'create';
+export const sendRoute = 'send';
 
 export const queryPrefix = {
   id: 'id',
@@ -78,4 +81,5 @@ export const queryPrefix = {
   limit: 'limit',
   doctorId: 'doctorId',
   date: 'date',
+  token: 'token',
 };

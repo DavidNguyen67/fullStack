@@ -97,7 +97,13 @@ class DetailDoctor extends Component {
               className="content-left col-12 col-lg-6"
               style={{ borderRight: '1px solid black' }}
             >
-              <DoctorSchedule />
+              <DoctorSchedule
+                doctorData={{
+                  nameVi,
+                  nameEn,
+                  priceInfo: doctor?.doctorInfo?.priceInfo,
+                }}
+              />
             </div>
             <div className="content-right col-12 col-lg-6">
               <ExtraInfo info={doctor.doctorInfo} />

@@ -56,7 +56,6 @@ class BookingModal extends Component {
       newState.timeType = timeType;
       newState.doctorId = doctorId;
     }
-
     if (prevProps.genders !== this.props.genders) {
       const { lang, genders } = this.props;
       newState.genders = this.props.genders;
@@ -121,6 +120,7 @@ class BookingModal extends Component {
   }
 
   bookConfirm = async () => {
+    const { dataTime, lang, doctorData } = this.props;
     const {
       timeType,
       doctorId,
@@ -136,16 +136,19 @@ class BookingModal extends Component {
       date: dob,
       timeType,
       doctorId,
-      namePatient,
-      phoneNumber,
-      email,
-      address,
-      note,
+      namePatient: namePatient.trim(),
+      phoneNumber: phoneNumber.trim(),
+      email: email.trim(),
+      address: address.trim(),
+      note: note.trim(),
       gender: gender.value,
+      dataTime: dataTime.time,
+      lang,
+      doctorData,
     };
 
     const validateFields = () => {
-      const { namePatient, phoneNumber, email } = this.state;
+      const { namePatient, phoneNumber, email } = payload;
 
       if (!namePatient) {
         toast.error(<FormattedMessage id="validate.nameRequired" />);
@@ -205,16 +208,12 @@ class BookingModal extends Component {
       toast.success(<FormattedMessage id="toast.successCreateAppointment" />);
       this.setState((prevState) => ({
         ...prevState,
-        date: null,
-        timeType: null,
-        doctorId: null,
         namePatient: '',
         phoneNumber: '',
         email: '',
         address: '',
         note: '',
         dob: new Date(),
-        gender: {},
       }));
       this.props.toggleModal();
       return;
@@ -268,6 +267,7 @@ class BookingModal extends Component {
   };
 
   render() {
+    // console.log(this.props);
     const {
       width,
       doctorId,

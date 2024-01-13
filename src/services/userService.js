@@ -103,3 +103,9 @@ export const createAppointment = async (payload) => {
     payload
   );
 };
+
+export const verifyAppointment = async (tokenString) => {
+  return instance.get(
+    `/${constants.bookingPath}/${constants.verifyPath}?${constants.queryPrefix.token}=${tokenString}`
+  );
+};

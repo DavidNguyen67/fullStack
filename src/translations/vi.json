@@ -127,7 +127,7 @@
     "failedLogin": "Đăng nhập thất bại. <br /> Vui lòng kiểm tra lại thông tin",
     "failedCreateUser": "Tạo người dùng thất bại.",
     "successCreateUser": "Tạo người dùng thành công.",
-    "successCreateAppointment": "Đặt lịch thành công.",
+    "successCreateAppointment": "Đặt lịch thành công. Vui lòng kiểm tra hôp thư Email",
     "failedCreateAppointment": "Đặt lịch thất bại.",
     "errorCreateUser": "Tạo người dùng thất bại",
     "errorReadUser": "Fetch người dùng thất bại",
