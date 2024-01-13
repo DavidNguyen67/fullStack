@@ -63,14 +63,15 @@ model AllCode {
 }
 
 model Booking {
-  id        Int       @id @default(autoincrement())
-  statusId  String    @default("S1")
-  doctorId  Int
-  patientId Int       @unique()
-  date      DateTime
-  timeType  String
-  createAt  DateTime? @default(now())
-  updateAt  DateTime? @default(now())
+  id           Int       @id @default(autoincrement())
+  statusId     String    @default("S1")
+  doctorId     Int
+  patientId    Int       @unique()
+  date         DateTime
+  timeType     String
+  uniqueString String    @unique()
+  createAt     DateTime? @default(now())
+  updateAt     DateTime? @default(now())
 }
 
 model Clinic {

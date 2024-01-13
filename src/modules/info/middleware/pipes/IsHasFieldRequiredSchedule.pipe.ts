@@ -1,8 +1,9 @@
 import {
   Injectable,
   PipeTransform,
-  BadRequestException,
   InternalServerErrorException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Doctor_info } from '@prisma/client';
 
@@ -19,13 +20,13 @@ export class IsHasFieldRequiredDoctorInfoPipe implements PipeTransform {
       if (!isValid) {
         const missingFields = 'priceId, provinceId, doctorId, paymentId';
         const errorMessage = `Missing required params: ${missingFields}`;
-        throw new BadRequestException(errorMessage);
+        throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
       }
 
       return doctorInfos;
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

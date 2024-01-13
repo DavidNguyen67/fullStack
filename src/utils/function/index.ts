@@ -51,3 +51,13 @@ export const calculateSizeBytes = (charLength: number) => (charLength * 6) / 8;
 export const hasNumber = (myString: string): boolean => {
   return /\d/.test(myString);
 };
+
+// Function to calculate the time difference between two ISO timestamps
+export const getRangeTimeISO = (isoTime1, isoTime2) => {
+  // Convert to milliseconds and calculate the difference
+  const difference = Math.abs(isoTime1 - isoTime2);
+
+  return difference / 1000;
+};
+
+// Usage of the function

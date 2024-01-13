@@ -1,8 +1,8 @@
 import {
   Injectable,
   PipeTransform,
-  BadRequestException,
-  InternalServerErrorException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Schedule } from '@prisma/client';
 import { env } from 'process';
@@ -21,13 +21,13 @@ export class IsHasFieldRequiredSchedulePipe implements PipeTransform {
       if (!isValid) {
         const missingFields = 'date, timeType, doctorId';
         const errorMessage = `Missing required params: ${missingFields}`;
-        throw new BadRequestException(errorMessage);
+        throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
       }
 
       return schedules;
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

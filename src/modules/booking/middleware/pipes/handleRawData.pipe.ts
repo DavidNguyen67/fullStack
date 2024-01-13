@@ -1,8 +1,8 @@
 import {
   Injectable,
   PipeTransform,
-  BadRequestException,
-  InternalServerErrorException,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { Booking, User } from '@prisma/client';
 import { v4 as uuid } from 'uuid';
@@ -49,13 +49,13 @@ export class HandleRawDataPipe implements PipeTransform {
       if (!isValidUserTbl) {
         const missingFields = 'email, firstName, lastName';
         const errorMessage = `Missing required params: ${missingFields}`;
-        throw new BadRequestException(errorMessage);
+        throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
       }
 
       if (!isValidBookingTbl) {
         const missingFields = 'date, doctorId, timeType';
         const errorMessage = `Missing required params: ${missingFields}`;
-        throw new BadRequestException(errorMessage);
+        throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
       }
 
       return {
@@ -65,7 +65,7 @@ export class HandleRawDataPipe implements PipeTransform {
       };
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
