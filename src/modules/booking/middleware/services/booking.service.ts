@@ -38,7 +38,7 @@ export class BookingService {
             target="_blank">Youtube</a></p>
         <p><strong>Đặt lúc: </strong>${bookAt}</p>
         <p><strong>Hẹn khám: </strong>${scheduleTime}</p>
-        <p><strong>Bác sỹ: </strong>${doctorData.nameVi}</p>
+        <p><strong>Bác sỹ: </strong>${doctorData.firstName} ${doctorData.lastName}</p>
         <p><strong>Giá khám: </strong>${doctorData.priceInfo?.valueVi} VND</p>
         <p>Nếu các thông tin trên là <strong>ĐÚNG</strong> sự thật. Vui lòng click vào <a href="${redirectLink}"
             target="_blank">đây</a> để xác nhận và hoàn tất thủ tục đặt lịch khám trong phút</p>
@@ -54,7 +54,7 @@ export class BookingService {
             target="_blank">Youtube</a></p>
         <p><strong>Booked at: </strong>${bookAt}</p>
         <p><strong>Scheduled time: </strong>${scheduleTime}</p>
-        <p><strong>Doctor: </strong>${doctorData.nameEn}</p>
+        <p><strong>Doctor: </strong>${doctorData.lastName} ${doctorData.firstName}</p>
         <p><strong>Cost: </strong>$ ${doctorData.priceInfo?.valueEn}</p>
         <p>If the above information is <strong>CORRECT</strong>, please click <a href="${redirectLink}"
             target="_blank">here</a> to
@@ -121,6 +121,7 @@ export class BookingService {
         }
 
         const { lang, dataTime, doctorData } = appInfo;
+
         const customerName =
           lang === constants.LANGUAGES.VI
             ? userInfo.lastName.toLocaleLowerCase() === 'none'

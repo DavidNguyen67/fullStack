@@ -71,6 +71,12 @@ export class SpecialtyService {
                     },
                   },
                 },
+                priceInfo: {
+                  select: {
+                    valueEn: true,
+                    valueVi: true,
+                  },
+                },
               },
             },
           },
@@ -97,8 +103,16 @@ export class SpecialtyService {
                       select: {
                         valueEn: true,
                         valueVi: true,
+                        keyMap: true,
                       },
                     },
+                  },
+                },
+                priceInfo: {
+                  select: {
+                    valueEn: true,
+                    valueVi: true,
+                    keyMap: true,
                   },
                 },
               },
