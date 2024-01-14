@@ -164,6 +164,18 @@ export class DoctorsService {
                   keyMap: true,
                 },
               },
+              clinicInfo: {
+                select: {
+                  name: true,
+                  id: true,
+                },
+              },
+              specialtyInfo: {
+                select: {
+                  name: true,
+                  id: true,
+                },
+              },
               nameClinic: true,
               note: true,
             },

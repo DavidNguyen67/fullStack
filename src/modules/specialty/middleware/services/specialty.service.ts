@@ -47,4 +47,76 @@ export class SpecialtyService {
       throw error;
     }
   }
+
+  async readSpecialty(id: number, provinceId?: string) {
+    try {
+      if (provinceId) {
+        const specialty = await this.prisma.specialty.findFirst({
+          where: {
+            id,
+          },
+          include: {
+            doctorSpecialty: {
+              where: {
+                provinceId,
+              },
+              select: {
+                doctorInfo: {
+                  include: {
+                    positionData: {
+                      select: {
+                        valueEn: true,
+                        valueVi: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+        if (!specialty) {
+          throw new HttpException(
+            'No specialty was found',
+            HttpStatus.NOT_FOUND,
+          );
+        }
+        return exclude(specialty, ['image']);
+      }
+      if (!provinceId) {
+        const specialty = await this.prisma.specialty.findFirst({
+          where: {
+            id,
+          },
+          include: {
+            doctorSpecialty: {
+              select: {
+                doctorInfo: {
+                  include: {
+                    positionData: {
+                      select: {
+                        valueEn: true,
+                        valueVi: true,
+                      },
+                    },
+                  },
+                },
+              },
+              take: 10,
+            },
+          },
+        });
+        if (!specialty) {
+          throw new HttpException(
+            'No specialty was found',
+            HttpStatus.NOT_FOUND,
+          );
+        }
+        return exclude(specialty, ['image']);
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }

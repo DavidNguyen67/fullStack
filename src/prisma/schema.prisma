@@ -75,13 +75,14 @@ model Booking {
 }
 
 model Clinic {
-  id          Int       @id @default(autoincrement())
-  name        String
-  address     Json
-  description Json
-  image       Bytes
-  createAt    DateTime? @default(now())
-  updateAt    DateTime? @default(now())
+  id           Int           @id @default(autoincrement())
+  name         String
+  address      Json
+  description  Json
+  image        Bytes
+  createAt     DateTime?     @default(now())
+  updateAt     DateTime?     @default(now())
+  doctorClinic Doctor_info[] @relation("Clinic")
 }
 
 model History {
@@ -107,15 +108,16 @@ model Schedule {
 }
 
 model Specialty {
-  id                 Int       @id @default(autoincrement())
+  id                 Int           @id @default(autoincrement())
   name               String
   contentMarkdown_VI Json?
   contentMarkdown_EN Json?
   descriptionHTML_VI Json?
   descriptionHTML_EN Json?
   image              Bytes?
-  createAt           DateTime? @default(now())
-  updateAt           DateTime? @default(now())
+  createAt           DateTime?     @default(now())
+  updateAt           DateTime?     @default(now())
+  doctorSpecialty    Doctor_info[] @relation("Specialty")
 }
 
 model doctor_clinic_specialty {
@@ -128,8 +130,8 @@ model doctor_clinic_specialty {
 }
 
 model Doctor_info {
-  id            Int      @id @default(autoincrement())
-  doctorId      Int      @unique
+  id            Int        @id @default(autoincrement())
+  doctorId      Int        @unique
   specialtyId   Int?
   clinicId      Int?
   priceId       String
@@ -138,11 +140,13 @@ model Doctor_info {
   nameClinic    Json?
   addressClinic Json?
   note          String?
-  count         Int      @default(0)
-  createAt      DateTime @default(now())
-  updateAt      DateTime @default(now())
-  doctorInfo    User?    @relation("Info", fields: [doctorId], references: [id])
-  priceInfo     AllCode  @relation("PriceInfo", fields: [priceId], references: [keyMap])
-  provinceInfo  AllCode  @relation("ProvinceInfo", fields: [provinceId], references: [keyMap])
-  paymentInfo   AllCode  @relation("PaymentInfo", fields: [paymentId], references: [keyMap])
+  count         Int        @default(0)
+  createAt      DateTime   @default(now())
+  updateAt      DateTime   @default(now())
+  doctorInfo    User?      @relation("Info", fields: [doctorId], references: [id])
+  priceInfo     AllCode    @relation("PriceInfo", fields: [priceId], references: [keyMap])
+  provinceInfo  AllCode    @relation("ProvinceInfo", fields: [provinceId], references: [keyMap])
+  paymentInfo   AllCode    @relation("PaymentInfo", fields: [paymentId], references: [keyMap])
+  clinicInfo    Clinic?    @relation("Clinic", fields: [clinicId], references: [id])
+  specialtyInfo Specialty? @relation("Specialty", fields: [specialtyId], references: [id])
 }
