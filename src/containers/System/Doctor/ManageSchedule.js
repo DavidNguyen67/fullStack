@@ -7,7 +7,10 @@ import Select from 'react-select';
 import * as constant from './../../../utils';
 import DatePicker from './../../../components/Input/DatePicker';
 import { toast } from 'react-toastify';
-import { createNewScheduleService } from '../../../services/userService';
+import {
+  createNewScheduleService,
+  getDoctorDetail,
+} from '../../../services/userService';
 import moment from 'moment';
 
 class ManageSchedule extends Component {

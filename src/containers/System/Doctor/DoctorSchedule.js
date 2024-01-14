@@ -56,8 +56,9 @@ class DoctorSchedule extends Component {
   };
 
   fetchSchedule = async (date) => {
-    const { id } = this.props.match.params;
-
+    let id = this.props.match.params.id;
+    const { doctorId } = this.props;
+    if (doctorId) id = doctorId;
     if (id && date) {
       const response = await services.getWeekDaysSchedule(id, date);
       if (response.statusCode === 200) {
@@ -74,13 +75,34 @@ class DoctorSchedule extends Component {
     }
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     this.getDays();
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     if (prevProps.lang !== this.props.lang) {
       this.getDays(false);
+    }
+    if (prevProps.doctorId !== this.props.doctorId) {
+      const response = await services.getDoctorDetail(this.props.doctorId);
+      if (response) {
+        if (response.statusCode === 200) {
+          this.setState((prevState) => ({
+            ...prevState,
+            doctor: response.data,
+            isLoading: false,
+            isFailed: false,
+          }));
+          return;
+        } else
+          this.setState((prevState) => ({
+            ...prevState,
+            doctor: {},
+            isFailed: true,
+            isLoading: false,
+          }));
+        return;
+      }
     }
   }
 

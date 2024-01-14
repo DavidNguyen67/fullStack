@@ -19,7 +19,32 @@ class ProfileDoctor extends Component {
 
   async componentDidMount() {
     const { id } = this.props;
-    if (id) await this.fetchDoctorProfile(id);
+    if (id) {
+      await this.fetchDoctorProfile(id);
+      return;
+    }
+
+    const { doctorId } = this.props;
+    if (doctorId) {
+      const response = await services.getDoctorDetail(doctorId);
+      if (response) {
+        if (response.statusCode === 200) {
+          this.setState((prevState) => ({
+            ...prevState,
+            doctor: response.data,
+            isLoading: false,
+            isFailed: false,
+          }));
+          return;
+        } else
+          this.setState((prevState) => ({
+            ...prevState,
+            isFailed: true,
+            isLoading: false,
+          }));
+        return;
+      }
+    }
   }
 
   async componentDidUpdate(prevProps) {

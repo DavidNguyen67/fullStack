@@ -3,22 +3,26 @@ import { connect } from 'react-redux';
 import './DetailSpecialty.scss';
 import HomeHeader from '../../HomePage/HomeHeader';
 import { getSpecialtyDetail } from '../../../services';
+import DoctorSchedule from '../../System/Doctor/DoctorSchedule';
+import ExtraInfo from '../Doctor/ExtraInfo';
+import ProfileDoctor from '../Doctor/ProfileDoctor';
 
 class DetailSpecialty extends Component {
   constructor(props) {
     super(props);
     this.state = {
       specialties: [],
+      doctorIds: [20, 22],
     };
   }
   async componentDidMount() {
     const { id } = this.props?.match?.params;
     const { specialties } = this.state;
 
-    if (id)
-      if (specialties.length < 1) {
-        await this.fetchSpecialtyDetails(id);
-      }
+    if (specialties.length < 1) {
+      await this.fetchSpecialtyDetails(id);
+      return;
+    }
   }
 
   async fetchSpecialtyDetails(id) {
@@ -34,10 +38,32 @@ class DetailSpecialty extends Component {
   }
 
   render() {
+    const { doctorIds } = this.state;
     return (
-      <>
+      <div className="detail-specialty-container">
         <HomeHeader />
-      </>
+        <div className="container">
+          <div className="description-specialty"></div>
+          {doctorIds.length > 0 &&
+            doctorIds.map((item) => {
+              return (
+                <div className="each-doctor-container" key={item}>
+                  <div className="row my-3 py-2">
+                    <div className="col-12 row each-doctor p-4">
+                      <div className="col-6 content-left">
+                        <ProfileDoctor doctorId={item} />
+                      </div>
+                      <div className="col-6 content-right">
+                        <DoctorSchedule doctorId={item} />
+                        <ExtraInfo doctorId={item} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      </div>
     );
   }
 }
@@ -47,6 +73,7 @@ const mapStateToProps = (state) => {
     systemMenuPath: state.app.systemMenuPath,
     isLoggedIn: state.user.isLoggedIn,
     lang: state.app.language,
+    doctors: state.admin.doctors,
   };
 };
 

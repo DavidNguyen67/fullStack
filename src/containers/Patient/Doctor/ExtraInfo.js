@@ -6,6 +6,7 @@ import './doctorExtraInfoContainer.scss';
 import { LANGUAGES } from '../../../utils';
 import NumberFormat from 'react-number-format';
 import { FormattedMessage } from 'react-intl';
+import { getDoctorDetail } from '../../../services';
 class ExtraInfo extends Component {
   constructor(props) {
     super(props);
@@ -15,150 +16,190 @@ class ExtraInfo extends Component {
       nameClinic: '',
       priceInfo: '',
       provinceInfo: '',
+
+      isLoading: false,
+      isFailed: false,
     };
+  }
+
+  async componentDidMount() {
+    if (this.props.info) return;
+
+    this.setState((prevState) => ({
+      ...prevState,
+      isLoading: true,
+      isFailed: false,
+    }));
+    const { doctorId } = this.props;
+    if (doctorId) {
+      const response = await getDoctorDetail(doctorId);
+      if (response) {
+        if (response.statusCode === 200) {
+          this.setState((prevState) => ({
+            ...prevState,
+            info: response.data?.doctorInfo,
+            isLoading: false,
+            isFailed: false,
+          }));
+          return;
+        } else
+          this.setState((prevState) => ({
+            ...prevState,
+            isFailed: true,
+            isLoading: false,
+          }));
+        return;
+      }
+    }
   }
 
   render() {
     const { isShow } = this.state;
-    const { info, lang } = this.props;
+    let info = this.props.info;
+    if (!info) info = this.state.info;
+    const { lang } = this.props;
 
     return (
-      <div className="doctor-extra-info-container h-100">
-        <div className="content-up pb-4">
-          <h3 className="text-uppercase">
-            <FormattedMessage id={`clinic.address`} />
-          </h3>
-          <h6>
-            <strong>{info?.nameClinic || ''}</strong>
-          </h6>
-          <h6>
-            <strong>
-              {`${info?.addressClinic} ${
-                lang === LANGUAGES.EN
-                  ? info?.provinceInfo?.valueEn
-                    ? `${info?.provinceInfo?.valueEn}`
-                    : ' '
-                  : info?.provinceInfo?.valueVi
-                  ? `${info?.provinceInfo?.valueVi}`
-                  : ' '
-              }`}
-            </strong>
-          </h6>
-        </div>
-        <div className="content-down">
-          {isShow ? (
-            <>
-              <div className="content-down-title text-uppercase">
-                <h5>
-                  <FormattedMessage id={`clinic.cost`} />
-                </h5>
-              </div>
-              <div className="detail-info">
-                <div className="left col-12 py-2">
-                  <div className="row">
-                    <div className="col-10">
-                      <div className="mx-2">
-                        <div>
-                          <FormattedMessage id={`clinic.cost`} />
+      <>
+        {info && (
+          <div className="doctor-extra-info-container h-100">
+            <div className="content-up pb-4">
+              <h3 className="text-uppercase">
+                <FormattedMessage id={`clinic.address`} />
+              </h3>
+              <h6>
+                <strong>{info?.nameClinic || ''}</strong>
+              </h6>
+              <h6>
+                <strong>
+                  {`${info?.addressClinic} ${
+                    lang === LANGUAGES.EN
+                      ? info?.provinceInfo?.valueEn
+                        ? `${info?.provinceInfo?.valueEn}`
+                        : ' '
+                      : info?.provinceInfo?.valueVi
+                      ? `${info?.provinceInfo?.valueVi}`
+                      : ' '
+                  }`}
+                </strong>
+              </h6>
+            </div>
+            <div className="content-down">
+              {isShow ? (
+                <>
+                  <div className="content-down-title text-uppercase">
+                    <h5>
+                      <FormattedMessage id={`clinic.cost`} />
+                    </h5>
+                  </div>
+                  <div className="detail-info">
+                    <div className="left col-12 py-2">
+                      <div className="row">
+                        <div className="col-10">
+                          <div className="mx-2">
+                            <div>
+                              <FormattedMessage id={`clinic.cost`} />
+                            </div>
+                            <p style={{ font: 'menu' }} className="m-0">
+                              <FormattedMessage id={`clinic.costInfo`} />
+                            </p>
+                          </div>
                         </div>
-                        <p style={{ font: 'menu' }} className="m-0">
-                          <FormattedMessage id={`clinic.costInfo`} />
-                        </p>
+                        <div className="col-2 d-flex">
+                          <span className="m-auto">
+                            {lang === LANGUAGES.EN ? (
+                              info?.priceInfo?.valueEn ? (
+                                <NumberFormat
+                                  value={info?.priceInfo?.valueEn}
+                                  displayType={'text'}
+                                  thousandSeparator={true}
+                                  prefix={'$'}
+                                />
+                              ) : (
+                                ' '
+                              )
+                            ) : info?.priceInfo?.valueVi ? (
+                              <NumberFormat
+                                value={info?.priceInfo?.valueVi}
+                                displayType={'text'}
+                                thousandSeparator={true}
+                                suffix={'VND'}
+                              />
+                            ) : (
+                              ' '
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-12">
+                          <p className="text-justify m-0 mt-2 mx-2 item">
+                            <FormattedMessage id={`clinic.PaymentMethod`} />:{' '}
+                            {lang === LANGUAGES.EN
+                              ? info?.paymentInfo?.valueEn
+                                ? `${info?.paymentInfo?.valueEn}`
+                                : ''
+                              : info?.paymentInfo?.valueVi
+                              ? `${info?.paymentInfo?.valueVi}`
+                              : ''}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="col-2 d-flex">
-                      <span className="m-auto">
-                        {lang === LANGUAGES.EN ? (
-                          info?.priceInfo?.valueEn ? (
-                            <NumberFormat
-                              value={info?.priceInfo?.valueEn}
-                              displayType={'text'}
-                              thousandSeparator={true}
-                              prefix={'$'}
-                            />
-                          ) : (
-                            ' '
-                          )
-                        ) : info?.priceInfo?.valueVi ? (
-                          <NumberFormat
-                            value={info?.priceInfo?.valueVi}
-                            displayType={'text'}
-                            thousandSeparator={true}
-                            suffix={'VND'}
-                          />
-                        ) : (
-                          ' '
-                        )}
-                      </span>
-                    </div>
                   </div>
-                  <div className="row">
-                    <div className="col-12">
-                      <p className="text-justify m-0 mt-2 mx-2 item">
-                        <FormattedMessage id={`clinic.PaymentMethod`} />:{' '}
-                        {lang === LANGUAGES.EN
-                          ? info?.paymentInfo?.valueEn
-                            ? `${info?.paymentInfo?.valueEn}`
-                            : ''
-                          : info?.paymentInfo?.valueVi
-                          ? `${info?.paymentInfo?.valueVi}`
-                          : ''}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              <div className="short-info">
-                <span
-                  className="toggle"
-                  onClick={() =>
-                    this.setState((prevState) => ({
-                      ...prevState,
-                      isShow: !prevState.isShow,
-                    }))
-                  }
-                >
-                  <FormattedMessage id={`clinic.hide`} />
-                </span>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="short-info">
-                <FormattedMessage id={`clinic.cost`} />:
-                {lang === LANGUAGES.EN ? (
-                  <NumberFormat
-                    value={info?.priceInfo?.valueEn}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'$'}
-                  />
-                ) : (
-                  <NumberFormat
-                    value={info?.priceInfo?.valueVi}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    suffix={'VND'}
-                  />
-                )}
-                <span
-                  className="toggle"
-                  onClick={() =>
-                    this.setState((prevState) => ({
-                      ...prevState,
-                      isShow: !prevState.isShow,
-                    }))
-                  }
-                >
-                  {' '}
-                  <FormattedMessage id={`clinic.more`} />
-                </span>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+                  <div className="short-info">
+                    <span
+                      className="toggle"
+                      onClick={() =>
+                        this.setState((prevState) => ({
+                          ...prevState,
+                          isShow: !prevState.isShow,
+                        }))
+                      }
+                    >
+                      <FormattedMessage id={`clinic.hide`} />
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="short-info">
+                    <FormattedMessage id={`clinic.cost`} />:
+                    {lang === LANGUAGES.EN ? (
+                      <NumberFormat
+                        value={info?.priceInfo?.valueEn}
+                        displayType={'text'}
+                        thousandSeparator={true}
+                        prefix={'$'}
+                      />
+                    ) : (
+                      <NumberFormat
+                        value={info?.priceInfo?.valueVi}
+                        displayType={'text'}
+                        thousandSeparator={true}
+                        suffix={'VND'}
+                      />
+                    )}
+                    <span
+                      className="toggle"
+                      onClick={() =>
+                        this.setState((prevState) => ({
+                          ...prevState,
+                          isShow: !prevState.isShow,
+                        }))
+                      }
+                    >
+                      {' '}
+                      <FormattedMessage id={`clinic.more`} />
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 }

@@ -17,43 +17,25 @@ class OutStandingDoctor extends Component {
   }
 
   async componentDidMount() {
-    this.setState((prevState) => ({
-      ...prevState,
-      isLoading: true,
-      topDoctors: [],
-      isFailed: false,
-    }));
-    const response = await getTopDoctorService();
-    if (response) {
-      if (response.statusCode === 200) {
-        this.setState((prevState) => ({
-          ...prevState,
-          topDoctors: response.data,
-          isLoading: false,
-          isFailed: false,
-        }));
-        return;
-      } else
-        this.setState((prevState) => ({
-          ...prevState,
-          topDoctors: [],
-          isFailed: true,
-          isLoading: false,
-        }));
-      return;
+    const { topDoctors } = this.props;
+    if (!topDoctors || topDoctors.length < 1) {
+      this.props.readTopDoctors(constant.MAX_NUMBER_OF_DOCTORS);
+      this.setState((prevState) => ({
+        ...prevState,
+        topDoctors,
+      }));
     }
   }
-
-  // async componentDidUpdate(prevProps, prevState, snapshot) {
-  //   const { topDoctors } = this.props;
-  //   if (topDoctors !== prevProps.topDoctors) {
-  //     this.props.readTopDoctors(constant.MAX_NUMBER_OF_DOCTORS);
-  //     this.setState((prevState) => ({
-  //       ...prevState,
-  //       topDoctors,
-  //     }));
-  //   }
-  // }
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    const { topDoctors } = this.props;
+    if (topDoctors !== prevProps.topDoctors) {
+      // this.props.readTopDoctors(constant.MAX_NUMBER_OF_DOCTORS);
+      this.setState((prevState) => ({
+        ...prevState,
+        topDoctors,
+      }));
+    }
+  }
 
   handleViewDetailDoctor = (item) => {
     const { history } = this.props;
@@ -64,6 +46,7 @@ class OutStandingDoctor extends Component {
   render() {
     const { lang } = this.props;
     const { topDoctors } = this.state;
+    console.log(topDoctors);
 
     return (
       <div className="section-share section-outstanding-doctor">
