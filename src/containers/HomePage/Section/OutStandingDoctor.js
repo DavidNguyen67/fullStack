@@ -64,7 +64,6 @@ class OutStandingDoctor extends Component {
   render() {
     const { lang } = this.props;
     const { topDoctors } = this.state;
-    console.log(topDoctors);
 
     return (
       <div className="section-share section-outstanding-doctor">

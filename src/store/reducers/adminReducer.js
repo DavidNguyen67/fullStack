@@ -15,6 +15,8 @@ const initialState = {
   prices: [],
   provinces: [],
   payments: [],
+  specialties: [],
+  clinics: [],
 
   isLoading: false,
   isError: false,
@@ -208,6 +210,52 @@ const appReducer = (state = initialState, action) => {
         ...state,
         isSuccess: true,
         timeSchedule: action.payload,
+        isLoading: false,
+        isError: false,
+      };
+
+    case actionTypes.FETCH_SPECIALTIES_START:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: true,
+        isError: false,
+      };
+    case actionTypes.FETCH_SPECIALTIES_FAILED:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: false,
+        isError: true,
+      };
+    case actionTypes.FETCH_SPECIALTIES_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        specialties: action.payload,
+        isLoading: false,
+        isError: false,
+      };
+
+    case actionTypes.FETCH_CLINIC_START:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: true,
+        isError: false,
+      };
+    case actionTypes.FETCH_CLINIC_FAILED:
+      return {
+        ...state,
+        isSuccess: false,
+        isLoading: false,
+        isError: true,
+      };
+    case actionTypes.FETCH_CLINIC_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        clinics: action.payload,
         isLoading: false,
         isError: false,
       };

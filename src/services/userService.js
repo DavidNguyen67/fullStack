@@ -116,8 +116,26 @@ export const createSpecialty = async (payload) => {
     payload
   );
 };
+
 export const readSpecialty = async () => {
   return await instance.get(
     `/${constants.specialtyPath}/${constants.readRoute}`
+  );
+};
+
+export const readClinic = async () => {
+  return await instance.get(`/${constants.clinicPath}/${constants.readRoute}`);
+};
+
+export const createClinic = async (payload) => {
+  return await instance.post(
+    `/${constants.clinicPath}/${constants.createRoute}`,
+    payload
+  );
+};
+
+export const getSpecialtyDetail = async (id) => {
+  return await instance.get(
+    `/${constants.specialtyPath}/${constants.readDetailRoute}?${constants.queryPrefix.id}=${id}`
   );
 };

@@ -5,6 +5,7 @@ export const path = {
   LOG_OUT: '/logout',
   SYSTEM: '/system',
   DETAIL_DOCTOR: '/doctor/detail/:id',
+  DETAIL_SPECIALTY: '/specialty/detail/:id',
   DOCTOR: '/doctor',
   VERIFY: '/verify',
 };
@@ -65,6 +66,7 @@ export const doctorInfo = `${crudDoctorPath}Info`;
 export const patientPath = 'patient';
 export const verifyPath = `verify`;
 export const specialtyPath = 'specialty';
+export const clinicPath = 'clinic';
 
 export const loginRoute = 'login';
 export const readRoute = 'read';

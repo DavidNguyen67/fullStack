@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Slider from 'react-slick';
 import { FormattedMessage } from 'react-intl';
 import { readSpecialty } from './../../../services/userService';
+import { withRouter } from 'react-router-dom';
 
 class Specialty extends Component {
   constructor(props) {
@@ -45,6 +46,11 @@ class Specialty extends Component {
     }
   }
 
+  redirectDetail = (id) => {
+    const { history } = this.props;
+    if (history) history.push(`/specialty/detail/${id}`);
+  };
+
   render() {
     const { specialties } = this.state;
 
@@ -82,7 +88,11 @@ class Specialty extends Component {
                           style={{ border: '1px solid #ccc' }}
                         >
                           <div className="img d-flex justify-content-center">
-                            <div className="info-specialty">
+                            <div
+                              className="info-specialty"
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => this.redirectDetail(specialty.id)}
+                            >
                               <div
                                 className="bg-image section-specialty"
                                 style={{
@@ -115,4 +125,7 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Specialty);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(Specialty));

@@ -5,6 +5,8 @@ import {
   getAllDoctorsService,
   getAllUsersService,
   getTopDoctorService,
+  readClinic,
+  readSpecialty,
   updateDoctorService,
   updateUsersService,
 } from '../../services/userService';
@@ -155,6 +157,56 @@ export const fetchProvinceStart = () => {
     } catch (error) {
       console.log(error);
       dispatch(fetchProvinceFailed());
+    }
+  };
+};
+
+export const fetchSpecialtyStart = () => {
+  return async (dispatch, getState) => {
+    const fetchSpecialtySuccess = (payload) => {
+      return {
+        type: actionTypes.FETCH_SPECIALTIES_SUCCESS,
+        payload,
+      };
+    };
+    const fetchSpecialtyFailed = () => ({
+      type: actionTypes.FETCH_SPECIALTIES_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.FETCH_SPECIALTIES_START });
+      const response = await readSpecialty();
+      if (response.data?.length > 0)
+        dispatch(fetchSpecialtySuccess(response.data));
+      else dispatch(fetchSpecialtyFailed());
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchSpecialtyFailed());
+    }
+  };
+};
+
+export const fetchClinicStart = () => {
+  return async (dispatch, getState) => {
+    const fetchClinicSuccess = (payload) => {
+      return {
+        type: actionTypes.FETCH_CLINIC_SUCCESS,
+        payload,
+      };
+    };
+    const fetchClinicFailed = () => ({
+      type: actionTypes.FETCH_CLINIC_FAILED,
+    });
+
+    try {
+      dispatch({ type: actionTypes.FETCH_CLINIC_START });
+      const response = await readClinic();
+      if (response.data?.length > 0)
+        dispatch(fetchClinicSuccess(response.data));
+      else dispatch(fetchClinicFailed());
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchClinicFailed());
     }
   };
 };

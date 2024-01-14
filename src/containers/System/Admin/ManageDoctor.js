@@ -28,9 +28,13 @@ class ManageDoctor extends Component {
       prices: [],
       payments: [],
       provinces: [],
+      clinics: [],
+      specialties: [],
 
       selectedProvince: '',
       selectedPayment: '',
+      selectedClinic: '',
+      selectedSpecialty: '',
       selectedPrice: '',
       nameClinic: '',
       addressClinic: '',
@@ -52,7 +56,7 @@ class ManageDoctor extends Component {
         contentMarkdown_VI: text,
       }));
   };
-  handleSaveContentMarkdown = async (event) => {
+  submit = async (event) => {
     const {
       contentHTML_EN,
       contentMarkdown_EN,
@@ -67,6 +71,8 @@ class ManageDoctor extends Component {
       nameClinic,
       addressClinic,
       note,
+      selectedClinic,
+      selectedSpecialty,
     } = this.state;
 
     const filterEmptyValues = (obj) =>
@@ -79,6 +85,8 @@ class ManageDoctor extends Component {
     const doctorId = selectedDoctor?.value;
 
     const payloadMarkDown = filterEmptyValues({
+      specialtyId: selectedSpecialty.value,
+      clinicId: selectedClinic?.value,
       contentHTML_EN,
       contentMarkdown_EN,
       contentHTML_VI,
@@ -92,6 +100,8 @@ class ManageDoctor extends Component {
       provinceId: selectedProvince?.value,
       paymentId: selectedPayment?.value,
       priceId: selectedPrice?.value,
+      specialtyId: selectedSpecialty.value,
+      clinicId: selectedClinic?.value,
       nameClinic,
       addressClinic,
       note,
@@ -212,95 +222,113 @@ class ManageDoctor extends Component {
   };
   handleChange = {
     doctor: async (selectedDoctor) => {
-      const response = await services.getDoctorDetail(selectedDoctor.value);
+      if (selectedDoctor.value) {
+        let newState = { selectedDoctor };
 
-      let newState = { selectedDoctor };
-
-      if (response.data) {
-        newState = {
-          ...newState,
-          doctor: response.data,
-        };
-        const { markDown, doctorInfo } = response.data;
-        newState = {
-          ...newState,
-          addressClinic: doctorInfo?.addressClinic || '',
-          nameClinic: doctorInfo?.nameClinic || '',
-          note: doctorInfo?.note || '',
-        };
-        if (this.props.lang === constant.LANGUAGES.VI) {
+        const response = await services.getDoctorDetail(selectedDoctor.value);
+        if (response.data) {
           newState = {
             ...newState,
-            description_VI: markDown?.description_VI || '',
-            contentHTML_VI: markDown?.contentHTML_VI || '',
-            contentMarkdown_VI: markDown?.contentMarkdown_VI || '',
-            hasOldData: !!markDown?.contentHTML_VI || '',
+            doctor: response.data,
           };
-          if (doctorInfo?.priceInfo.valueVi) {
+          const { markDown, doctorInfo } = response.data;
+          newState = {
+            ...newState,
+            addressClinic: doctorInfo?.addressClinic || '',
+            nameClinic: doctorInfo?.nameClinic || '',
+            note: doctorInfo?.note || '',
+          };
+          if (this.props.lang === constant.LANGUAGES.VI) {
+            newState = {
+              ...newState,
+              description_VI: markDown?.description_VI || '',
+              contentHTML_VI: markDown?.contentHTML_VI || '',
+              contentMarkdown_VI: markDown?.contentMarkdown_VI || '',
+              hasOldData: !!markDown?.contentHTML_VI || '',
+            };
+            if (doctorInfo?.priceInfo?.valueVi) {
+              newState = {
+                ...newState,
+                selectedPrice: {
+                  label: doctorInfo?.priceInfo.valueVi,
+                  value: doctorInfo?.priceInfo.keyMap,
+                },
+              };
+            }
+            if (doctorInfo?.provinceInfo?.valueVi) {
+              newState = {
+                ...newState,
+                selectedProvince: {
+                  label: doctorInfo?.provinceInfo.valueVi,
+                  value: doctorInfo?.provinceInfo.keyMap,
+                },
+              };
+            }
+            if (doctorInfo?.selectedPayment?.valueVi) {
+              newState = {
+                ...newState,
+                selectedPayment: {
+                  label: doctorInfo?.paymentInfo?.valueVi,
+                  value: doctorInfo?.paymentInfo?.keyMap,
+                },
+              };
+            }
+          } else
+            newState = {
+              ...newState,
+              description_EN: markDown?.description_EN || '',
+              contentHTML_EN: markDown?.contentHTML_EN || '',
+              contentMarkdown_EN: markDown?.contentMarkdown_EN || '',
+              hasOldData: !!markDown?.contentHTML_EN || '',
+            };
+          if (doctorInfo?.priceInfo?.valueEn) {
             newState = {
               ...newState,
               selectedPrice: {
-                label: doctorInfo?.priceInfo.valueVi,
-                value: doctorInfo?.priceInfo.keyMap,
+                label: doctorInfo?.priceInfo?.valueEn,
+                value: doctorInfo?.priceInfo?.keyMap,
               },
             };
           }
-          if (doctorInfo?.provinceInfo.valueVi) {
+          if (doctorInfo?.paymentInfo?.valueEn) {
             newState = {
               ...newState,
               selectedProvince: {
-                label: doctorInfo?.provinceInfo.valueVi,
-                value: doctorInfo?.provinceInfo.keyMap,
+                label: doctorInfo?.provinceInfo?.valueEn,
+                value: doctorInfo?.provinceInfo?.keyMap,
               },
             };
           }
-          if (doctorInfo?.selectedPayment?.valueVi) {
+          if (doctorInfo?.provinceInfo?.valueEn) {
             newState = {
               ...newState,
               selectedPayment: {
-                label: doctorInfo?.paymentInfo.valueVi,
+                label: doctorInfo?.paymentInfo.valueEn,
                 value: doctorInfo?.paymentInfo.keyMap,
               },
             };
           }
-        } else
-          newState = {
-            ...newState,
-            description_EN: markDown?.description_EN || '',
-            contentHTML_EN: markDown?.contentHTML_EN || '',
-            contentMarkdown_EN: markDown?.contentMarkdown_EN || '',
-            hasOldData: !!markDown?.contentHTML_EN || '',
-          };
-        if (doctorInfo?.priceInfo.valueEn) {
-          newState = {
-            ...newState,
-            selectedPrice: {
-              label: doctorInfo?.priceInfo.valueEn,
-              value: doctorInfo?.priceInfo.keyMap,
-            },
-          };
+          if (doctorInfo?.specialtyInfo) {
+            newState = {
+              ...newState,
+              selectedSpecialty: {
+                label: doctorInfo?.specialtyInfo?.name,
+                value: doctorInfo?.specialtyInfo?.id,
+              },
+            };
+          }
+          if (doctorInfo?.clinicInfo) {
+            newState = {
+              ...newState,
+              selectedClinic: {
+                label: doctorInfo?.clinicInfo?.name,
+                value: doctorInfo?.clinicInfo?.id,
+              },
+            };
+          }
         }
-        if (doctorInfo?.paymentInfo.valueEn) {
-          newState = {
-            ...newState,
-            selectedProvince: {
-              label: doctorInfo?.provinceInfo.valueEn,
-              value: doctorInfo?.provinceInfo.keyMap,
-            },
-          };
-        }
-        if (doctorInfo?.provinceInfo.valueEn) {
-          newState = {
-            ...newState,
-            selectedPayment: {
-              label: doctorInfo?.paymentInfo.valueEn,
-              value: doctorInfo?.paymentInfo.keyMap,
-            },
-          };
-        }
+        if (Object.keys(newState).length > 0) this.setState(newState);
       }
-
-      this.setState(newState);
     },
     price: (selectedPrice) => {
       this.setState((prevState) => ({
@@ -318,6 +346,18 @@ class ManageDoctor extends Component {
       this.setState((prevState) => ({
         ...prevState,
         selectedProvince: selectedProvince,
+      }));
+    },
+    specialty: (selectedSpecialty) => {
+      this.setState((prevState) => ({
+        ...prevState,
+        selectedSpecialty: selectedSpecialty,
+      }));
+    },
+    clinic: (selectedClinic) => {
+      this.setState((prevState) => ({
+        ...prevState,
+        selectedClinic: selectedClinic,
       }));
     },
     nameClinic: (event) => {
@@ -339,6 +379,7 @@ class ManageDoctor extends Component {
       }));
     },
   };
+
   handleOnChangeDesc = (event) => {
     const { lang } = this.props;
     if (lang === constant.LANGUAGES.VI)
@@ -355,7 +396,8 @@ class ManageDoctor extends Component {
 
   // IF get error at manageDoctor, check componentDidUpdate
   async componentDidUpdate(prevProps) {
-    const { lang, prices, provinces, payments } = this.props;
+    const { lang, prices, provinces, payments, specialties, clinics } =
+      this.props;
 
     const updateState = {};
 
@@ -384,6 +426,14 @@ class ManageDoctor extends Component {
       updateState.payments = payments;
     }
 
+    if (prevProps.specialties !== specialties) {
+      updateState.specialties = specialties;
+    }
+
+    if (prevProps.clinics !== clinics) {
+      updateState.clinics = clinics;
+    }
+
     if (Object.keys(updateState).length > 0)
       this.setState((prevState) => ({
         ...prevState,
@@ -398,6 +448,8 @@ class ManageDoctor extends Component {
     await this.props.fetchProvinceStart();
     await this.props.fetchPaymentStart();
     await this.props.fetchPriceStart();
+    await this.props.fetchSpecialtyStart();
+    await this.props.fetchClinicStart();
   }
 
   render() {
@@ -416,6 +468,10 @@ class ManageDoctor extends Component {
       nameClinic,
       addressClinic,
       note,
+      clinics,
+      specialties,
+      selectedClinic,
+      selectedSpecialty,
     } = this.state;
     const { doctors, lang } = this.props;
     if (lang === constant.LANGUAGES.VI) {
@@ -479,6 +535,25 @@ class ManageDoctor extends Component {
         };
       });
 
+    const listSpecialty =
+      specialties.length > 0 &&
+      specialties.map &&
+      specialties.map((item) => {
+        return {
+          value: item.id,
+          label: item.name,
+        };
+      });
+
+    const listClinic =
+      clinics.length > 0 &&
+      clinics.map &&
+      clinics.map((item) => {
+        return {
+          value: item.id,
+          label: item.name,
+        };
+      });
     return (
       <>
         <div className="manage-doctor-container row">
@@ -494,7 +569,7 @@ class ManageDoctor extends Component {
                 <Select
                   value={selectedDoctor}
                   onChange={this.handleChange.doctor}
-                  options={listDoctor}
+                  options={listDoctor || []}
                   placeholder={
                     <FormattedMessage id={'title.doctor.SelectDoctor'} />
                   }
@@ -523,7 +598,7 @@ class ManageDoctor extends Component {
               <Select
                 value={selectedPrice}
                 onChange={this.handleChange.price}
-                options={listPrice}
+                options={listPrice || []}
                 placeholder={<FormattedMessage id={'title.doctor.price'} />}
               />
             </div>
@@ -534,7 +609,7 @@ class ManageDoctor extends Component {
               <Select
                 value={selectedPayment}
                 onChange={this.handleChange.payment}
-                options={listPayment}
+                options={listPayment || []}
                 placeholder={<FormattedMessage id={'title.doctor.payment'} />}
               />
             </div>
@@ -545,7 +620,7 @@ class ManageDoctor extends Component {
               <Select
                 value={selectedProvince}
                 onChange={this.handleChange.province}
-                options={listProvince}
+                options={listProvince || []}
                 placeholder={<FormattedMessage id={'title.doctor.province'} />}
               />
             </div>
@@ -591,6 +666,28 @@ class ManageDoctor extends Component {
                 )}
               />
             </div>
+            <div className="col-12 col-lg-4 mb-2 form-group">
+              <label>
+                <FormattedMessage id={'doctor.specialty'} />
+              </label>
+              <Select
+                value={selectedSpecialty}
+                onChange={this.handleChange.specialty}
+                options={listSpecialty || []}
+                // placeholder={<FormattedMessage id={'title.doctor.payment'} />}
+              />
+            </div>
+            <div className="col-12 col-lg-4 mb-2 form-group">
+              <label>
+                <FormattedMessage id={'doctor.clinic'} />
+              </label>
+              <Select
+                value={selectedClinic}
+                onChange={this.handleChange.clinic}
+                options={listClinic || []}
+                // placeholder={<FormattedMessage id={'title.doctor.payment'} />}
+              />
+            </div>
             <div className="my-2" />
           </div>
           <div className="manage-doctor-editor row">
@@ -603,12 +700,11 @@ class ManageDoctor extends Component {
               />
             </div>
           </div>
-          <div className="row" />
           <div className="my-2" />
           <div className="col-6">
             <button
               className="btn btn-primary save-content-markdown"
-              onClick={this.handleSaveContentMarkdown}
+              onClick={this.submit}
               disabled={isLoading}
             >
               {hasOldData ? (
@@ -635,6 +731,8 @@ const mapStateToProps = (state) => {
     prices: state.admin.prices,
     provinces: state.admin.provinces,
     payments: state.admin.payments,
+    specialties: state.admin.specialties,
+    clinics: state.admin.clinics,
   };
 };
 
@@ -645,6 +743,8 @@ const mapDispatchToProps = (dispatch) => {
     fetchProvinceStart: () => dispatch(actions.fetchProvinceStart()),
     fetchPaymentStart: () => dispatch(actions.fetchPaymentStart()),
     fetchPriceStart: () => dispatch(actions.fetchPriceStart()),
+    fetchSpecialtyStart: () => dispatch(actions.fetchSpecialtyStart()),
+    fetchClinicStart: () => dispatch(actions.fetchClinicStart()),
   };
 };
 
