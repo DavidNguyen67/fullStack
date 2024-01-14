@@ -86,6 +86,7 @@ class DoctorSchedule extends Component {
     if (prevProps.doctorId !== this.props.doctorId) {
       const response = await services.getDoctorDetail(this.props.doctorId);
       if (response) {
+        console.log(response.data);
         if (response.statusCode === 200) {
           this.setState((prevState) => ({
             ...prevState,

@@ -197,7 +197,9 @@
     "costInfo": "Examination price includes advance appointment fee (clinic's listed price)",
     "PaymentMethod": "Patients can pay costs in form",
     "more": "More",
-    "hide": "Hide"
+    "hide": "Hide",
+    "choose": "Choose province",
+    "all": "All"
   },
   "booking": {
     "title": "Scheduling information"

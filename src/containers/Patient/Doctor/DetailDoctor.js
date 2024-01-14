@@ -67,7 +67,6 @@ class DetailDoctor extends Component {
         )
       );
     const imageSrc = base64 ? `data:image/png;base64,${base64}` : '';
-
     return (
       <>
         <HomeHeader isShowBanner={false} />
@@ -86,9 +85,16 @@ class DetailDoctor extends Component {
                   : `${doctor.positionData?.valueEn} ${nameEn}`}
               </div>
               <div className="down">
-                {lang === constant.LANGUAGES.VI
-                  ? doctor.markDown?.description_VI
-                  : doctor.markDown?.description_EN}
+                <div>
+                  {lang === constant.LANGUAGES.VI
+                    ? doctor.markDown?.contentMarkdown_VI
+                    : doctor.markDown?.contentMarkdown_EN}
+                </div>
+                <div>
+                  {lang === constant.LANGUAGES.VI
+                    ? doctor.markDown?.description_VI
+                    : doctor.markDown?.description_EN}
+                </div>
               </div>
             </div>
           </div>

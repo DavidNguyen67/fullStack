@@ -17,7 +17,7 @@ class OutStandingDoctor extends Component {
   }
 
   async componentDidMount() {
-    const { topDoctors } = this.props;
+    const { topDoctors } = this.state;
     if (!topDoctors || topDoctors.length < 1) {
       this.props.readTopDoctors(constant.MAX_NUMBER_OF_DOCTORS);
       this.setState((prevState) => ({
@@ -46,8 +46,10 @@ class OutStandingDoctor extends Component {
   render() {
     const { lang } = this.props;
     const { topDoctors } = this.state;
-    console.log(topDoctors);
 
+    console.log('====================================');
+    console.log(topDoctors);
+    console.log('====================================');
     return (
       <div className="section-share section-outstanding-doctor">
         {typeof topDoctors !== 'string' &&

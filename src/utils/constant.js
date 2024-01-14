@@ -85,4 +85,5 @@ export const queryPrefix = {
   doctorId: 'doctorId',
   date: 'date',
   token: 'token',
+  province: 'province',
 };

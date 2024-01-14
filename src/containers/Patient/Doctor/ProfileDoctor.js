@@ -8,6 +8,7 @@ import NumberFormat from 'react-number-format';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import moment from 'moment';
+import { Link, withRouter } from 'react-router-dom';
 
 class ProfileDoctor extends Component {
   constructor(props) {
@@ -18,13 +19,12 @@ class ProfileDoctor extends Component {
   }
 
   async componentDidMount() {
-    const { id } = this.props;
+    const { id, doctorId, doctorData } = this.props;
     if (id) {
       await this.fetchDoctorProfile(id);
       return;
     }
 
-    const { doctorId } = this.props;
     if (doctorId) {
       const response = await services.getDoctorDetail(doctorId);
       if (response) {
@@ -45,13 +45,22 @@ class ProfileDoctor extends Component {
         return;
       }
     }
+
+    if (doctorData) {
+      this.setState((prevState) => ({
+        ...prevState,
+        doctor: doctorData,
+        isLoading: false,
+        isFailed: false,
+      }));
+    }
   }
 
   async componentDidUpdate(prevProps) {
-    if (prevProps.id !== this.props.id) {
-      const { id } = this.props;
-      if (id) await this.fetchDoctorProfile(id);
-    }
+    // if (prevProps.id !== this.props.id) {
+    //   const { id } = this.props;
+    //   if (id) await this.fetchDoctorProfile(id);
+    // }
   }
 
   async fetchDoctorProfile(id) {
@@ -94,10 +103,16 @@ class ProfileDoctor extends Component {
     }
     return <></>;
   };
+  forwardToDetailDoctor = () => {
+    const { doctor } = this.state;
+    const { history } = this.props;
+    history && history.push(`/doctor/detail/${doctor.id}`);
+  };
 
   render() {
     const { doctor } = this.state;
-    const { lang, isShowDesc, dataTime } = this.props;
+    const { lang, isShowDesc, dataTime, isShowMarkDown, isShowLink } =
+      this.props;
 
     const nameVi = `${doctor.lastName} ${doctor.firstName}`;
     const nameEn = `${doctor.firstName} ${doctor.lastName}`;
@@ -108,7 +123,6 @@ class ProfileDoctor extends Component {
       )
     );
     const imageSrc = base64 ? `data:image/png;base64,${base64}` : '';
-
     return (
       <>
         <div className="profile-doctor-container">
@@ -154,6 +168,42 @@ class ProfileDoctor extends Component {
               </div>
             </div>
           </div>
+          {isShowMarkDown && (
+            <>
+              <br />
+              <div style={{ maxHeight: '50%' }}>
+                <div>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        lang === constant.LANGUAGES.VI
+                          ? doctor.markDown?.contentHTML_VI
+                          : doctor.markDown?.contentHTML_EN,
+                    }}
+                  ></div>
+                </div>
+                <div>
+                  {lang === constant.LANGUAGES.VI
+                    ? doctor.markDown?.description_VI
+                    : doctor.markDown?.description_EN}
+                </div>
+              </div>
+            </>
+          )}
+          <br />
+          {isShowLink && (
+            <>
+              <div>
+                <button
+                  className="btn btn-primary mb-3"
+                  onClick={this.forwardToDetailDoctor}
+                >
+                  Xem them
+                </button>
+                {/* <Link to={`/doctor/detail/${doctor.id}`}>Xem them</Link> */}
+              </div>
+            </>
+          )}
         </div>
       </>
     );
@@ -172,4 +222,7 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileDoctor);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(ProfileDoctor));

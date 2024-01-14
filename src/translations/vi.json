@@ -199,7 +199,9 @@
     "costInfo": "Giá khám đã bao gồm phí đặt lịch hẹn trước (Giá niêm yết của phòng khám)",
     "PaymentMethod": "Người bệnh có thể thanh toán chi phí bằng hình thức",
     "more": "Xem thêm",
-    "hide": "Ẩn"
+    "hide": "Ẩn",
+    "choose": "Chọn tỉnh thành",
+    "all": "Tất cả"
   },
   "booking": {
     "title": "Thông tin đặt lịch"

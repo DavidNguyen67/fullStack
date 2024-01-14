@@ -139,3 +139,12 @@ export const getSpecialtyDetail = async (id) => {
     `/${constants.specialtyPath}/${constants.readDetailRoute}?${constants.queryPrefix.id}=${id}`
   );
 };
+
+export const getSpecialtyDetailFilterByProvince = async (
+  clinicId,
+  provinceId
+) => {
+  return await instance.get(
+    `/${constants.specialtyPath}/${constants.readDetailRoute}?${constants.queryPrefix.id}=${clinicId}&${constants.queryPrefix.province}=${provinceId}`
+  );
+};
