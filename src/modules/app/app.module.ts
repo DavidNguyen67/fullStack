@@ -14,6 +14,7 @@ import { BookingModule } from '../booking/booking.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { env } from 'process';
 import { SpecialtyModule } from '../specialty/specialty.module';
+import { ClinicModule } from '../clinic/clinic.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { SpecialtyModule } from '../specialty/specialty.module';
     InfoModule,
     BookingModule,
     SpecialtyModule,
+    ClinicModule,
   ],
   providers: [
     {

@@ -48,7 +48,7 @@ export class SpecialtyService {
     }
   }
 
-  async readSpecialty(id: number, provinceId?: string) {
+  async readDetailSpecialtyById(id: number, provinceId?: string) {
     try {
       if (provinceId) {
         const specialty = await this.prisma.specialty.findFirst({

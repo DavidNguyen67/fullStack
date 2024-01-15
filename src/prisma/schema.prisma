@@ -75,14 +75,17 @@ model Booking {
 }
 
 model Clinic {
-  id           Int           @id @default(autoincrement())
-  name         String
-  address      Json
-  description  Json
-  image        Bytes
-  createAt     DateTime?     @default(now())
-  updateAt     DateTime?     @default(now())
-  doctorClinic Doctor_info[] @relation("Clinic")
+  id                 Int           @id @default(autoincrement())
+  name               String
+  address            Json
+  contentMarkdown_VI Json?
+  contentMarkdown_EN Json?
+  descriptionHTML_VI Json?
+  descriptionHTML_EN Json?
+  image              Bytes?
+  createAt           DateTime?     @default(now())
+  updateAt           DateTime?     @default(now())
+  doctorClinic       Doctor_info[] @relation("Clinic")
 }
 
 model History {

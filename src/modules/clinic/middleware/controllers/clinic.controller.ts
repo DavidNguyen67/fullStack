@@ -9,21 +9,21 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
-import { SpecialtyService } from '../services/specialty.service';
-import { pipes } from '../../../users/middlewares/pipes';
-import { IsHasFieldRequiredSpecialtyPipe } from '../pipes/IsHasFieldRequiredSpecialty.pipe';
+import { ClinicService } from '../services/clinic.service';
+import { pipes } from 'src/modules/users/middlewares/pipes';
 import { GlobalRes } from 'src/utils/interfaces/response.interface';
+import { IsHasFieldRequiredClinicPipe } from '../pipes/IsHasFieldRequiredSpecialty.pipe';
 import { getMaxElement } from 'src/utils/function';
 
-@Controller(`${routes.versionApi}/${routes.specialtyPath}`)
-export class SpecialtyController {
-  constructor(private readonly specialtyService: SpecialtyService) {}
+@Controller(`${routes.versionApi}/${routes.clinicPath}`)
+export class ClinicController {
+  constructor(private readonly clinicService: ClinicService) {}
 
   @Post(routes.createRoute)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.ExcludeIdFieldPipe,
-    IsHasFieldRequiredSpecialtyPipe,
+    IsHasFieldRequiredClinicPipe,
     pipes.FileSizeAndImageValidationPipe,
     pipes.RemoveBase64PrefixPipe,
   )
@@ -33,7 +33,7 @@ export class SpecialtyController {
       if (payload)
         return {
           statusCode: HttpStatus.OK,
-          data: await this.specialtyService.createSpecialty(payload),
+          data: await this.clinicService.createClinic(payload),
         };
     } catch (error) {
       console.log(error);
@@ -48,7 +48,7 @@ export class SpecialtyController {
     try {
       return {
         statusCode: HttpStatus.OK,
-        data: await this.specialtyService.readSpecialties(),
+        data: await this.clinicService.readClinics(),
       };
     } catch (error) {
       console.log(error);
@@ -57,26 +57,21 @@ export class SpecialtyController {
   }
 
   @Get(routes.readDetailRoute)
-  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe)
   async readDetailSpecialtyById(@Query() query: any) {
     try {
       // eslint-disable-next-line prefer-const
-      let { id, province } = query;
+      let { id } = query;
       id = Array.isArray(id) ? getMaxElement(id) : +id;
-      if (id) {
-        if (!province)
-          return {
-            statusCode: HttpStatus.OK,
-            data: await this.specialtyService.readDetailSpecialtyById(id),
-          };
+      if (!id) {
         return {
           statusCode: HttpStatus.OK,
-          data: await this.specialtyService.readDetailSpecialtyById(
-            id,
-            province,
-          ),
+          data: await this.clinicService.readClinics(),
         };
       }
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.clinicService.readDetailClinicById(id),
+      };
     } catch (error) {
       console.log(error);
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);

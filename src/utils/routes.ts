@@ -11,6 +11,7 @@ export const markdownPath = 'markdown';
 export const doctorInfo = `${crudDoctorPath}Info`;
 export const verifyPath = `verify`;
 export const specialtyPath = 'specialty';
+export const clinicPath = 'clinic';
 
 export const loginRoute = 'login';
 export const readRoute = 'read';

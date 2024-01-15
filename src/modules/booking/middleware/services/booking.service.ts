@@ -38,7 +38,7 @@ export class BookingService {
             target="_blank">Youtube</a></p>
         <p><strong>Đặt lúc: </strong>${bookAt}</p>
         <p><strong>Hẹn khám: </strong>${scheduleTime}</p>
-        <p><strong>Bác sỹ: </strong>${doctorData.firstName} ${doctorData.lastName}</p>
+        <p><strong>Bác sỹ: </strong>${doctorData.nameVi}</p>
         <p><strong>Giá khám: </strong>${doctorData.priceInfo?.valueVi} VND</p>
         <p>Nếu các thông tin trên là <strong>ĐÚNG</strong> sự thật. Vui lòng click vào <a href="${redirectLink}"
             target="_blank">đây</a> để xác nhận và hoàn tất thủ tục đặt lịch khám trong phút</p>
@@ -54,7 +54,7 @@ export class BookingService {
             target="_blank">Youtube</a></p>
         <p><strong>Booked at: </strong>${bookAt}</p>
         <p><strong>Scheduled time: </strong>${scheduleTime}</p>
-        <p><strong>Doctor: </strong>${doctorData.lastName} ${doctorData.firstName}</p>
+        <p><strong>Doctor: </strong>${doctorData.nameEn}</p>
         <p><strong>Cost: </strong>$ ${doctorData.priceInfo?.valueEn}</p>
         <p>If the above information is <strong>CORRECT</strong>, please click <a href="${redirectLink}"
             target="_blank">here</a> to
@@ -104,6 +104,7 @@ export class BookingService {
           ...booking,
           patientId: userInfo.id,
           updateAt: new Date(),
+          statusId: constants.STATUS_NEW,
         };
         const uniqueString = uuid();
         const appointments = await this.prisma.booking.upsert({
@@ -182,6 +183,9 @@ export class BookingService {
     try {
       const decoded: any = jwt.verify(token, env.SECRET_KEY);
       if (decoded) {
+        console.log('====================================');
+        console.log(decoded.data);
+        console.log('====================================');
         const isExist = await this.prisma.booking.findFirst({
           where: {
             uniqueString: decoded.data,
@@ -197,6 +201,7 @@ export class BookingService {
               statusId: constants.STATUS_CONFIRMED,
             },
           });
+
           if (booking) {
             return !!booking;
           }
