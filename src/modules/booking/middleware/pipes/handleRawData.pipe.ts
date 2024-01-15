@@ -18,6 +18,7 @@ export class HandleRawDataPipe implements PipeTransform {
         return {
           email: item.email,
           password: uuid(),
+          address: item.address,
           firstName,
           lastName:
             lastName.length > 0 && lastName[0] ? lastName.join(' ') : 'None',
@@ -28,7 +29,9 @@ export class HandleRawDataPipe implements PipeTransform {
         return {
           doctorId: item.doctorId,
           timeType: item.timeType,
-          date: item.date,
+          DOB: item.date,
+          note: item.note,
+          DateAppointment: item.DateAppointment,
         };
       });
       const appInfo = payload.map((item) => {
@@ -47,7 +50,7 @@ export class HandleRawDataPipe implements PipeTransform {
       );
 
       if (!isValidUserTbl) {
-        const missingFields = 'email, firstName, lastName';
+        const missingFields = 'email, firstName, lastName, address';
         const errorMessage = `Missing required params: ${missingFields}`;
         throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
       }
@@ -70,9 +73,16 @@ export class HandleRawDataPipe implements PipeTransform {
   }
 
   private hasRequiredUserFields(user: User): boolean {
-    return !!user.email && !!user.firstName && !!user.lastName;
+    return (
+      !!user.email && !!user.firstName && !!user.lastName && !!user.address
+    );
   }
   private hasRequiredBookingFields(booking: Booking): boolean {
-    return !!booking.date && !!booking.doctorId && !!booking.timeType;
+    return (
+      !!booking.DOB &&
+      !!booking.doctorId &&
+      !!booking.timeType &&
+      !!booking.DateAppointment
+    );
   }
 }

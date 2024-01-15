@@ -27,6 +27,7 @@ model User {
   markDown     Markdown?    @relation("Markdown")
   doctorInfo   Doctor_info? @relation("Info")
   schedules    Schedule[]   @relation("ScheduleUser")
+  patientInfo  Booking[]    @relation("Booking")
 }
 
 model Markdown {
@@ -63,15 +64,18 @@ model AllCode {
 }
 
 model Booking {
-  id           Int       @id @default(autoincrement())
-  statusId     String    @default("S1")
-  doctorId     Int
-  patientId    Int       @unique()
-  date         DateTime
-  timeType     String
-  uniqueString String    @unique()
-  createAt     DateTime? @default(now())
-  updateAt     DateTime? @default(now())
+  id              Int       @id @default(autoincrement())
+  statusId        String    @default("S1")
+  doctorId        Int
+  patientId       Int       @unique()
+  DOB             DateTime
+  note            Json?
+  timeType        String
+  DateAppointment DateTime
+  uniqueString    String    @unique()
+  createAt        DateTime? @default(now())
+  updateAt        DateTime? @default(now())
+  patientInfo     User      @relation("Booking", fields: [patientId], references: [id])
 }
 
 model Clinic {
