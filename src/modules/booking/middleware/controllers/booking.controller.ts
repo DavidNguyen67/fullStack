@@ -15,6 +15,7 @@ import { HandleRawDataPipe } from '../pipes/handleRawData.pipe';
 import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { IsHasTokenInQueryPipe } from '../pipes/isHasTokenInQuery.pipe';
 import { getMaxElement } from 'src/utils/function';
+import { IsHasDoctorIdDateQueryPipe } from '../pipes/isHasDoctorIdDateQuey.pipe';
 
 @Controller(`${routes.versionApi}/${routes.bookingPath}`)
 export class BookingController {
@@ -49,20 +50,19 @@ export class BookingController {
   }
 
   @Get(routes.readRoute)
-  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe)
+  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe, IsHasDoctorIdDateQueryPipe)
   async readAppointMentByDateAndDoctorId(@Query() query: any) {
     try {
       // eslint-disable-next-line prefer-const
-      let { id, date } = query;
-      console.log(id, date);
-      id = Array.isArray(id) ? getMaxElement(id) : +id;
+      let { doctorId, date } = query;
+      doctorId = Array.isArray(doctorId) ? getMaxElement(doctorId) : +doctorId;
       date = Array.isArray(date) ? getMaxElement(date) : +date;
 
-      if (id && date) {
+      if (doctorId && date) {
         return {
           statusCode: HttpStatus.OK,
           data: await this.bookingService.readAppointMentByDateAndDoctorId(
-            id,
+            doctorId,
             date,
           ),
         };
