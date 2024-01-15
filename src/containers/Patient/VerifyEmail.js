@@ -81,7 +81,7 @@ class VerifyEmail extends Component {
             {lang === LANGUAGES.VI ? (
               <>
                 {isLoading && <>Dang loading</>}
-                {isFailed && <>Xac dinh lich hen bi loi</>}
+                {isFailed && <>LICH HEN DA HET THOI GIAN HOAC DA XAC NHAN</>}
                 {isVerify && <>Xac dinh lich hen thanh cong</>}
               </>
             ) : (

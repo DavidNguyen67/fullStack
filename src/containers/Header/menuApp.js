@@ -21,10 +21,10 @@ export const adminMenu = [
       // },
       // ],
       // },
-      {
-        name: 'menu.admin.manageAdmin',
-        link: '/system/manage-admin',
-      },
+      // {
+      //   name: 'menu.admin.manageAdmin',
+      //   link: '/system/manage-admin',
+      // },
       {
         name: 'menu.admin.manageUser',
         link: '/system/users',
@@ -47,7 +47,7 @@ export const adminMenu = [
     menus: [
       {
         name: 'menu.admin.manageClinic',
-        link: '/system/manage-clinic',
+        link: '/system/clinics',
       },
     ],
   },
@@ -61,16 +61,16 @@ export const adminMenu = [
       },
     ],
   },
-  {
-    // Quản lý cẩm nang
-    name: 'menu.admin.titleHandbook',
-    menus: [
-      {
-        name: 'menu.admin.manageHandbook',
-        link: '/system/manage-handbook',
-      },
-    ],
-  },
+  // {
+  //   // Quản lý cẩm nang
+  //   name: 'menu.admin.titleHandbook',
+  //   menus: [
+  //     {
+  //       name: 'menu.admin.manageHandbook',
+  //       link: '/system/manage-handbook',
+  //     },
+  //   ],
+  // },
 ];
 
 export const doctorMenu = [

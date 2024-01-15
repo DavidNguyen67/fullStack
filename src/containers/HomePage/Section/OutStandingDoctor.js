@@ -5,7 +5,7 @@ import * as actions from './../../../store/actions';
 import * as constant from '../../../utils/';
 import { FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router-dom';
-import { getTopDoctorService } from '../../../services/userService';
+import TextTruncate from '../../../components/TextTruncate/TextTruncate';
 class OutStandingDoctor extends Component {
   constructor(props) {
     super(props);
@@ -47,9 +47,6 @@ class OutStandingDoctor extends Component {
     const { lang } = this.props;
     const { topDoctors } = this.state;
 
-    console.log('====================================');
-    console.log(topDoctors);
-    console.log('====================================');
     return (
       <div className="section-share section-outstanding-doctor">
         {typeof topDoctors !== 'string' &&
@@ -100,14 +97,26 @@ class OutStandingDoctor extends Component {
                             </div>
                             <div className="position text-center">
                               <h3>
-                                {lang === constant.LANGUAGES.VI
-                                  ? `${doctor.positionData?.valueVi}`
-                                  : `${doctor.positionData?.valueEn}`}
+                                <TextTruncate
+                                  className="text-center"
+                                  text={
+                                    lang === constant.LANGUAGES.VI
+                                      ? `${doctor.positionData?.valueVi}`
+                                      : `${doctor.positionData?.valueEn}`
+                                  }
+                                  maxLength={20}
+                                />
                               </h3>
                               <h4>
-                                {lang === constant.LANGUAGES.VI
-                                  ? nameVi
-                                  : nameEn}
+                                <TextTruncate
+                                  className="text-center"
+                                  text={
+                                    lang === constant.LANGUAGES.VI
+                                      ? nameVi
+                                      : nameEn
+                                  }
+                                  maxLength={20}
+                                />
                               </h4>
                               <div>{doctor.email}</div>
                             </div>

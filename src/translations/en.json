@@ -40,7 +40,9 @@
       "title": "CREATE MORE DOCTOR INFORMATION",
       "price": "Select price",
       "payment": "Select payment method",
-      "province": "Select province"
+      "province": "Select province",
+      "clinic": "Select clinic",
+      "specialty": "Select specialty"
     }
   },
   "login": {

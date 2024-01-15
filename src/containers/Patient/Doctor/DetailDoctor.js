@@ -85,11 +85,11 @@ class DetailDoctor extends Component {
                   : `${doctor.positionData?.valueEn} ${nameEn}`}
               </div>
               <div className="down">
-                <div>
+                {/* <div>
                   {lang === constant.LANGUAGES.VI
                     ? doctor.markDown?.contentMarkdown_VI
                     : doctor.markDown?.contentMarkdown_EN}
-                </div>
+                </div> */}
                 <div>
                   {lang === constant.LANGUAGES.VI
                     ? doctor.markDown?.description_VI

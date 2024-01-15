@@ -20,7 +20,8 @@ class ManageDoctor extends Component {
       selectedDoctor: null,
       doctor: null,
       contentHTML: '',
-      contentMarkdown: '',
+      contentMarkdown_VI: '',
+      contentMarkdown_EN: '',
       description: '',
       hasOldData: false,
       isLoading: false,
@@ -56,6 +57,7 @@ class ManageDoctor extends Component {
         contentMarkdown_VI: text,
       }));
   };
+
   submit = async (event) => {
     const {
       contentHTML_EN,
@@ -85,7 +87,7 @@ class ManageDoctor extends Component {
     const doctorId = selectedDoctor?.value;
 
     const payloadMarkDown = filterEmptyValues({
-      specialtyId: selectedSpecialty.value,
+      specialtyId: selectedSpecialty?.value,
       clinicId: selectedClinic?.value,
       contentHTML_EN,
       contentMarkdown_EN,
@@ -100,7 +102,7 @@ class ManageDoctor extends Component {
       provinceId: selectedProvince?.value,
       paymentId: selectedPayment?.value,
       priceId: selectedPrice?.value,
-      specialtyId: selectedSpecialty.value,
+      specialtyId: selectedSpecialty?.value,
       clinicId: selectedClinic?.value,
       nameClinic,
       addressClinic,
@@ -183,6 +185,7 @@ class ManageDoctor extends Component {
         selectedProvince: '',
         selectedPayment: '',
         selectedPrice: '',
+        selectedClinic: '',
         nameClinic: '',
         addressClinic: '',
         note: '',
@@ -220,6 +223,7 @@ class ManageDoctor extends Component {
 
     return;
   };
+
   handleChange = {
     doctor: async (selectedDoctor) => {
       if (selectedDoctor.value) {
@@ -254,6 +258,11 @@ class ManageDoctor extends Component {
                   value: doctorInfo?.priceInfo.keyMap,
                 },
               };
+            } else {
+              newState = {
+                ...newState,
+                selectedPrice: null,
+              };
             }
             if (doctorInfo?.provinceInfo?.valueVi) {
               newState = {
@@ -263,6 +272,11 @@ class ManageDoctor extends Component {
                   value: doctorInfo?.provinceInfo.keyMap,
                 },
               };
+            } else {
+              newState = {
+                ...newState,
+                selectedProvince: null,
+              };
             }
             if (doctorInfo?.selectedPayment?.valueVi) {
               newState = {
@@ -271,6 +285,11 @@ class ManageDoctor extends Component {
                   label: doctorInfo?.paymentInfo?.valueVi,
                   value: doctorInfo?.paymentInfo?.keyMap,
                 },
+              };
+            } else {
+              newState = {
+                ...newState,
+                selectedPayment: null,
               };
             }
           } else
@@ -289,6 +308,11 @@ class ManageDoctor extends Component {
                 value: doctorInfo?.priceInfo?.keyMap,
               },
             };
+          } else {
+            newState = {
+              ...newState,
+              selectedPrice: null,
+            };
           }
           if (doctorInfo?.paymentInfo?.valueEn) {
             newState = {
@@ -297,6 +321,11 @@ class ManageDoctor extends Component {
                 label: doctorInfo?.provinceInfo?.valueEn,
                 value: doctorInfo?.provinceInfo?.keyMap,
               },
+            };
+          } else {
+            newState = {
+              ...newState,
+              selectedProvince: null,
             };
           }
           if (doctorInfo?.provinceInfo?.valueEn) {
@@ -307,6 +336,11 @@ class ManageDoctor extends Component {
                 value: doctorInfo?.paymentInfo.keyMap,
               },
             };
+          } else {
+            newState = {
+              ...newState,
+              selectedPayment: null,
+            };
           }
           if (doctorInfo?.specialtyInfo) {
             newState = {
@@ -316,6 +350,11 @@ class ManageDoctor extends Component {
                 value: doctorInfo?.specialtyInfo?.id,
               },
             };
+          } else {
+            newState = {
+              ...newState,
+              selectedSpecialty: null,
+            };
           }
           if (doctorInfo?.clinicInfo) {
             newState = {
@@ -324,6 +363,11 @@ class ManageDoctor extends Component {
                 label: doctorInfo?.clinicInfo?.name,
                 value: doctorInfo?.clinicInfo?.id,
               },
+            };
+          } else {
+            newState = {
+              ...newState,
+              selectedClinic: null,
             };
           }
         }
@@ -453,8 +497,6 @@ class ManageDoctor extends Component {
   }
 
   render() {
-    let contentMarkdown = null;
-    let description = null;
     const {
       selectedDoctor,
       hasOldData,
@@ -472,15 +514,12 @@ class ManageDoctor extends Component {
       specialties,
       selectedClinic,
       selectedSpecialty,
+      contentMarkdown_EN,
+      contentMarkdown_VI,
+      description_VI,
+      description_EN,
     } = this.state;
     const { doctors, lang } = this.props;
-    if (lang === constant.LANGUAGES.VI) {
-      contentMarkdown = this.state?.contentMarkdown_VI;
-      description = this.state?.description_VI;
-    } else {
-      description = this.state?.description_EN;
-      contentMarkdown = this.state?.contentMarkdown_EN;
-    }
 
     const listDoctor =
       doctors.length > 0 &&
@@ -585,7 +624,11 @@ class ManageDoctor extends Component {
                   className="form-control"
                   rows="4"
                   onChange={this.handleOnChangeDesc}
-                  value={description}
+                  value={
+                    lang === constant.LANGUAGES.VI
+                      ? description_VI
+                      : description_EN
+                  }
                 ></textarea>
               </div>
             </div>
@@ -674,7 +717,7 @@ class ManageDoctor extends Component {
                 value={selectedSpecialty}
                 onChange={this.handleChange.specialty}
                 options={listSpecialty || []}
-                // placeholder={<FormattedMessage id={'title.doctor.payment'} />}
+                placeholder={<FormattedMessage id={'title.doctor.specialty'} />}
               />
             </div>
             <div className="col-12 col-lg-4 mb-2 form-group">
@@ -685,7 +728,7 @@ class ManageDoctor extends Component {
                 value={selectedClinic}
                 onChange={this.handleChange.clinic}
                 options={listClinic || []}
-                // placeholder={<FormattedMessage id={'title.doctor.payment'} />}
+                placeholder={<FormattedMessage id={'title.doctor.clinic'} />}
               />
             </div>
             <div className="my-2" />
@@ -696,7 +739,11 @@ class ManageDoctor extends Component {
                 style={{ height: '500px' }}
                 renderHTML={(text) => mdParser.render(text)}
                 onChange={this.handleEditorChange}
-                value={contentMarkdown}
+                value={
+                  lang === constant.LANGUAGES.VI
+                    ? contentMarkdown_VI
+                    : contentMarkdown_EN
+                }
               />
             </div>
           </div>

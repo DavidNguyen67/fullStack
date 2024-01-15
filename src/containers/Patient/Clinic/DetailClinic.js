@@ -1,38 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './DetailSpecialty.scss';
+import './DetailClinic.scss';
 import HomeHeader from '../../HomePage/HomeHeader';
-import {
-  getSpecialtyDetail,
-  getSpecialtyDetailFilterByProvince,
-} from '../../../services';
+import { getClinicDetail } from '../../../services';
 import DoctorSchedule from '../../System/Doctor/DoctorSchedule';
 import ExtraInfo from '../Doctor/ExtraInfo';
 import ProfileDoctor from '../Doctor/ProfileDoctor';
 import { LANGUAGES } from '../../../utils';
-import Select from 'react-select';
-import * as actions from './../../../store/actions';
+import * as actions from '../../../store/actions';
 import { FormattedMessage } from 'react-intl';
-class DetailSpecialty extends Component {
+
+class DetailClinic extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      specialties: [],
       doctors: [],
       contentHTML: {},
       description: {},
 
       isShow: false,
-      provinces: [],
-
-      selectedProvince: {},
     };
   }
   async componentDidMount() {
     const { id } = this.props?.match?.params;
-    const { specialties } = this.state;
-    this.props.fetchProvinceStart();
-    if (specialties.length < 1) {
+    const { doctors } = this.state;
+    if (doctors.length < 1) {
       await this.fetchSpecialtyDetails(id);
       return;
     }
@@ -40,19 +32,21 @@ class DetailSpecialty extends Component {
 
   async fetchSpecialtyDetails(id) {
     if (id) {
-      const response = await getSpecialtyDetail(id);
+      const response = await getClinicDetail(id);
       if (response) {
         if (response.statusCode === 200) {
           const data = response.data;
           const doctors =
-            data.doctorSpecialty?.length > 0 &&
-            data.doctorSpecialty.map((item) => ({
+            data.doctorClinic?.length > 0 &&
+            data.doctorClinic.map((item) => ({
               ...item.doctorInfo,
               priceInfo: item.priceInfo,
             }));
           this.setState((prevState) => ({
             ...prevState,
             doctors,
+            name: data.name,
+            address: data.address,
             contentHTML: {
               vi: data.contentMarkdown_VI,
               en: data.contentMarkdown_EN,
@@ -90,80 +84,11 @@ class DetailSpecialty extends Component {
     }));
   };
 
-  componentDidUpdate(preProps, prevState) {
-    if (preProps.provinces !== this.props.provinces) {
-      this.setState((prevState) => ({
-        ...prevState,
-        provinces: this.props.provinces,
-      }));
-    }
-  }
-  handleChangeProvince = async (selectedProvince) => {
-    if (selectedProvince.value) {
-      const { id } = this.props?.match?.params;
-      const response = await getSpecialtyDetailFilterByProvince(
-        id,
-        selectedProvince.value
-      );
-      if (response) {
-        if (response.statusCode === 200) {
-          const data = response.data;
-          const doctors =
-            data.doctorSpecialty?.length > 0 &&
-            data.doctorSpecialty.map((item) => item.doctorInfo);
-
-          this.setState((prevState) => ({
-            ...prevState,
-            doctors: doctors,
-            selectedProvince,
-            contentHTML: {
-              vi: data.descriptionHTML_VI,
-              en: data.descriptionHTML_EN,
-            },
-            description: {
-              vi: data.descriptionHTML_VI,
-              en: data.descriptionHTML_EN,
-            },
-            isLoading: false,
-            isFailed: false,
-          }));
-          return;
-        } else
-          this.setState((prevState) => ({
-            ...prevState,
-            doctorIds: [],
-            isFailed: true,
-            isLoading: false,
-          }));
-        return;
-      }
-
-      this.setState((prevState) => ({
-        ...prevState,
-        selectedProvince,
-      }));
-    } else {
-      const { id } = this.props?.match?.params;
-      await this.fetchSpecialtyDetails(id);
-    }
-  };
+  componentDidUpdate(preProps, prevState) {}
 
   render() {
-    const { description, doctors, isShow, provinces, selectedProvince } =
-      this.state;
+    const { description, doctors, isShow, name, address } = this.state;
     const { lang } = this.props;
-    const listProvince =
-      provinces.map &&
-      provinces.map((item) => {
-        return {
-          value: item.keyMap,
-          label: lang === LANGUAGES.EN ? item.valueEn : item.valueVi,
-        };
-      });
-    listProvince.unshift({
-      value: undefined,
-      label: lang === LANGUAGES.EN ? 'All' : 'Toàn quốc',
-    });
 
     return (
       <div className="detail-specialty-container">
@@ -175,6 +100,8 @@ class DetailSpecialty extends Component {
               className="each-doctor col-12 overflow-hidden position-relative"
               style={isShow ? {} : { height: '250px' }}
             >
+              <h1>{name}</h1>
+              <h3>{address}</h3>
               <div
                 dangerouslySetInnerHTML={{
                   __html:
@@ -196,12 +123,6 @@ class DetailSpecialty extends Component {
                 <label>
                   <FormattedMessage id="clinic.choose" />
                 </label>
-                <Select
-                  options={listProvince}
-                  value={selectedProvince}
-                  onChange={this.handleChangeProvince}
-                  placeholder={<FormattedMessage id={'clinic.choose'} />}
-                />
               </div>
             </div>
           </div>
@@ -256,4 +177,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DetailSpecialty);
+export default connect(mapStateToProps, mapDispatchToProps)(DetailClinic);

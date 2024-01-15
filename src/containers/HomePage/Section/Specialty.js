@@ -4,6 +4,7 @@ import Slider from 'react-slick';
 import { FormattedMessage } from 'react-intl';
 import { readSpecialty } from './../../../services/userService';
 import { withRouter } from 'react-router-dom';
+import TextTruncate from '../../../components/TextTruncate/TextTruncate';
 
 class Specialty extends Component {
   constructor(props) {
@@ -99,7 +100,14 @@ class Specialty extends Component {
                                   background: `url(${imageSrc}) no-repeat center top / cover`,
                                 }}
                               ></div>
-                              <h3 className="text-center">{specialty.name}</h3>
+                              <h3 className="clinicName">
+                                <TextTruncate
+                                  className="text-center"
+                                  text={specialty.name}
+                                  maxLength={20}
+                                  tag="h4"
+                                />
+                              </h3>
                             </div>
                           </div>
                         </div>

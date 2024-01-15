@@ -46,7 +46,9 @@
       "title": "TẠO THÊM THÔNG TÍN BÁC SĨ",
       "price": "Chọn giá",
       "payment": "Chọn phương thức thanh toán",
-      "province": "Chọn tỉnh thành"
+      "province": "Chọn tỉnh thành",
+      "clinic": "Chọn cơ sở y tế",
+      "specialty": "Chọn chuyên khoa"
     }
   },
   "button": {
