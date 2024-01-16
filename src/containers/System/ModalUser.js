@@ -81,6 +81,8 @@ function ModalUser(props) {
   const { isError, isLoading, genders, positions, roles } = useSelector(
     (state) => state.admin
   );
+  const { isLoading: isLoadingApp } = useSelector((state) => state.app);
+
   const dispatch = useDispatch();
 
   const fetchFormInput = () => {
@@ -314,8 +316,11 @@ function ModalUser(props) {
           if (!result[key]) delete result[key];
         }
         setIsLoadingRequest(true);
+        dispatch(actions.startLoading());
 
         response = await createNewUserService([result]);
+
+        dispatch(actions.stopLoading());
         if (
           response.status === 500 ||
           response.data?.statusCode === 500 ||
@@ -700,6 +705,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     readUsers: (id) => dispatch(actions.readUsers(id)),
+    startLoading: () => dispatch(actions.startLoading()),
+    stopLoading: () => dispatch(actions.stopLoading()),
   };
 };
 

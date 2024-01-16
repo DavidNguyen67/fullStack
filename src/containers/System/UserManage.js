@@ -81,7 +81,9 @@ class UserManage extends Component {
     const handleDeleteUsers = (isMany) => {
       const deleteFunc = async () => {
         const { id } = dataUser;
+        this.props.startLoading();
         const response = await deleteUsersService([id]);
+        this.props.stopLoading();
         if (response.statusCode === 200 || response.status === 200) {
           toast.success(
             <FormattedMessage
@@ -387,6 +389,8 @@ const mapDispatchToProps = (dispatch) => {
     deleteUsers: (ids) => dispatch(actions.deleteUsers(ids)),
     createNewUser: (payload) => dispatch(actions.createNewUser(payload)),
     updateUsers: (payload) => dispatch(actions.updateUsers(payload)),
+    startLoading: () => dispatch(actions.startLoading()),
+    stopLoading: () => dispatch(actions.stopLoading()),
   };
 };
 

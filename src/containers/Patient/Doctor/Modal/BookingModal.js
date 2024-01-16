@@ -120,7 +120,7 @@ class BookingModal extends Component {
   }
 
   bookConfirm = async () => {
-    const { dataTime, lang, doctorData } = this.props;
+    const { dataTime, lang, doctorData, DateAppointment } = this.props;
     const {
       timeType,
       doctorId,
@@ -145,10 +145,11 @@ class BookingModal extends Component {
       dataTime: dataTime.time,
       lang,
       doctorData,
+      DateAppointment: new Date(parseInt(DateAppointment, 10)).toISOString(),
     };
 
     const validateFields = () => {
-      const { namePatient, phoneNumber, email } = payload;
+      const { namePatient, phoneNumber, email, address } = payload;
 
       if (!namePatient) {
         toast.error(<FormattedMessage id="validate.nameRequired" />);
@@ -158,6 +159,11 @@ class BookingModal extends Component {
       if (!email) {
         toast.error(<FormattedMessage id="validate.emailRequired" />);
         return false;
+      }
+
+      if (!address) {
+        toast.error(<FormattedMessage id="validate.addressRequired" />);
+        return;
       }
 
       if (!validator.isEmail(email)) {
@@ -188,8 +194,9 @@ class BookingModal extends Component {
       ...prevState,
       isLoading: true,
     }));
-
+    this.props.startLoading();
     const response = await services.createAppointment(payload);
+    this.props.stopLoading();
 
     this.setState((prevState) => ({
       ...prevState,
@@ -465,6 +472,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getGenderStart: () => dispatch(actions.fetchGenderStart()),
+    startLoading: () => dispatch(actions.startLoading()),
+    stopLoading: () => dispatch(actions.stopLoading()),
   };
 };
 

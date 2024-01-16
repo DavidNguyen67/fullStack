@@ -78,6 +78,7 @@
     },
     "doctor": {
       "manage-schedule": "Manage Appointment Schedule",
+      "manage-patient": "Manage patient",
       "price": "Appointment Price",
       "payment": "Payment Method",
       "province": "Province",
@@ -120,6 +121,7 @@
     "nameCharacters": "First and last names can only contain alphabetical characters",
     "phoneNumberInvalid": "Invalid phone number",
     "emailRequired": "Email is required",
+    "addressRequired": "Address is required",
     "passwordRequired": "Password is required",
     "firstNameRequired": "FirstName is required",
     "lastNameRequired": "LastName is required"

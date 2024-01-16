@@ -180,7 +180,9 @@ class ActionUserPage extends Component {
         ...prevState,
         isLoadingRequest: !prevState.isLoadingRequest,
       }));
+      this.props.startLoading();
       const response = await deleteUsersService(id);
+      this.props.stopLoading();
       this.setState((prevState) => ({
         ...prevState,
         isLoadingRequest: !prevState.isLoadingRequest,
@@ -317,7 +319,9 @@ class ActionUserPage extends Component {
         ...prevState,
         isLoadingRequest: !prevState.isLoadingRequest,
       }));
+      this.props.startLoading();
       await this.props.createNewUser(result);
+      this.props.stopLoading();
       this.setState((prevState) => ({
         ...prevState,
         isLoadingRequest: !prevState.isLoadingRequest,
@@ -421,7 +425,9 @@ class ActionUserPage extends Component {
             ...prevState,
             isLoadingRequest: !prevState.isLoadingRequest,
           }));
+          this.props.startLoading();
           await this.props.updateUsers(result);
+          this.props.stopLoading();
 
           this.setState((prevState) => ({
             ...prevState,
@@ -1062,6 +1068,8 @@ const mapDispatchToProps = (dispatch) => {
     updateUsers: (payload) => dispatch(actions.updateUsers(payload)),
     deleteUsers: (payload) => dispatch(actions.deleteUsers(payload)),
     readUsers: (id) => dispatch(actions.readUsers(id)),
+    startLoading: () => dispatch(actions.startLoading()),
+    stopLoading: () => dispatch(actions.stopLoading()),
   };
 };
 

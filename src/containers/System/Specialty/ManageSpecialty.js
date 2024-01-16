@@ -8,6 +8,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import CommonUtils from './../../../utils/CommonUtils';
 import { createSpecialty } from '../../../services/userService';
 import { LANGUAGES } from '../../../utils';
+import { startLoading, stopLoading } from '../../../store/actions';
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
@@ -81,8 +82,9 @@ class ManageSpecialty extends Component {
         isFailed: false,
       }));
 
+      this.props.startLoading();
       const response = await createSpecialty(payload);
-
+      this.props.stopLoading();
       if (response) {
         if (response.statusCode === 200) {
           this.setState((prevState) => ({
@@ -173,11 +175,15 @@ const mapStateToProps = (state) => {
     systemMenuPath: state.app.systemMenuPath,
     isLoggedIn: state.user.isLoggedIn,
     lang: state.app.language,
+    
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    startLoading: () => dispatch(startLoading()),
+    stopLoading: () => dispatch(stopLoading()),
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageSpecialty);

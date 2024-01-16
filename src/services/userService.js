@@ -154,3 +154,15 @@ export const getClinicDetail = async (id) => {
     `/${constants.clinicPath}/${constants.readDetailRoute}?${constants.queryPrefix.id}=${id}`
   );
 };
+
+export const getPatientByDayAndDoctorId = async (doctorId, date) => {
+  return await instance.get(
+    `/${constants.bookingPath}/${constants.readRoute}?${constants.queryPrefix.doctorId}=${doctorId}&${constants.queryPrefix.date}=${date}`
+  );
+};
+
+export const confirmRemedy = async (formData) => {
+  return await instance.post(`/${constants.bookingPath}/upload`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};

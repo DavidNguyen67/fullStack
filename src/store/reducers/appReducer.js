@@ -14,10 +14,21 @@ const initialState = {
   contentOfConfirmModal: {
     ...initContentOfConfirmModal,
   },
+  isLoading: false,
 };
 
 const appReducer = (state = initialState, action) => {
   switch (action.type) {
+    case actionTypes.START_LOADING:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case actionTypes.STOP_LOADING:
+      return {
+        ...state,
+        isLoading: false,
+      };
     case actionTypes.APP_START_UP_COMPLETE:
       return {
         ...state,

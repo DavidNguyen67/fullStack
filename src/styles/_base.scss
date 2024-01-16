@@ -11,6 +11,9 @@ html {
   height: 100vh;
   overflow: hidden;
 }
+._loading_overlay_overlay {
+  z-index: 99999999999 !important;
+}
 
 .content-container {
   .title {

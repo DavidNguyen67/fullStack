@@ -19,7 +19,7 @@ class ManageSchedule extends Component {
     this.state = {
       selectedDoctor: null,
       isLoading: false,
-      currentDate: null,
+      currentDate: new Date(),
       timeSchedule: [],
       doctors: [],
       selectedTime: [],
@@ -71,7 +71,9 @@ class ManageSchedule extends Component {
       ...prevState,
       isLoading: true,
     }));
+    this.props.startLoading();
     const response = await createNewScheduleService(payload);
+    this.props.stopLoading();
     this.setState((prevState) => ({
       ...prevState,
       isLoading: false,
@@ -155,8 +157,14 @@ class ManageSchedule extends Component {
   }
 
   render() {
-    const { selectedDoctor, isLoading, doctors, timeSchedule, selectedTime } =
-      this.state;
+    const {
+      selectedDoctor,
+      isLoading,
+      doctors,
+      timeSchedule,
+      selectedTime,
+      currentDate,
+    } = this.state;
     const { lang } = this.props;
     const listDoctors =
       doctors.length > 0 &&
@@ -197,6 +205,7 @@ class ManageSchedule extends Component {
               </label>
               <DatePicker
                 onChange={this.handleChangeDatePicker}
+                value={currentDate}
                 className="form-control"
                 minDate={new Date().setDate(new Date().getDate() - 1)}
               />
@@ -258,6 +267,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     readAllDoctors: () => dispatch(actions.readAllDoctors()),
     readAllScheduleHours: () => dispatch(actions.readAllScheduleHours()),
+    startLoading: () => dispatch(actions.startLoading()),
+    stopLoading: () => dispatch(actions.stopLoading()),
   };
 };
 

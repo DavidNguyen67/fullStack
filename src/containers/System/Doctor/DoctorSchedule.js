@@ -18,6 +18,8 @@ class DoctorSchedule extends Component {
       isShow: false,
       dataTime: null,
       doctor: null,
+
+      DateAppointment: new Date(),
     };
   }
 
@@ -65,6 +67,7 @@ class DoctorSchedule extends Component {
         this.setState((prevState) => ({
           ...prevState,
           allAvailableTime: response.data,
+          DateAppointment: date,
         }));
       } else {
         this.setState((prevState) => ({
@@ -127,7 +130,8 @@ class DoctorSchedule extends Component {
     }));
   };
   render() {
-    const { allDay, allAvailableTime, isShow, dataTime } = this.state;
+    const { allDay, allAvailableTime, isShow, dataTime, DateAppointment } =
+      this.state;
     const { lang, doctorData } = this.props;
     return (
       <>
@@ -200,6 +204,7 @@ class DoctorSchedule extends Component {
           toggleModal={this.toggleModal}
           dataTime={dataTime}
           doctorData={doctorData}
+          DateAppointment={DateAppointment}
         />
       </>
     );
@@ -221,6 +226,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     readAllDoctors: () => dispatch(actions.readAllDoctors()),
     readAllScheduleHours: () => dispatch(actions.readAllScheduleHours()),
+    startLoading: () => dispatch(actions.startLoading()),
+    stopLoading: () => dispatch(actions.stopLoading()),
   };
 };
 

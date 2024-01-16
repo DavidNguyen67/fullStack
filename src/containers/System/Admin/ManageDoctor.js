@@ -151,8 +151,10 @@ class ManageDoctor extends Component {
       ...prevState,
       isLoading: true,
     }));
+    this.props.startLoading();
     const response = await services.updateMarkDownService(payloadMarkDown);
     const res = await services.createUpdateNewDoctorInfo(payloadDoctorInfo);
+    this.props.stopLoading();
     this.setState((prevState) => ({
       ...prevState,
       isLoading: false,
@@ -792,6 +794,8 @@ const mapDispatchToProps = (dispatch) => {
     fetchPriceStart: () => dispatch(actions.fetchPriceStart()),
     fetchSpecialtyStart: () => dispatch(actions.fetchSpecialtyStart()),
     fetchClinicStart: () => dispatch(actions.fetchClinicStart()),
+    startLoading: () => dispatch(actions.startLoading()),
+    stopLoading: () => dispatch(actions.stopLoading()),
   };
 };
 

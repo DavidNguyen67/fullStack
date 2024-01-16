@@ -78,6 +78,7 @@
     },
     "doctor": {
       "manage-schedule": "Quản lý kế hoạch khám bệnh",
+      "manage-patient": "Quản lý bệnh nhân",
       "price": "Giá khám bệnh",
       "payment": "Phương thức thanh toán",
       "province": "Tỉnh thành",
@@ -120,6 +121,7 @@
     "nameCharacters": "Tên và họ chỉ được chứa các ký tự chữ cái",
     "phoneNumberInvalid": "Số điện thoại không hợp lệ",
     "emailRequired": "Trường Email không được bỏ trống",
+    "addressRequired": "Trường Địa chỉ không được bỏ trống",
     "passwordRequired": "Trường Mật Khẩu không được bỏ trống",
     "firstNameRequired": "Trường Tên không được bỏ trống",
     "lastNameRequired": "Trường Họ không được bỏ trống"

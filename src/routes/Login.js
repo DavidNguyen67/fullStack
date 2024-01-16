@@ -63,7 +63,9 @@ class Login extends Component {
           ...prevState,
           isDisable: true,
         }));
+        this.props.startLoading();
         const response = await handleLoginService(username, password);
+        this.props.stopLoading();
         this.setState((prevState) => ({
           ...prevState,
           isDisable: false,
@@ -190,6 +192,8 @@ const mapDispatchToProps = (dispatch) => {
 
     userLoginSuccess: (userInfo) =>
       dispatch(actions.userLoginSuccess(userInfo)),
+    startLoading: () => dispatch(actions.startLoading()),
+    stopLoading: () => dispatch(actions.stopLoading()),
   };
 };
 
