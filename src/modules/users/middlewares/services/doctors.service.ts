@@ -33,7 +33,7 @@ export class DoctorsService {
         },
         take: +env.MAX_RECORD_LENGTH,
         where: {
-          roleId: role.ROLE_DOCTOR_CODE,
+          roleId: role.ROLE.DOCTOR,
         },
         orderBy: {
           createAt: 'asc',
@@ -90,7 +90,7 @@ export class DoctorsService {
           id: {
             in: id,
           },
-          roleId: role.ROLE_DOCTOR_CODE,
+          roleId: role.ROLE.DOCTOR,
         },
         orderBy: {
           id: 'asc',
@@ -183,7 +183,7 @@ export class DoctorsService {
         },
         where: {
           id: id,
-          roleId: role.ROLE_DOCTOR_CODE,
+          roleId: role.ROLE.DOCTOR,
         },
         orderBy: {
           id: 'asc',
@@ -250,7 +250,7 @@ export class DoctorsService {
         },
         where: {
           id: id,
-          roleId: role.ROLE_DOCTOR_CODE,
+          roleId: role.ROLE.DOCTOR,
         },
         orderBy: {
           id: 'asc',
@@ -293,7 +293,7 @@ export class DoctorsService {
           },
         },
         where: {
-          roleId: role.ROLE_DOCTOR_CODE,
+          roleId: role.ROLE.DOCTOR,
         },
         orderBy: {
           id: 'asc',

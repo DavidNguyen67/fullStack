@@ -10,8 +10,9 @@ import {
 import { AuthService } from './auth.service';
 import * as routes from './../../../utils/routes';
 import { LoginInterface } from 'src/utils/interfaces';
-import { AuthPipe } from './auth.pipe';
 import { GlobalRes } from 'src/utils/interfaces/response.interface';
+import { Public } from 'src/utils/decorators';
+import { AdminGuard } from 'src/utils/guard/Admin.guard';
 
 @Controller(`${routes.versionApi}/${routes.authPath}`)
 export class AuthController {
@@ -21,8 +22,9 @@ export class AuthController {
     return 'hello1';
   }
 
+  @Public()
   @Post(routes.loginRoute)
-  @UsePipes(AuthPipe)
+  @UsePipes(AdminGuard)
   async loginController(@Body() dataLogin: LoginInterface): Promise<GlobalRes> {
     try {
       const { username, password } = dataLogin;

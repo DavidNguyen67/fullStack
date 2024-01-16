@@ -9,6 +9,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  UseGuards,
   // UploadedFile,
   UseInterceptors,
   UsePipes,
@@ -25,6 +26,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 // import { FormDataRequest, MemoryStoredFile } from 'nestjs-form-data';
 import { pipes } from '../pipes';
 import { HandleRawDataCreate } from 'src/modules/specialty/middleware/pipes/handleRawDataCreate.pipe';
+import * as roleGuards from '../../../../utils/guard/index.guard';
+import { Public } from 'src/utils/decorators';
 
 @Controller(`${routes.versionApi}/${routes.crudUserPath}`)
 export class UsersController {
@@ -32,7 +35,6 @@ export class UsersController {
 
   @Get(routes.readRoute)
   @UseInterceptors(FetchUsersInterceptor)
-  // ! Guard in here is not used correctly as itself
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.convertAnyStringArrToNumArrPipe,
@@ -62,6 +64,7 @@ export class UsersController {
   }
 
   @Post(routes.createRoute)
+  @UseGuards(roleGuards.AdminGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.ExcludeIdFieldPipe,
@@ -86,6 +89,7 @@ export class UsersController {
   }
 
   @Delete(routes.deleteRoute)
+  @UseGuards(roleGuards.AdminGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.convertAnyStringArrToNumArrPipe,
@@ -111,6 +115,7 @@ export class UsersController {
   }
 
   @Put(routes.updateRoute)
+  @UseGuards(roleGuards.AdminGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.FileSizeAndImageValidationPipe,
@@ -146,6 +151,7 @@ export class UsersController {
   }
 
   @Post('upload')
+  @Public()
   @UseInterceptors(FileInterceptor('file'))
   @UsePipes(pipes.FileSizeAndImageValidationPipe, pipes.RemoveBase64PrefixPipe)
   testFileUpload(@UploadedFile() file: Express.Multer.File) {

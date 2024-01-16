@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Query,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
@@ -18,6 +19,7 @@ import { getMaxElement } from 'src/utils/function';
 import { IsHasDoctorIdDateQueryPipe } from '../pipes/isHasDoctorIdDateQuey.pipe';
 import { FormDataRequest } from 'nestjs-form-data';
 import { FormDataSendRemedyDTO } from 'src/utils/dto/formData.dto';
+import * as guards from '../../../../utils/guard/index.guard';
 
 @Controller(`${routes.versionApi}/${routes.bookingPath}`)
 export class BookingController {
@@ -52,6 +54,7 @@ export class BookingController {
   }
 
   @Get(routes.readRoute)
+  @UseGuards(guards.DoctorGuard)
   @UsePipes(pipes.IsHasDataInQueryOrBodyPipe, IsHasDoctorIdDateQueryPipe)
   async readAppointMentByDateAndDoctorId(@Query() query: any) {
     try {
@@ -76,6 +79,7 @@ export class BookingController {
   }
 
   @Post('upload')
+  @UseGuards(guards.DoctorGuard)
   @FormDataRequest()
   async uploadFile(@Body() body: FormDataSendRemedyDTO) {
     try {

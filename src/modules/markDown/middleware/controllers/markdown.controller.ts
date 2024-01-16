@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Put,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -13,11 +14,13 @@ import { processUserData } from 'src/utils/function';
 import { MarkdownsService } from '../services/markdown.service';
 import { pipes } from '../pipes';
 import { GlobalRes } from 'src/utils/interfaces/response.interface';
+import * as roleGuards from '../../../../utils/guard/index.guard';
 @Controller(`${routes.versionApi}/${routes.markdownPath}`)
 export class MarkDownController {
   constructor(private readonly markdownsService: MarkdownsService) {}
 
   @Put(routes.updateRoute)
+  @UseGuards(roleGuards.AdminGuard)
   @UsePipes(pipes.IsHasDataInQueryOrBodyPipe, pipes.IsHasDoctorIdPipe)
   async updateUsers(
     @Body(new ValidationPipe({ transform: true })) body: UpdateDoctorsDto | any,

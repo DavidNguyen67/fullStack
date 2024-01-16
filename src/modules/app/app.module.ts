@@ -49,6 +49,10 @@ import { ScheduleModule } from '@nestjs/schedule';
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
     },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // },
   ],
 })
 export class AppModule {}

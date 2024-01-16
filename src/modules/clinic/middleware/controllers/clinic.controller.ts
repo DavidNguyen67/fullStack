@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Query,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
@@ -14,12 +15,15 @@ import { pipes } from 'src/modules/users/middlewares/pipes';
 import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { IsHasFieldRequiredClinicPipe } from '../pipes/IsHasFieldRequiredSpecialty.pipe';
 import { getMaxElement } from 'src/utils/function';
+import { Public } from 'src/utils/decorators';
+import * as guards from '../../../../utils/guard/index.guard';
 
 @Controller(`${routes.versionApi}/${routes.clinicPath}`)
 export class ClinicController {
   constructor(private readonly clinicService: ClinicService) {}
 
   @Post(routes.createRoute)
+  @UseGuards(guards.AdminGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.ExcludeIdFieldPipe,
@@ -42,6 +46,7 @@ export class ClinicController {
   }
 
   @Get(routes.readRoute)
+  @Public()
   // @UsePipes()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async readSpecialties() {
@@ -57,6 +62,7 @@ export class ClinicController {
   }
 
   @Get(routes.readDetailRoute)
+  @Public()
   async readDetailSpecialtyById(@Query() query: any) {
     try {
       // eslint-disable-next-line prefer-const

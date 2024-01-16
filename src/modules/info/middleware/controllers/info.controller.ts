@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Put,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
@@ -14,12 +15,14 @@ import { HandleRawDataPipe } from '../pipes/handleRawData.pipe';
 import { IsHasFieldRequiredDoctorInfoPipe } from '../pipes/IsHasFieldRequiredSchedule.pipe';
 import * as _ from 'lodash';
 import { infoDto } from 'src/utils/dto/info.dto';
+import * as guards from '../../../../utils/guard/index.guard';
 
 @Controller(`${routes.versionApi}/${routes.doctorInfo}`)
 export class InfoController {
   constructor(private readonly infoService: InfoService) {}
 
   @Put(routes.updateRoute)
+  @UseGuards(guards.AdminGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     IsHasFieldRequiredDoctorInfoPipe,

@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { exclude } from 'src/utils/function';
-import * as role from '../../../../utils/constants';
 import { UpdateDoctorsDto } from 'src/utils/dto/User.dto';
+import { ROLE } from 'src/utils/constants';
 
 @Injectable()
 export class MarkdownsService {
@@ -35,7 +35,7 @@ export class MarkdownsService {
           id: {
             in: id,
           },
-          roleId: role.ROLE_DOCTOR_CODE,
+          roleId: ROLE.DOCTOR,
         },
         orderBy: {
           id: 'asc',

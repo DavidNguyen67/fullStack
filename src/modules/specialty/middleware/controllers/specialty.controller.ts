@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Query,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
@@ -14,12 +15,14 @@ import { pipes } from '../../../users/middlewares/pipes';
 import { IsHasFieldRequiredSpecialtyPipe } from '../pipes/IsHasFieldRequiredSpecialty.pipe';
 import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { getMaxElement } from 'src/utils/function';
+import * as guards from '../../../../utils/guard/index.guard';
 
 @Controller(`${routes.versionApi}/${routes.specialtyPath}`)
 export class SpecialtyController {
   constructor(private readonly specialtyService: SpecialtyService) {}
 
   @Post(routes.createRoute)
+  @UseGuards(guards.AdminAndDoctorGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.ExcludeIdFieldPipe,

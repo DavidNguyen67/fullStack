@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Query,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -18,12 +19,14 @@ import { IsHasFieldRequiredSchedulePipe } from '../pipes/IsHasFieldRequiredSched
 import { HandleRawDataPipe } from '../pipes/HandleRawDataPipe.pipe';
 import { BookSchedulesDto } from 'src/utils/dto/schedule.dto';
 import { TimeStampToDatePipe } from '../pipes/TimeStampToDatePipe.pipe';
+import * as guards from '../../../../utils/guard/index.guard';
 
 @Controller(`${routes.versionApi}/${routes.schedulePath}`)
 export class ScheDuleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Post(routes.createRoute)
+  @UseGuards(guards.AdminAndDoctorGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.ExcludeIdFieldPipe,
@@ -46,6 +49,7 @@ export class ScheDuleController {
   }
 
   @Get(routes.readRoute)
+  @UseGuards(guards.DoctorGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.ExcludeIdFieldPipe,
