@@ -32,16 +32,12 @@ class Specialty extends Component {
         this.setState((prevState) => ({
           ...prevState,
           specialties: response.data,
-          isLoading: false,
-          isFailed: false,
         }));
         return;
       } else
         this.setState((prevState) => ({
           ...prevState,
           specialties: [],
-          isFailed: true,
-          isLoading: false,
         }));
       return;
     }

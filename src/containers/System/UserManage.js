@@ -101,6 +101,10 @@ class UserManage extends Component {
           }));
           return;
         }
+        if (response.statusCode === 401 || response.status === 401) {
+          toast.error('Ban khong co quyen thuc hien hanh dong nay');
+          return;
+        }
         toast.error(
           <FormattedMessage
             id="toast.errorDeleteUser"

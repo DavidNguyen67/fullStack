@@ -27,11 +27,11 @@ class ManagePatient extends Component {
   async componentDidMount() {
     const { userInfo } = this.props;
     const todayUnixTimeStamp = moment().startOf('day').valueOf();
-
     try {
       const response = await getPatientByDayAndDoctorId(
         userInfo.id,
-        todayUnixTimeStamp
+        todayUnixTimeStamp,
+        userInfo.access_token
       );
 
       this.handleResponse(response);
@@ -45,7 +45,11 @@ class ManagePatient extends Component {
     const timeStamp = new Date(date).getTime();
 
     try {
-      const response = await getPatientByDayAndDoctorId(userInfo.id, timeStamp);
+      const response = await getPatientByDayAndDoctorId(
+        userInfo.id,
+        timeStamp,
+        userInfo.access_token
+      );
 
       this.handleResponse(response, date);
     } catch (error) {

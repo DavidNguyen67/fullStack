@@ -212,6 +212,15 @@ class ManageDoctor extends Component {
         toast.error(<FormattedMessage id={`toast.BadRequest`} />);
         return;
       }
+      if (
+        response.statusCode === 401 ||
+        response.data?.statusCode === 401 ||
+        res.statusCode === 401 ||
+        res.data?.statusCode === 401
+      ) {
+        toast.error('Ban khong co quyen thuc hien hanh dong nay');
+        return;
+      }
       toast.error(
         <FormattedMessage
           id="toast.failUpdateDoctor"

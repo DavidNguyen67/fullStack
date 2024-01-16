@@ -315,19 +315,18 @@ function ModalUser(props) {
         for (const key of Object.keys(result)) {
           if (!result[key]) delete result[key];
         }
-        setIsLoadingRequest(true);
+
         dispatch(actions.startLoading());
-
         response = await createNewUserService([result]);
-
         dispatch(actions.stopLoading());
+
         if (
           response.status === 500 ||
           response.data?.statusCode === 500 ||
           response.statusCode === 500
         ) {
           toast.error(<FormattedMessage id={`toast.InternalError`} />);
-          setIsLoadingRequest(false);
+
           return;
         }
         if (response.statusCode === 200 || response.status === 200) {
@@ -341,7 +340,7 @@ function ModalUser(props) {
             />
           );
           props.toggleModal();
-          setIsLoadingRequest(false);
+
           dispatch(actions.readUsers());
           return;
         }
@@ -355,7 +354,11 @@ function ModalUser(props) {
               tagName="div"
             />
           );
-          setIsLoadingRequest(false);
+
+          return;
+        }
+        if (response.statusCode === 401 || response.status === 401) {
+          toast.error('Ban khong co quyen thuc hien hanh dong nay');
           return;
         }
         toast.error(
@@ -367,7 +370,7 @@ function ModalUser(props) {
             tagName="div"
           />
         );
-        setIsLoadingRequest(false);
+
         return;
       case UPDATE:
         dataUser.password && delete dataUser.password;
@@ -387,9 +390,7 @@ function ModalUser(props) {
         for (const key of Object.keys(result)) {
           if (!result[key]) delete result[key];
         }
-        setIsLoadingRequest(true);
         response = await updateUsersService([result]);
-
         if (!response || Object.keys(response).length < 1) {
           toast.error(
             <FormattedMessage
@@ -412,7 +413,7 @@ function ModalUser(props) {
             />
           );
           props.toggleModal();
-          setIsLoadingRequest(false);
+
           dispatch(actions.readUsers());
           return;
         }
@@ -426,7 +427,11 @@ function ModalUser(props) {
               tagName="div"
             />
           );
-          setIsLoadingRequest(false);
+
+          return;
+        }
+        if (response.statusCode === 401 || response.status === 401) {
+          toast.error('Ban khong co quyen thuc hien hanh dong nay');
           return;
         }
         toast.error(
@@ -438,10 +443,9 @@ function ModalUser(props) {
             tagName="div"
           />
         );
-        setIsLoadingRequest(false);
+
         return;
       default:
-        setIsLoadingRequest(false);
         return;
     }
   };

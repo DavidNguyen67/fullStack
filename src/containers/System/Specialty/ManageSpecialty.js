@@ -9,6 +9,7 @@ import CommonUtils from './../../../utils/CommonUtils';
 import { createSpecialty } from '../../../services/userService';
 import { LANGUAGES } from '../../../utils';
 import { startLoading, stopLoading } from '../../../store/actions';
+import { toast } from 'react-toastify';
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
@@ -87,22 +88,16 @@ class ManageSpecialty extends Component {
       this.props.stopLoading();
       if (response) {
         if (response.statusCode === 200) {
-          this.setState((prevState) => ({
-            ...prevState,
-            name: '',
-            image: '',
-            descriptionHTML: '',
-            descriptionMarkdown: '',
-            isLoading: false,
-            isFailed: false,
-          }));
+          toast.error('OKe');
           return;
-        } else
-          this.setState((prevState) => ({
-            ...prevState,
-            isFailed: true,
-            isLoading: false,
-          }));
+        } else if (
+          response.statusCode === 401 ||
+          response.data?.statusCode === 401
+        ) {
+          toast.error('Ban khong co quyen thuc hien hanh dong nay');
+          return;
+        }
+
         return;
       }
     } catch (error) {
@@ -175,7 +170,6 @@ const mapStateToProps = (state) => {
     systemMenuPath: state.app.systemMenuPath,
     isLoggedIn: state.user.isLoggedIn,
     lang: state.app.language,
-    
   };
 };
 

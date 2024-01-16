@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import {
   deleteUsersService,
   getAllUsersService,
+  updateUsersService,
 } from '../../../services/userService';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
@@ -205,10 +206,10 @@ class ActionUserPage extends Component {
         response.statusCode === 500
       )
         toast.error(<FormattedMessage id={`toast.InternalError`} />);
-      if (response.statusCode === 200 || response.status === 200) {
-        toast.success(
+      if (response.statusCode === 409 || response.status === 409) {
+        toast.error(
           <FormattedMessage
-            id="toast.successCreateUser"
+            id="toast.conflictEmail"
             values={{
               br: <br />,
             }}
@@ -217,10 +218,14 @@ class ActionUserPage extends Component {
         );
         return;
       }
-      if (response.statusCode === 409 || response.status === 409) {
-        toast.error(
+      if (response.statusCode === 401 || response.status === 401) {
+        toast.error('Ban khong co quyen thuc hien hanh dong nay');
+        return;
+      }
+      if (response.statusCode === 200 || response.status === 200) {
+        toast.success(
           <FormattedMessage
-            id="toast.conflictEmail"
+            id="toast.successCreateUser"
             values={{
               br: <br />,
             }}
@@ -344,6 +349,10 @@ class ActionUserPage extends Component {
           );
           return;
         }
+        if (statusCode === 401 || statusCode === 401) {
+          toast.error('Ban khong co quyen thuc hien hanh dong nay');
+          return;
+        }
         toast.error(
           <FormattedMessage
             id="toast.failedCreateUser"
@@ -426,25 +435,14 @@ class ActionUserPage extends Component {
             isLoadingRequest: !prevState.isLoadingRequest,
           }));
           this.props.startLoading();
-          await this.props.updateUsers(result);
+          const response = await updateUsersService(payload);
           this.props.stopLoading();
 
           this.setState((prevState) => ({
             ...prevState,
             isLoadingRequest: !prevState.isLoadingRequest,
           }));
-          const { isErrorUpdate } = this.props;
-          if (isErrorUpdate) {
-            toast.error(
-              <FormattedMessage
-                id="toast.errorUpdateUser"
-                values={{
-                  br: <br />,
-                }}
-                tagName="div"
-              />
-            );
-          } else {
+          if (response.statusCode === 200 || response.status === 200) {
             toast.success(
               <FormattedMessage
                 id="toast.successUpdateUser"
@@ -454,44 +452,26 @@ class ActionUserPage extends Component {
                 tagName="div"
               />
             );
+            const response = await this.props.readUsers();
+            this.setState((prevState) => ({
+              ...prevState,
+              response,
+            }));
             const { history, systemMenuPath } = this.props;
             history.push(systemMenuPath);
+            return;
           }
-
-          if (this.props.match?.params?.id) {
-            const response = await getAllUsersService(
-              this.props.match.params.id
-            );
-            const { history, systemMenuPath } = this.props;
-
-            if (response.data && Array.isArray(response.data)) {
-              const users = response.data.reduce((accumulator, value) => {
-                return { ...accumulator, [uuidv4()]: value };
-              }, {});
-              this.setState((prevState) => ({
-                ...prevState,
-                users,
-                pureUsers: response.data,
-              }));
-            } else {
-              if (
-                response.status === 500 ||
-                response.data?.statusCode === 500
-              ) {
-                toast.error(<FormattedMessage id={`toast.InternalError`} />);
-              } else if (
-                response.status === 404 ||
-                response.data?.statusCode === 404
-              ) {
-                toast.error(
-                  <FormattedMessage id={`toast.errorNotFoundUser`} />
-                );
-              } else {
-                toast.error(<FormattedMessage id={`toast.errorReadUser`} />);
-              }
-              history.push(systemMenuPath);
-            }
+          if (response.statusCode === 401 || response.status === 401) {
+            toast.error('Ban khong co quyen thuc hien hanh dong nay');
+            return;
           }
+          <FormattedMessage
+            id="toast.errorUpdateUser"
+            values={{
+              br: <br />,
+            }}
+            tagName="div"
+          />;
         }
       }
     }
