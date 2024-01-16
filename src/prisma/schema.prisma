@@ -61,6 +61,7 @@ model AllCode {
   priceInfo    Doctor_info[] @relation("PriceInfo")
   provinceInfo Doctor_info[] @relation("ProvinceInfo")
   paymentInfo  Doctor_info[] @relation("PaymentInfo")
+  time         Booking[]     @relation("Time to appointment")
 }
 
 model Booking {
@@ -76,6 +77,7 @@ model Booking {
   createAt        DateTime? @default(now())
   updateAt        DateTime? @default(now())
   patientInfo     User      @relation("Booking", fields: [patientId], references: [id])
+  time            AllCode?  @relation("Time to appointment", fields: [timeType], references: [keyMap])
 }
 
 model Clinic {

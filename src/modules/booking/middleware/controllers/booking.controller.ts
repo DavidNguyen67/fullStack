@@ -16,6 +16,8 @@ import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { IsHasTokenInQueryPipe } from '../pipes/isHasTokenInQuery.pipe';
 import { getMaxElement } from 'src/utils/function';
 import { IsHasDoctorIdDateQueryPipe } from '../pipes/isHasDoctorIdDateQuey.pipe';
+import { FormDataRequest } from 'nestjs-form-data';
+import { FormDataSendRemedyDTO } from 'src/utils/dto/formData.dto';
 
 @Controller(`${routes.versionApi}/${routes.bookingPath}`)
 export class BookingController {
@@ -67,6 +69,26 @@ export class BookingController {
           ),
         };
       }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('upload')
+  @FormDataRequest()
+  async uploadFile(@Body() body: FormDataSendRemedyDTO) {
+    try {
+      const isSuccess = await this.bookingService.handleSendRemedy(body);
+      return isSuccess
+        ? {
+            statusCode: HttpStatus.OK,
+            data: isSuccess,
+          }
+        : {
+            statusCode: HttpStatus.BAD_REQUEST,
+            data: isSuccess,
+          };
     } catch (error) {
       console.log(error);
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);

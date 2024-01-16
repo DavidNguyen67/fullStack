@@ -9,6 +9,8 @@ import * as jwt from 'jsonwebtoken';
 import * as routes from './../../../../utils/routes';
 import * as constants from './../../../../utils/constants';
 import { exclude } from 'src/utils/function';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { FormDataSendRemedyDTO } from 'src/utils/dto/formData.dto';
 
 @Injectable()
 export class BookingService {
@@ -154,6 +156,61 @@ export class BookingService {
     return `${env.URL_REACT}/${routes.verifyPath}/?token=${token}`;
   }
 
+  private async sendAttachmentMail(
+    payload: FormDataSendRemedyDTO,
+    buffer: Buffer,
+  ) {
+    try {
+      const medicalBillStringVi = `
+        <div>
+          <br>
+          Xin chào <strong>${payload.patientName}</strong>,
+          <p>Dưới đây là thông tin về hóa đơn y tế của bạn:</p>
+          <p>Nếu bạn cần thêm thông tin hoặc có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi.</p>
+          <h4>Xin chân thành cảm ơn</h4>
+        </div>
+      `;
+
+      const medicalBillStringEn = `
+        <div>
+          <br>
+          Hello <strong>${payload.patientName}</strong>,
+          <p>Here is the information about your medical bill:</p>
+          <p>If you need additional information or have any questions, feel free to contact us.</p>
+          <h4>Sincerely thank you</h4>
+        </div>
+      `;
+
+      const medicalBillString =
+        payload.lang === constants.LANGUAGES.VI
+          ? medicalBillStringVi
+          : medicalBillStringEn;
+
+      const mail = await this.mailerService.sendMail({
+        to: payload.email,
+        subject:
+          payload.lang === constants.LANGUAGES.EN
+            ? 'Medical bill🚑💊'
+            : 'Hóa đơn y tế 🩹🩸',
+        html: medicalBillString,
+        attachments: [
+          {
+            filename: `${uuid()}-${payload.patientName}.png`,
+            content: await Buffer.from(buffer).toString('base64'),
+            encoding: 'base64',
+          },
+        ],
+      });
+      if (!mail) {
+        throw new HttpException('No mail sent', HttpStatus.BAD_REQUEST);
+      }
+      return mail;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
   async PatientBookAppointments({
     patient,
     booking,
@@ -162,6 +219,7 @@ export class BookingService {
     try {
       const payloadUser = { ...patient };
       payloadUser.id && delete payloadUser.id;
+
       const userInfo = await this.prisma.user.upsert({
         where: {
           email: payloadUser.email,
@@ -199,7 +257,6 @@ export class BookingService {
           };
 
           const uniqueString = uuid();
-          console.log(uniqueString);
 
           const appointments = await this.prisma.booking.upsert({
             where: {
@@ -208,6 +265,7 @@ export class BookingService {
             update: { ...payloadBooking, uniqueString },
             create: { ...payloadBooking, uniqueString },
           });
+
           if (!appointments) {
             throw new HttpException(
               'No schedules were created. Check your input data. allow to book but got error',
@@ -229,11 +287,11 @@ export class BookingService {
           let bookAt: any = appointments.updateAt;
           bookAt =
             lang === constants.LANGUAGES.EN
-              ? moment(bookAt).format('h:mm:ss a - ddd - MM/DD/YYYY')
+              ? moment(bookAt).format('h:mm a - ddd - MM/DD/YYYY')
               : this.capitalizeFirstLetter(
                   moment(bookAt)
                     .locale('vi')
-                    .format('h:mm:ss - dddd - DD/MM/YYYY'),
+                    .format('h:mm - dddd - DD/MM/YYYY'),
                 );
           const scheduleTime =
             lang === constants.LANGUAGES.EN
@@ -320,13 +378,91 @@ export class BookingService {
     }
   }
 
+  async handleSendRemedy(payload: FormDataSendRemedyDTO) {
+    try {
+      const appointment = await this.prisma.booking.update({
+        where: {
+          patientId: +payload.patientId,
+          doctorId: +payload.doctorId,
+          timeType: payload.timeType,
+          // statusId: constants.STATUS_CONFIRMED,
+        },
+        data: {
+          statusId: constants.STATUS_DONE,
+        },
+      });
+      if (!appointment) {
+        throw new HttpException('No appointment found', HttpStatus.NOT_FOUND);
+      }
+
+      await this.sendAttachmentMail(payload, payload.file?.buffer);
+
+      return { appointment };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  // @Cron(CronExpression.EVERY_SECOND, { name: 'autoDeleteRecordAfter30Mins' })
+  // handleCron() {
+  //   console.log('Called when the current second is 45');
+  // }
+
   async readAppointMentByDateAndDoctorId(doctorId: number, dateNumber: number) {
     try {
+      // const patients = await this.prisma.user.findMany({
+      //   take: +env.MAX_RECORD_LENGTH,
+      //   select: {
+      //     id: true,
+      //     email: true,
+      //     firstName: true,
+      //     lastName: true,
+      //     address: true,
+      //     gender: true,
+      //     genderData: true,
+      //     phoneNumber: true,
+      //     patientInfo: {
+      //       where: {
+      //         doctorId,
+      //         DateAppointment: new Date(dateNumber),
+      //       },
+      //     },
+      //   },
+      // });
+      // const { length } = patients;
+      // if (length < 1) {
+      //   throw new HttpException('No patients were found', HttpStatus.NOT_FOUND);
+      // }
+      // return patients.map(
+      //   (item) => exclude(item, ['password', 'createAt', 'updateAt']) || item,
+      // );
+
       const appointments = await this.prisma.booking.findMany({
         take: +env.MAX_RECORD_LENGTH,
         where: {
           doctorId,
           DateAppointment: new Date(dateNumber),
+        },
+        include: {
+          patientInfo: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              address: true,
+              gender: true,
+              genderData: true,
+              phoneNumber: true,
+            },
+          },
+          time: {
+            select: {
+              valueEn: true,
+              valueVi: true,
+            },
+          },
         },
       });
       const { length } = appointments;
