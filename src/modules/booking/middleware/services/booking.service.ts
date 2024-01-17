@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
@@ -10,18 +10,20 @@ import * as routes from './../../../../utils/routes';
 import * as constants from './../../../../utils/constants';
 import { exclude } from 'src/utils/function';
 import { FormDataSendRemedyDTO } from 'src/utils/dto/formData.dto';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { DeleteUnconfirmedEvent } from '../../events/deleteUnconfirmed.event';
+
 @Injectable()
 export class BookingService {
   constructor(
     private prisma: PrismaService,
     private readonly mailerService: MailerService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   private readonly saltOrRounds = 10;
   private readonly coolDownVerify: number = 30; // 30 minutes
-  private readonly logger = new Logger(BookingService.name);
-
+  private deleteUnconfirmedTimeout: NodeJS.Timeout;
   private capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
@@ -325,6 +327,27 @@ export class BookingService {
                   : `Thư xác nhận ✉️`,
               html: contentMail,
             });
+          if (appointments && mailInfo) {
+            const {
+              doctorId,
+              patientId,
+              timeType,
+              DateAppointment: dateAppointment,
+            } = appointments;
+
+            this.deleteUnconfirmedTimeout = setTimeout(
+              () => {
+                const deleteUnconfirmedEvent: DeleteUnconfirmedEvent = {
+                  dateAppointment,
+                  patientId,
+                  timeType,
+                  doctorId,
+                };
+                this.eventEmitter.emit('delete', deleteUnconfirmedEvent);
+              },
+              this.coolDownVerify * 60 * 1000,
+            );
+          }
           return !!(appointments && mailInfo);
         }
       }
@@ -359,6 +382,8 @@ export class BookingService {
           });
 
           if (booking) {
+            // this.shouldCancelDeleteEvent = true;
+            clearTimeout(this.deleteUnconfirmedTimeout);
             return !!booking;
           }
           throw new HttpException(
@@ -448,10 +473,5 @@ export class BookingService {
       console.log(error);
       throw error;
     }
-  }
-
-  @Cron(CronExpression.EVERY_SECOND, { name: 'notifications' })
-  handleCron() {
-    this.logger.debug('Called every 30 seconds');
   }
 }

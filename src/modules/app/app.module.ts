@@ -15,7 +15,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { env } from 'process';
 import { SpecialtyModule } from '../specialty/specialty.module';
 import { ClinicModule } from '../clinic/clinic.module';
-import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -33,7 +33,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         },
       },
     }),
-    ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     AuthModule,
     UsersModule,
     allCodeModule,

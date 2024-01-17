@@ -21,14 +21,10 @@ import { FormDataRequest } from 'nestjs-form-data';
 import { FormDataSendRemedyDTO } from 'src/utils/dto/formData.dto';
 import * as guards from '../../../../utils/guard/index.guard';
 import { Public } from 'src/utils/decorators';
-import { SchedulerRegistry } from '@nestjs/schedule';
 
 @Controller(`${routes.versionApi}/${routes.bookingPath}`)
 export class BookingController {
-  constructor(
-    private readonly bookingService: BookingService,
-    private schedulerRegistry: SchedulerRegistry,
-  ) {}
+  constructor(private readonly bookingService: BookingService) {}
 
   @Post(routes.createRoute)
   @Public()
@@ -104,12 +100,5 @@ export class BookingController {
       console.log(error);
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  @Get()
-  async test() {
-    const job = this.schedulerRegistry.getCronJob('notifications');
-    job.start();
-    setTimeout(() => job.stop(), 10000);
   }
 }
