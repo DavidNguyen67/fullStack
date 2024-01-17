@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
@@ -9,9 +9,8 @@ import * as jwt from 'jsonwebtoken';
 import * as routes from './../../../../utils/routes';
 import * as constants from './../../../../utils/constants';
 import { exclude } from 'src/utils/function';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { FormDataSendRemedyDTO } from 'src/utils/dto/formData.dto';
-
+import { Cron, CronExpression } from '@nestjs/schedule';
 @Injectable()
 export class BookingService {
   constructor(
@@ -21,6 +20,7 @@ export class BookingService {
 
   private readonly saltOrRounds = 10;
   private readonly coolDownVerify: number = 30; // 30 minutes
+  private readonly logger = new Logger(BookingService.name);
 
   private capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -153,7 +153,7 @@ export class BookingService {
       env.SECRET_KEY,
     );
 
-    return `${env.URL_REACT}/${routes.verifyPath}/?token=${token}`;
+    return `${env.FRONTEND_URL}/${routes.verifyPath}/?token=${token}`;
   }
 
   private async sendAttachmentMail(
@@ -404,45 +404,14 @@ export class BookingService {
     }
   }
 
-  // @Cron(CronExpression.EVERY_SECOND, { name: 'autoDeleteRecordAfter30Mins' })
-  // handleCron() {
-  //   console.log('Called when the current second is 45');
-  // }
-
   async readAppointMentByDateAndDoctorId(doctorId: number, dateNumber: number) {
     try {
-      // const patients = await this.prisma.user.findMany({
-      //   take: +env.MAX_RECORD_LENGTH,
-      //   select: {
-      //     id: true,
-      //     email: true,
-      //     firstName: true,
-      //     lastName: true,
-      //     address: true,
-      //     gender: true,
-      //     genderData: true,
-      //     phoneNumber: true,
-      //     patientInfo: {
-      //       where: {
-      //         doctorId,
-      //         DateAppointment: new Date(dateNumber),
-      //       },
-      //     },
-      //   },
-      // });
-      // const { length } = patients;
-      // if (length < 1) {
-      //   throw new HttpException('No patients were found', HttpStatus.NOT_FOUND);
-      // }
-      // return patients.map(
-      //   (item) => exclude(item, ['password', 'createAt', 'updateAt']) || item,
-      // );
-
       const appointments = await this.prisma.booking.findMany({
         take: +env.MAX_RECORD_LENGTH,
         where: {
           doctorId,
           DateAppointment: new Date(dateNumber),
+          statusId: constants.STATUS_CONFIRMED,
         },
         include: {
           patientInfo: {
@@ -479,5 +448,10 @@ export class BookingService {
       console.log(error);
       throw error;
     }
+  }
+
+  @Cron(CronExpression.EVERY_SECOND, { name: 'notifications' })
+  handleCron() {
+    this.logger.debug('Called every 30 seconds');
   }
 }

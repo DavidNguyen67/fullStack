@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UploadedFile,
   UseGuards,
   // UploadedFile,
@@ -35,6 +36,7 @@ export class UsersController {
 
   @Get(routes.readRoute)
   @UseInterceptors(FetchUsersInterceptor)
+  @UseGuards(roleGuards.AdminGuard)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.convertAnyStringArrToNumArrPipe,

@@ -31,7 +31,8 @@ export class DoctorGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+    const token = request.cookies[env.KEY_COOKIE];
+
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -42,7 +43,7 @@ export class DoctorGuard implements CanActivate {
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       if (payload) {
-        return payload.roleId !== ROLE.DOCTOR;
+        return payload.roleId === ROLE.DOCTOR;
       }
     } catch (error) {
       throw new HttpException(error, HttpStatus.UNAUTHORIZED);

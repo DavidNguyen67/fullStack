@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Query,
+  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
@@ -14,12 +15,15 @@ import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { FetchUsersInterceptor } from '../interceptor/fetchUser.interceptor';
 import { getMaxElement } from 'src/utils/function';
 import { pipes } from '../pipes';
+import * as guards from '../../../../utils/guard/index.guard';
+import { Public } from 'src/utils/decorators';
 
 @Controller(`${routes.versionApi}/${routes.crudDoctorPath}`)
 export class DoctorController {
   constructor(private readonly doctorsService: DoctorsService) {}
 
   @Get(routes.readRoute)
+  @UseGuards(guards.AdminGuard)
   @UseInterceptors(FetchUsersInterceptor)
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
@@ -50,6 +54,7 @@ export class DoctorController {
   }
 
   @Get(routes.readTopRoute)
+  @Public()
   @UseInterceptors(FetchUsersInterceptor)
   // @UsePipes()
   async fetchTopDoctors(): Promise<GlobalRes> {
@@ -72,6 +77,7 @@ export class DoctorController {
     pipes.convertAnyStringArrToNumArrPipe,
     pipes.IsIdHasNumberInStringPipe,
   )
+  @Public()
   async fetchDoctorDetail(
     @Query() query: FetchDoctorInterface,
   ): Promise<GlobalRes> {
@@ -100,6 +106,7 @@ export class DoctorController {
   }
 
   @Get(routes.readCommonRoute)
+  @Public()
   @UsePipes(
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.convertAnyStringArrToNumArrPipe,

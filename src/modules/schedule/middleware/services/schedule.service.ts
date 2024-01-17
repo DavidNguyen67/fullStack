@@ -14,7 +14,7 @@ export class ScheduleService {
           AND: [
             {
               doctorId: item.doctorId,
-              date: item.date,
+              date: new Date(item.date),
             },
           ],
         },
@@ -48,40 +48,41 @@ export class ScheduleService {
     }
   }
 
-  async createSchedule(payload: Schedule[]) {
+  async createSchedule(payload: any) {
     try {
-      let data = [];
-      let isValid = false;
-      const date = payload[0].date;
+      const deleteResult = await this.prisma.schedule.deleteMany({
+        where: {
+          doctorId: payload.doctorId,
+          date: new Date(payload.date),
+        },
+      });
 
-      for (const item of payload) {
-        const result = await this.isAvailableSchedule(item, payload);
-        if (result.length > 0) {
-          data = result;
+      if (deleteResult) {
+        const resultArray = payload.timeType.map((timeType: string) => ({
+          date: new Date(payload.date),
+          doctorId: payload.doctorId,
+          timeType: timeType,
+          maxNum: payload.maxNum,
+        }));
+
+        if (resultArray.length > 0) {
+          const records = await this.prisma.schedule.createMany({
+            data: resultArray,
+            skipDuplicates: true,
+          });
+
+          if (records) {
+            return records;
+          } else {
+            throw new HttpException(
+              'No records were created',
+              HttpStatus.BAD_REQUEST,
+            );
+          }
         }
       }
-      if (!isValid && data.length > 0) {
-        isValid = true;
-      }
-      if (isValid) {
-        data.forEach((item) => {
-          item.timeStamp && delete item.timeStamp;
-          item.date = date;
-        });
-        const schedule = await this.prisma.schedule.createMany({
-          data: data,
-          skipDuplicates: true,
-        });
-        const { count } = schedule;
-        if (count < 1) {
-          throw new HttpException(
-            'No schedules were created. Check your input data.',
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-        return schedule;
-      }
-      throw new HttpException('Duplicate schedules', HttpStatus.CONFLICT);
+
+      throw new HttpException('Delete got error', HttpStatus.BAD_REQUEST);
     } catch (error) {
       console.log(error);
       throw error;
