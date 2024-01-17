@@ -65,6 +65,7 @@
   },
   "menu": {
     "admin": {
+      "home": "Go to home",
       "title": "Users System",
       "manageUser": "Manage Users",
       "manageDoctor": "Manage Doctors",
@@ -77,6 +78,7 @@
       "manageHandbook": "Manage Handbooks"
     },
     "doctor": {
+      "home": "Go to home",
       "manage-schedule": "Manage Appointment Schedule",
       "manage-patient": "Manage patient",
       "price": "Appointment Price",

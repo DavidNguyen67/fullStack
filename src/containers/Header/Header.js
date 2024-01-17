@@ -8,6 +8,7 @@ import './Header.scss';
 import { LANGUAGES, USER_ROLE } from './../../utils';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
+import { withRouter } from 'react-router-dom';
 class Header extends Component {
   constructor(props) {
     super(props);
@@ -42,6 +43,13 @@ class Header extends Component {
     }
   }
 
+  returnToHome = () => {
+    const { history } = this.props;
+    if (history) {
+      history.go('/');
+    }
+  };
+
   render() {
     const { processLogout, language, userInfo } = this.props;
 
@@ -53,6 +61,13 @@ class Header extends Component {
           <Navigator menus={this.state.menuApp} />
         </div>
 
+        {/* <div
+          className="Home"
+          onClick={this.returnToHome}
+          style={{ cursor: 'pointer' }}
+        >
+          <h3>React</h3>
+        </div> */}
         <div className="languages">
           <span className="welcome">
             <FormattedMessage id={'title.welcome'} />
@@ -103,4 +118,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));

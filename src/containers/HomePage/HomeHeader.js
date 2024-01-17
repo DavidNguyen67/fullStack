@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import './HomeHeader.scss';
 import logo from './../../assets/images/reactLogo.jpg';
 import { FormattedMessage } from 'react-intl';
-import { LANGUAGES } from './../../utils/constant';
+import { LANGUAGES, USER_ROLE } from './../../utils/constant';
 import { changeLanguageApp } from '../../store/actions/appActions';
 import { LanguageUtils } from '../../utils';
 import { withRouter } from 'react-router-dom';
@@ -12,15 +12,30 @@ class HomeHeader extends Component {
     this.props.changeLanguageAppRedux(lan);
   };
   returnToHome = () => {
-    console.log(this.props);
     const { history } = this.props;
     if (history) {
       history.push('/');
     }
   };
 
+  handleForward = () => {
+    const { userInfo, history } = this.props;
+    switch (userInfo.roleId) {
+      case USER_ROLE.ADMIN:
+        history.push('/system');
+        return;
+      case USER_ROLE.DOCTOR:
+        history.push('/doctor/patient');
+        return;
+      default:
+        history.push('/');
+        return;
+    }
+  };
+
   render() {
-    const { language } = this.props;
+    const { language, userInfo } = this.props;
+
     return (
       <>
         <div className="home-header-container">
@@ -105,6 +120,18 @@ class HomeHeader extends Component {
                   </span>
                 </div>
               </div>
+              {userInfo && (
+                <div className="forwardPage">
+                  <button
+                    className="btn btn-success"
+                    onClick={this.handleForward}
+                  >
+                    Di toi trang{' '}
+                    {userInfo.roleId === USER_ROLE.ADMIN && 'Admin'}
+                    {userInfo.roleId === USER_ROLE.DOCTOR && 'Doctor'}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -191,6 +218,7 @@ const mapStateToProps = (state) => {
   return {
     language: state.app.language,
     isLoggedIn: state.user.isLoggedIn,
+    userInfo: state.user.userInfo,
   };
 };
 

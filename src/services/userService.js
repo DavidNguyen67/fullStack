@@ -157,14 +157,14 @@ export const getClinicDetail = async (id) => {
 
 export const getPatientByDayAndDoctorId = async (
   doctorId,
-  date,
-  access_token
+  date
+  // access_token
 ) => {
   return await instance.get(
-    `/${constants.bookingPath}/${constants.readRoute}?${constants.queryPrefix.doctorId}=${doctorId}&${constants.queryPrefix.date}=${date}`,
-    {
-      headers: { Authorization: `Bearer ${access_token}` },
-    }
+    `/${constants.bookingPath}/${constants.readRoute}?${constants.queryPrefix.doctorId}=${doctorId}&${constants.queryPrefix.date}=${date}`
+    // {
+    //   headers: { Authorization: `Bearer ${access_token}` },
+    // }
   );
 };
 

@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import {
   createNewScheduleService,
   getDoctorDetail,
+  getWeekDaysSchedule,
 } from '../../../services/userService';
 import moment from 'moment';
 
@@ -34,9 +35,10 @@ class ManageSchedule extends Component {
   };
 
   handleSave = async () => {
+    const { userInfo } = this.props;
     const { currentDate, selectedDoctor, selectedTime } = this.state;
 
-    if (!selectedDoctor) {
+    if (!userInfo && !selectedDoctor) {
       toast.error(<FormattedMessage id="toast.selectDoctorIsRequired" />);
       return;
     }
@@ -51,8 +53,10 @@ class ManageSchedule extends Component {
 
     const payload = {
       date: currentDate,
-      doctorId: selectedDoctor?.value,
-      timeType: selectedTime?.map && selectedTime.map((item) => item.keyMap),
+      doctorId: selectedDoctor?.value || userInfo.id,
+      timeType:
+        selectedTime?.map &&
+        selectedTime.map((item) => item.keyMap || item.timeType),
     };
 
     // filter the false value in payload
@@ -79,6 +83,7 @@ class ManageSchedule extends Component {
       isLoading: false,
       selectedTime: [],
     }));
+
     if (response && response.statusCode === 200) {
       toast.success(<FormattedMessage id={`toast.successBookSchedule`} />);
     } else {
@@ -94,11 +99,27 @@ class ManageSchedule extends Component {
     }
   };
 
-  handleChangeDatePicker = ([date]) => {
-    this.setState((prevState) => ({
-      ...prevState,
-      currentDate: date,
-    }));
+  handleChangeDatePicker = async ([date]) => {
+    const { userInfo } = this.props;
+    const dateData = new Date(date).getTime();
+    let newObj = {};
+    if (dateData) {
+      newObj = { ...newObj, currentDate: date };
+      const response = await getWeekDaysSchedule(
+        userInfo.id,
+        new Date(date).getTime()
+      );
+
+      if (Array.isArray(response.data)) {
+        newObj = { ...newObj, selectedTime: response.data };
+      }
+    }
+
+    if (Object.keys(newObj.length > 0))
+      this.setState((prevState) => ({
+        ...prevState,
+        ...newObj,
+      }));
   };
 
   handlerKeyDown = async (event) => {
@@ -112,10 +133,17 @@ class ManageSchedule extends Component {
   handleSelectTime = (itemData) => {
     this.setState((prevState) => {
       const { selectedTime } = prevState;
-      const updatedSelected = selectedTime.includes(itemData)
-        ? selectedTime.filter((selectedId) => selectedId !== itemData)
+      const updatedSelected = selectedTime.find((item) => {
+        return (
+          item.timeType === itemData.keyMap || item.keyMap === itemData.keyMap
+        );
+      })
+        ? selectedTime.filter(
+            (selectedId) =>
+              selectedId.timeType !== itemData.keyMap &&
+              selectedId.keyMap !== itemData.keyMap
+          )
         : [...selectedTime, itemData];
-
       return {
         ...prevState,
         selectedTime: updatedSelected,
@@ -124,35 +152,39 @@ class ManageSchedule extends Component {
   };
 
   async componentDidMount() {
-    await this.props.readAllDoctors();
-    await this.props.readAllScheduleHours();
+    await Promise.all([
+      this.props.readAllDoctors(),
+      this.props.readAllScheduleHours(),
+    ]);
+
+    const { userInfo } = this.props;
+    const startOfDayTimestamp = moment().startOf('day').valueOf();
+    const response = await getWeekDaysSchedule(
+      userInfo.id,
+      startOfDayTimestamp
+    );
+
+    const newState = {
+      currentDate: startOfDayTimestamp,
+      ...(response.data?.length > 0 && { selectedTime: response.data }),
+    };
+
+    this.setState((prevState) => ({ ...prevState, ...newState }));
   }
 
-  async componentDidUpdate(prevProps, prevState, snapshot) {
-    let updatedState = {};
+  async componentDidUpdate(prevProps) {
+    const updatedState = {};
 
     if (prevProps.doctors !== this.props.doctors) {
-      updatedState = {
-        ...updatedState,
-        doctors: this.props.doctors,
-      };
+      updatedState.doctors = this.props.doctors;
     }
 
     if (prevProps.timeSchedule !== this.props.timeSchedule) {
-      updatedState = {
-        ...updatedState,
-        timeSchedule: this.props.timeSchedule,
-      };
+      updatedState.timeSchedule = this.props.timeSchedule;
     }
 
     if (Object.keys(updatedState).length > 0) {
-      this.setState(
-        (prevState) => ({
-          ...prevState,
-          ...updatedState,
-        }),
-        () => (updatedState = {})
-      );
+      this.setState((prevState) => ({ ...prevState, ...updatedState }));
     }
   }
 
@@ -165,7 +197,8 @@ class ManageSchedule extends Component {
       selectedTime,
       currentDate,
     } = this.state;
-    const { lang } = this.props;
+    const { lang, userInfo } = this.props;
+
     const listDoctors =
       doctors.length > 0 &&
       doctors.map &&
@@ -189,27 +222,46 @@ class ManageSchedule extends Component {
             <FormattedMessage id={'manage-schedule.title'} />
           </div>
           <div className="row">
-            <div className="col-6 form-group">
-              <label>
-                <FormattedMessage id={'title.doctor.SelectDoctor'} />
-              </label>
-              <Select
-                value={selectedDoctor}
-                onChange={this.handleChange}
-                options={listDoctors}
-              />
-            </div>
-            <div className="col-6 form-group">
-              <label>
-                <FormattedMessage id={'title.doctor.SelectDate'} />
-              </label>
-              <DatePicker
-                onChange={this.handleChangeDatePicker}
-                value={currentDate}
-                className="form-control"
-                minDate={new Date().setDate(new Date().getDate() - 1)}
-              />
-            </div>
+            {userInfo.roleId === constant.USER_ROLE.ADMIN ? (
+              <>
+                <div className="col-6 form-group">
+                  <label>
+                    <FormattedMessage id={'title.doctor.SelectDoctor'} />
+                  </label>
+
+                  <Select
+                    value={selectedDoctor}
+                    onChange={this.handleChange}
+                    options={listDoctors}
+                  />
+                </div>
+                <div className="col-6 form-group">
+                  <label>
+                    <FormattedMessage id={'title.doctor.SelectDate'} />
+                  </label>
+                  <DatePicker
+                    onChange={this.handleChangeDatePicker}
+                    value={currentDate}
+                    className="form-control"
+                    minDate={new Date().setDate(new Date().getDate() - 1)}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="col-3 form-group">
+                  <label>
+                    <FormattedMessage id={'title.doctor.SelectDate'} />
+                  </label>
+                  <DatePicker
+                    onChange={this.handleChangeDatePicker}
+                    value={currentDate}
+                    className="form-control"
+                    minDate={new Date().setDate(new Date().getDate() - 1)}
+                  />
+                </div>
+              </>
+            )}
           </div>
           <div className="row mt-2">
             <label>
@@ -221,7 +273,11 @@ class ManageSchedule extends Component {
                   <div key={item.id} className="col-12 col-sm-6 col-lg-3 mb-3">
                     <button
                       className={
-                        selectedTime.includes(item)
+                        selectedTime.some(
+                          (time) =>
+                            time.timeType === item.keyMap ||
+                            time.keyMap === item.keyMap
+                        )
                           ? `btn-schedule active w-100`
                           : `btn-schedule w-100`
                       }

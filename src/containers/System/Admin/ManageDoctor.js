@@ -530,7 +530,7 @@ class ManageDoctor extends Component {
       description_VI,
       description_EN,
     } = this.state;
-    const { doctors, lang } = this.props;
+    const { doctors, lang, userInfo } = this.props;
 
     const listDoctor =
       doctors.length > 0 &&
@@ -604,175 +604,185 @@ class ManageDoctor extends Component {
           label: item.name,
         };
       });
+
+    console.log(userInfo);
     return (
       <>
-        <div className="manage-doctor-container row">
-          <div className="manage-doctor-title text-center my-4">
-            <FormattedMessage id={'title.doctor.title'} />
-          </div>
-          <div className="more-info mb-4">
-            <div className="row col-12">
-              <div className="content-left form-group col-5">
+        {userInfo.roleId === constant.USER_ROLE.ADMIN ? (
+          <div className="manage-doctor-container row">
+            <div className="manage-doctor-title text-center my-4">
+              <FormattedMessage id={'title.doctor.title'} />
+            </div>
+            <div className="more-info mb-4">
+              <div className="row col-12">
+                <div className="content-left form-group col-5">
+                  <label>
+                    <FormattedMessage id={'title.doctor.SelectDoctor'} />
+                  </label>
+                  <Select
+                    value={selectedDoctor}
+                    onChange={this.handleChange.doctor}
+                    options={listDoctor || []}
+                    placeholder={
+                      <FormattedMessage id={'title.doctor.SelectDoctor'} />
+                    }
+                  />
+                </div>
+                <div className="content-right form-group col-7">
+                  <label>
+                    <FormattedMessage
+                      id={'title.doctor.introductoryInformation'}
+                    />
+                  </label>
+                  <textarea
+                    className="form-control"
+                    rows="4"
+                    onChange={this.handleOnChangeDesc}
+                    value={
+                      lang === constant.LANGUAGES.VI
+                        ? description_VI
+                        : description_EN
+                    }
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div className="more-info-extract row">
+              <div className="col-12 col-lg-4 mb-2 form-group">
                 <label>
-                  <FormattedMessage id={'title.doctor.SelectDoctor'} />
+                  <FormattedMessage id={'doctor.price'} />
                 </label>
                 <Select
-                  value={selectedDoctor}
-                  onChange={this.handleChange.doctor}
-                  options={listDoctor || []}
+                  value={selectedPrice}
+                  onChange={this.handleChange.price}
+                  options={listPrice || []}
+                  placeholder={<FormattedMessage id={'title.doctor.price'} />}
+                />
+              </div>
+              <div className="col-12 col-lg-4 mb-2 form-group">
+                <label>
+                  <FormattedMessage id={'doctor.payment'} />
+                </label>
+                <Select
+                  value={selectedPayment}
+                  onChange={this.handleChange.payment}
+                  options={listPayment || []}
+                  placeholder={<FormattedMessage id={'title.doctor.payment'} />}
+                />
+              </div>
+              <div className="col-12 col-lg-4 mb-2 form-group">
+                <label>
+                  <FormattedMessage id={'doctor.province'} />
+                </label>
+                <Select
+                  value={selectedProvince}
+                  onChange={this.handleChange.province}
+                  options={listProvince || []}
                   placeholder={
-                    <FormattedMessage id={'title.doctor.SelectDoctor'} />
+                    <FormattedMessage id={'title.doctor.province'} />
                   }
                 />
               </div>
-              <div className="content-right form-group col-7">
+              <div className="col-12 col-lg-4 mb-2 form-group">
                 <label>
-                  <FormattedMessage
-                    id={'title.doctor.introductoryInformation'}
-                  />
+                  <FormattedMessage id={'doctor.nameClinic'} />
                 </label>
-                <textarea
+                <input
                   className="form-control"
-                  rows="4"
-                  onChange={this.handleOnChangeDesc}
+                  value={nameClinic || ''}
+                  onChange={this.handleChange.nameClinic}
+                  placeholder={constant.LanguageUtils.getMessageByKey(
+                    'manage-user.nameClinicPlaceholder',
+                    lang
+                  )}
+                />
+              </div>
+              <div className="col-12 col-lg-4 mb-2 form-group">
+                <label>
+                  <FormattedMessage id={'doctor.addressClinic'} />
+                </label>
+                <input
+                  className="form-control"
+                  value={addressClinic || ''}
+                  onChange={this.handleChange.addressClinic}
+                  placeholder={constant.LanguageUtils.getMessageByKey(
+                    'manage-user.addressClinicPlaceholder',
+                    lang
+                  )}
+                />
+              </div>
+              <div className="col-12 col-lg-4 mb-2 form-group">
+                <label>
+                  <FormattedMessage id={'doctor.note'} />
+                </label>
+                <input
+                  className="form-control"
+                  value={note || ''}
+                  onChange={this.handleChange.note}
+                  placeholder={constant.LanguageUtils.getMessageByKey(
+                    'manage-user.notePlaceholder',
+                    lang
+                  )}
+                />
+              </div>
+              <div className="col-12 col-lg-4 mb-2 form-group">
+                <label>
+                  <FormattedMessage id={'doctor.specialty'} />
+                </label>
+                <Select
+                  value={selectedSpecialty}
+                  onChange={this.handleChange.specialty}
+                  options={listSpecialty || []}
+                  placeholder={
+                    <FormattedMessage id={'title.doctor.specialty'} />
+                  }
+                />
+              </div>
+              <div className="col-12 col-lg-4 mb-2 form-group">
+                <label>
+                  <FormattedMessage id={'doctor.clinic'} />
+                </label>
+                <Select
+                  value={selectedClinic}
+                  onChange={this.handleChange.clinic}
+                  options={listClinic || []}
+                  placeholder={<FormattedMessage id={'title.doctor.clinic'} />}
+                />
+              </div>
+              <div className="my-2" />
+            </div>
+            <div className="manage-doctor-editor row">
+              <div className="col-12">
+                <MdEditor
+                  style={{ height: '500px' }}
+                  renderHTML={(text) => mdParser.render(text)}
+                  onChange={this.handleEditorChange}
                   value={
                     lang === constant.LANGUAGES.VI
-                      ? description_VI
-                      : description_EN
+                      ? contentMarkdown_VI
+                      : contentMarkdown_EN
                   }
-                ></textarea>
+                />
               </div>
             </div>
-          </div>
-          <div className="more-info-extract row">
-            <div className="col-12 col-lg-4 mb-2 form-group">
-              <label>
-                <FormattedMessage id={'doctor.price'} />
-              </label>
-              <Select
-                value={selectedPrice}
-                onChange={this.handleChange.price}
-                options={listPrice || []}
-                placeholder={<FormattedMessage id={'title.doctor.price'} />}
-              />
-            </div>
-            <div className="col-12 col-lg-4 mb-2 form-group">
-              <label>
-                <FormattedMessage id={'doctor.payment'} />
-              </label>
-              <Select
-                value={selectedPayment}
-                onChange={this.handleChange.payment}
-                options={listPayment || []}
-                placeholder={<FormattedMessage id={'title.doctor.payment'} />}
-              />
-            </div>
-            <div className="col-12 col-lg-4 mb-2 form-group">
-              <label>
-                <FormattedMessage id={'doctor.province'} />
-              </label>
-              <Select
-                value={selectedProvince}
-                onChange={this.handleChange.province}
-                options={listProvince || []}
-                placeholder={<FormattedMessage id={'title.doctor.province'} />}
-              />
-            </div>
-            <div className="col-12 col-lg-4 mb-2 form-group">
-              <label>
-                <FormattedMessage id={'doctor.nameClinic'} />
-              </label>
-              <input
-                className="form-control"
-                value={nameClinic || ''}
-                onChange={this.handleChange.nameClinic}
-                placeholder={constant.LanguageUtils.getMessageByKey(
-                  'manage-user.nameClinicPlaceholder',
-                  lang
-                )}
-              />
-            </div>
-            <div className="col-12 col-lg-4 mb-2 form-group">
-              <label>
-                <FormattedMessage id={'doctor.addressClinic'} />
-              </label>
-              <input
-                className="form-control"
-                value={addressClinic || ''}
-                onChange={this.handleChange.addressClinic}
-                placeholder={constant.LanguageUtils.getMessageByKey(
-                  'manage-user.addressClinicPlaceholder',
-                  lang
-                )}
-              />
-            </div>
-            <div className="col-12 col-lg-4 mb-2 form-group">
-              <label>
-                <FormattedMessage id={'doctor.note'} />
-              </label>
-              <input
-                className="form-control"
-                value={note || ''}
-                onChange={this.handleChange.note}
-                placeholder={constant.LanguageUtils.getMessageByKey(
-                  'manage-user.notePlaceholder',
-                  lang
-                )}
-              />
-            </div>
-            <div className="col-12 col-lg-4 mb-2 form-group">
-              <label>
-                <FormattedMessage id={'doctor.specialty'} />
-              </label>
-              <Select
-                value={selectedSpecialty}
-                onChange={this.handleChange.specialty}
-                options={listSpecialty || []}
-                placeholder={<FormattedMessage id={'title.doctor.specialty'} />}
-              />
-            </div>
-            <div className="col-12 col-lg-4 mb-2 form-group">
-              <label>
-                <FormattedMessage id={'doctor.clinic'} />
-              </label>
-              <Select
-                value={selectedClinic}
-                onChange={this.handleChange.clinic}
-                options={listClinic || []}
-                placeholder={<FormattedMessage id={'title.doctor.clinic'} />}
-              />
-            </div>
             <div className="my-2" />
-          </div>
-          <div className="manage-doctor-editor row">
-            <div className="col-12">
-              <MdEditor
-                style={{ height: '500px' }}
-                renderHTML={(text) => mdParser.render(text)}
-                onChange={this.handleEditorChange}
-                value={
-                  lang === constant.LANGUAGES.VI
-                    ? contentMarkdown_VI
-                    : contentMarkdown_EN
-                }
-              />
+            <div className="col-6">
+              <button
+                className="btn btn-primary save-content-markdown"
+                onClick={this.submit}
+                disabled={isLoading}
+              >
+                {hasOldData ? (
+                  <FormattedMessage id={'button.save'} />
+                ) : (
+                  <FormattedMessage id={'button.create'} />
+                )}
+              </button>
             </div>
           </div>
-          <div className="my-2" />
-          <div className="col-6">
-            <button
-              className="btn btn-primary save-content-markdown"
-              onClick={this.submit}
-              disabled={isLoading}
-            >
-              {hasOldData ? (
-                <FormattedMessage id={'button.save'} />
-              ) : (
-                <FormattedMessage id={'button.create'} />
-              )}
-            </button>
-          </div>
-        </div>
+        ) : (
+          <>Khong co quyen truy cap</>
+        )}
       </>
     );
   }
@@ -785,6 +795,7 @@ const mapStateToProps = (state) => {
     isErrorUpdateDoctor: state.admin.isErrorUpdateDoctor,
     isSuccessUpdateDoctor: state.admin.isSuccessUpdateDoctor,
     statusCode: state.admin.statusCode,
+    userInfo: state.user.userInfo,
 
     prices: state.admin.prices,
     provinces: state.admin.provinces,

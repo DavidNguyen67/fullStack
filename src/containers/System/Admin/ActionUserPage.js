@@ -7,6 +7,7 @@ import {
   LanguageUtils,
   MAX_FILE_SIZE,
   PNG_PREFIX,
+  USER_ROLE,
 } from '../../../utils';
 import * as actions from '../../../store/actions';
 import './UserRedux.scss';
@@ -680,342 +681,365 @@ class ActionUserPage extends Component {
     if (isError) {
       return <>Error...</>;
     }
-
+    const { userInfo } = this.props;
     return (
       <>
-        <div className="mt-4 flex-grow-1 d-flex">
-          <button className="btn btn-primary" onClick={this.goBack}>
-            <FormattedMessage id="button.back" />
-          </button>
-          <div className="mx-2" />
-        </div>
-        {users &&
-          Object.keys(users).length > 0 &&
-          Object.keys(users).map((key, index) => {
-            const user = users[key];
-            const base64 = btoa(
-              new Uint8Array(user.image?.data).reduce(
-                (data, byte) => data + String.fromCharCode(byte),
-                ''
-              )
-            );
-            const imageSrc = base64 ? `${PNG_PREFIX}${base64}` : '';
-            const currentGender = {
-              value: user.genderData?.value || user.genderData?.keyMap,
-              label:
-                user.genderData?.label ||
-                (lang === LANGUAGES.EN
-                  ? user.genderData?.valueEn
-                  : user.genderData?.valueVi),
-            };
-            const currentPosition = {
-              value: user.positionData?.value || user.positionData?.keyMap,
-              label:
-                user.positionData?.label ||
-                (lang === LANGUAGES.EN
-                  ? user.positionData?.valueEn
-                  : user.positionData?.valueVi),
-            };
-            const currentRole = {
-              value: user.roleData?.value || user.roleData?.keyMap,
-              label:
-                user.roleData?.label ||
-                (lang === LANGUAGES.EN
-                  ? user.roleData?.valueEn
-                  : user.roleData?.valueVi),
-            };
-
-            return (
-              <div key={key} className="d-lg-flex user-form">
-                <form className="col col-12 col-md-10">
-                  <div className="form-row my-2 row">
-                    <div
-                      className={
-                        !isCreateForm
-                          ? 'form-group col-12 col-lg-12'
-                          : 'form-group col-6 col-lg-6'
-                      }
-                    >
-                      <label htmlFor={`inputEmail${key}`}>
-                        <FormattedMessage id="manage-user.email" />
-                      </label>
-                      <input
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                        type="text"
-                        className="form-control"
-                        disabled={isDeleteForm}
-                        id={`inputEmail${key}`}
-                        placeholder={LanguageUtils.getMessageByKey(
-                          'manage-user.emailPlaceholder',
-                          lang
-                        )}
-                        value={user.email || ''}
-                        name="email"
-                      />
-                    </div>
-                    <div
-                      className={
-                        !isCreateForm ? 'd-none' : 'form-group  col-6 col-lg-6'
-                      }
-                    >
-                      <label htmlFor={`inputPassword${key}`}>
-                        <FormattedMessage id="manage-user.password" />
-                      </label>
-                      <input
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                        type="password"
-                        className="form-control"
-                        disabled={isDeleteForm}
-                        id={`inputPassword${key}`}
-                        placeholder={LanguageUtils.getMessageByKey(
-                          'manage-user.passwordPlaceholder',
-                          lang
-                        )}
-                        value={user.password || ''}
-                        name="password"
-                      />
-                    </div>
-                    <div className={'form-group  col-6 col-lg-6'}>
-                      <label htmlFor={`inputFirstName${key}`}>
-                        <FormattedMessage id="manage-user.firstName" />
-                      </label>
-                      <input
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                        type="text"
-                        className="form-control"
-                        disabled={isDeleteForm}
-                        id={`inputFirstName${key}`}
-                        placeholder={LanguageUtils.getMessageByKey(
-                          'manage-user.firstNamePlaceholder',
-                          lang
-                        )}
-                        name="firstName"
-                        value={user.firstName || ''}
-                      />
-                    </div>
-                    <div className={'form-group  col-6 col-lg-6'}>
-                      <label htmlFor={`inputLastName${key}`}>
-                        <FormattedMessage id="manage-user.lastName" />
-                      </label>
-                      <input
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                        type="text"
-                        className="form-control"
-                        disabled={isDeleteForm}
-                        id={`inputLastName${key}`}
-                        placeholder={LanguageUtils.getMessageByKey(
-                          'manage-user.lastNamePlaceholder',
-                          lang
-                        )}
-                        name="lastName"
-                        value={user.lastName || ''}
-                      />
-                    </div>
-                  </div>
-                  <div className="form-row my-2 row">
-                    <div className="form-group col-12 col-lg-6 ">
-                      <label htmlFor={`inputAddress${key}`}>
-                        <FormattedMessage id="manage-user.address" />
-                      </label>
-                      <input
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                        type="text"
-                        className="form-control"
-                        disabled={isDeleteForm}
-                        id={`inputAddress${key}`}
-                        placeholder={LanguageUtils.getMessageByKey(
-                          'manage-user.addressPlaceholder',
-                          lang
-                        )}
-                        name="address"
-                        value={user.address || ''}
-                      />
-                    </div>
-                    <div className="form-group col-12 col-lg-6 mt-2 mt-lg-0">
-                      <label htmlFor={`inputPhoneNumber${key}`}>
-                        <FormattedMessage id="manage-user.phoneNumber" />
-                      </label>
-                      <input
-                        onChange={(event) => this.handleChangeInput(event, key)}
-                        type="text"
-                        name="phoneNumber"
-                        className="form-control col-6 col-lg-3"
-                        disabled={isDeleteForm}
-                        id={`inputPhoneNumber${key}`}
-                        placeholder={LanguageUtils.getMessageByKey(
-                          'manage-user.phoneNumberPlaceholder',
-                          lang
-                        )}
-                        value={user.phoneNumber || ''}
-                      />
-                    </div>
-                  </div>
-                  <div className="form-row my-2 row">
-                    <div className="form-group col-md-6 col-lg-3 position-relative">
-                      <label htmlFor={`inputGender${key}`}>
-                        <FormattedMessage id="manage-user.gender" />
-                      </label>
-                      <i className="fa fa-chevron-down position-absolute arrows"></i>
-                      <Select
-                        value={currentGender}
-                        id={`inputGender${key}`}
-                        disabled={isDeleteForm}
-                        name="gender"
-                        onChange={(event) =>
-                          this.handleChangeSelect(event, key, 'genderData')
-                        }
-                        options={listGender}
-                      />
-                    </div>
-                    <div className="form-group col-md-6 col-lg-3 position-relative">
-                      <label htmlFor={`inputPosition${key}`}>
-                        <FormattedMessage id="manage-user.position" />
-                      </label>
-                      <i className="fa fa-chevron-down position-absolute arrows"></i>
-                      <Select
-                        value={currentPosition}
-                        id={`inputPosition${key}`}
-                        disabled={isDeleteForm}
-                        name="positionId"
-                        onChange={(event) =>
-                          this.handleChangeSelect(event, key, 'positionData')
-                        }
-                        options={listPosition}
-                      />
-                    </div>
-                    <div className="form-group col-md-6 col-lg-3 position-relative">
-                      <label htmlFor={`inputRoleId${key}`}>
-                        <FormattedMessage id="manage-user.role" />
-                      </label>
-                      <i className="fa fa-chevron-down position-absolute arrows"></i>
-                      <Select
-                        value={currentRole}
-                        id={`inputRoleId${key}`}
-                        disabled={isDeleteForm}
-                        name="roleId"
-                        onChange={(event) =>
-                          this.handleChangeSelect(event, key, 'roleData')
-                        }
-                        options={listRole}
-                      />
-                    </div>
-                    <div className="form-group col-md-6 col-lg-3 inputImage-container">
-                      <div className="d-flex">
-                        <label
-                          htmlFor={`inputImage${key}`}
-                          className="btn btn-success mt-4"
-                        >
-                          <FormattedMessage id="manage-user.image" />
-                          <i className="fas fa-upload"></i>
-                        </label>
-                        <input
-                          onChange={(event) =>
-                            this.handleChangeInput(event, key)
-                          }
-                          type="file"
-                          accept="image/*"
-                          className="form-control inputImage"
-                          id={`inputImage${key}`}
-                          value={user.avatar || ''}
-                          name="avatar"
-                          disabled={isDeleteForm}
-                        />
+        {userInfo.roleId === USER_ROLE.ADMIN ? (
+          <>
+            <div className="mt-4 flex-grow-1 d-flex">
+              <button className="btn btn-primary" onClick={this.goBack}>
+                <FormattedMessage id="button.back" />
+              </button>
+              <div className="mx-2" />
+            </div>
+            {users &&
+              Object.keys(users).length > 0 &&
+              Object.keys(users).map((key, index) => {
+                const user = users[key];
+                const base64 = btoa(
+                  new Uint8Array(user.image?.data).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ''
+                  )
+                );
+                const imageSrc = base64 ? `${PNG_PREFIX}${base64}` : '';
+                const currentGender = {
+                  value: user.genderData?.value || user.genderData?.keyMap,
+                  label:
+                    user.genderData?.label ||
+                    (lang === LANGUAGES.EN
+                      ? user.genderData?.valueEn
+                      : user.genderData?.valueVi),
+                };
+                const currentPosition = {
+                  value: user.positionData?.value || user.positionData?.keyMap,
+                  label:
+                    user.positionData?.label ||
+                    (lang === LANGUAGES.EN
+                      ? user.positionData?.valueEn
+                      : user.positionData?.valueVi),
+                };
+                const currentRole = {
+                  value: user.roleData?.value || user.roleData?.keyMap,
+                  label:
+                    user.roleData?.label ||
+                    (lang === LANGUAGES.EN
+                      ? user.roleData?.valueEn
+                      : user.roleData?.valueVi),
+                };
+                return (
+                  <div key={key} className="d-lg-flex user-form">
+                    <form className="col col-12 col-md-10">
+                      <div className="form-row my-2 row">
                         <div
-                          className="preview-image flex-grow-1 mt-4 mx-3"
-                          style={
-                            user.previewImgUrl
-                              ? {
-                                  background: `url(${user.previewImgUrl}) no-repeat center top / contain`,
-                                  boxShadow: `rgba(0, 0, 0, 0.35) 0px 5px 15px`,
-                                }
-                              : imageSrc
-                              ? {
-                                  background: `url(${imageSrc}) no-repeat center top / contain`,
-                                  boxShadow: `rgba(0, 0, 0, 0.35) 0px 5px 15px`,
-                                }
-                              : {}
+                          className={
+                            !isCreateForm
+                              ? 'form-group col-12 col-lg-12'
+                              : 'form-group col-6 col-lg-6'
                           }
-                          onClick={() => {
-                            if (user.previewImgUrl || imageSrc) {
-                              this.setState((prevState) => ({
-                                ...prevState,
-                                users: {
-                                  ...prevState.users,
-                                  [key]: {
-                                    ...prevState.users[key],
-                                    isOpen: true,
-                                  },
-                                },
-                              }));
+                        >
+                          <label htmlFor={`inputEmail${key}`}>
+                            <FormattedMessage id="manage-user.email" />
+                          </label>
+                          <input
+                            onChange={(event) =>
+                              this.handleChangeInput(event, key)
                             }
-                          }}
-                        ></div>
-                        {user.isOpen && (
-                          <Lightbox
-                            mainSrc={user.previewImgUrl || imageSrc}
-                            onCloseRequest={() =>
-                              this.setState((prevState) => ({
-                                ...prevState,
-                                users: {
-                                  ...prevState.users,
-                                  [key]: {
-                                    ...prevState.users[key],
-                                    isOpen: false,
-                                  },
-                                },
-                              }))
-                            }
+                            type="text"
+                            className="form-control"
+                            disabled={isDeleteForm}
+                            id={`inputEmail${key}`}
+                            placeholder={LanguageUtils.getMessageByKey(
+                              'manage-user.emailPlaceholder',
+                              lang
+                            )}
+                            value={user.email || ''}
+                            name="email"
                           />
+                        </div>
+                        <div
+                          className={
+                            !isCreateForm
+                              ? 'd-none'
+                              : 'form-group  col-6 col-lg-6'
+                          }
+                        >
+                          <label htmlFor={`inputPassword${key}`}>
+                            <FormattedMessage id="manage-user.password" />
+                          </label>
+                          <input
+                            onChange={(event) =>
+                              this.handleChangeInput(event, key)
+                            }
+                            type="password"
+                            className="form-control"
+                            disabled={isDeleteForm}
+                            id={`inputPassword${key}`}
+                            placeholder={LanguageUtils.getMessageByKey(
+                              'manage-user.passwordPlaceholder',
+                              lang
+                            )}
+                            value={user.password || ''}
+                            name="password"
+                          />
+                        </div>
+                        <div className={'form-group  col-6 col-lg-6'}>
+                          <label htmlFor={`inputFirstName${key}`}>
+                            <FormattedMessage id="manage-user.firstName" />
+                          </label>
+                          <input
+                            onChange={(event) =>
+                              this.handleChangeInput(event, key)
+                            }
+                            type="text"
+                            className="form-control"
+                            disabled={isDeleteForm}
+                            id={`inputFirstName${key}`}
+                            placeholder={LanguageUtils.getMessageByKey(
+                              'manage-user.firstNamePlaceholder',
+                              lang
+                            )}
+                            name="firstName"
+                            value={user.firstName || ''}
+                          />
+                        </div>
+                        <div className={'form-group  col-6 col-lg-6'}>
+                          <label htmlFor={`inputLastName${key}`}>
+                            <FormattedMessage id="manage-user.lastName" />
+                          </label>
+                          <input
+                            onChange={(event) =>
+                              this.handleChangeInput(event, key)
+                            }
+                            type="text"
+                            className="form-control"
+                            disabled={isDeleteForm}
+                            id={`inputLastName${key}`}
+                            placeholder={LanguageUtils.getMessageByKey(
+                              'manage-user.lastNamePlaceholder',
+                              lang
+                            )}
+                            name="lastName"
+                            value={user.lastName || ''}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row my-2 row">
+                        <div className="form-group col-12 col-lg-6 ">
+                          <label htmlFor={`inputAddress${key}`}>
+                            <FormattedMessage id="manage-user.address" />
+                          </label>
+                          <input
+                            onChange={(event) =>
+                              this.handleChangeInput(event, key)
+                            }
+                            type="text"
+                            className="form-control"
+                            disabled={isDeleteForm}
+                            id={`inputAddress${key}`}
+                            placeholder={LanguageUtils.getMessageByKey(
+                              'manage-user.addressPlaceholder',
+                              lang
+                            )}
+                            name="address"
+                            value={user.address || ''}
+                          />
+                        </div>
+                        <div className="form-group col-12 col-lg-6 mt-2 mt-lg-0">
+                          <label htmlFor={`inputPhoneNumber${key}`}>
+                            <FormattedMessage id="manage-user.phoneNumber" />
+                          </label>
+                          <input
+                            onChange={(event) =>
+                              this.handleChangeInput(event, key)
+                            }
+                            type="text"
+                            name="phoneNumber"
+                            className="form-control col-6 col-lg-3"
+                            disabled={isDeleteForm}
+                            id={`inputPhoneNumber${key}`}
+                            placeholder={LanguageUtils.getMessageByKey(
+                              'manage-user.phoneNumberPlaceholder',
+                              lang
+                            )}
+                            value={user.phoneNumber || ''}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row my-2 row">
+                        <div className="form-group col-md-6 col-lg-3 position-relative">
+                          <label htmlFor={`inputGender${key}`}>
+                            <FormattedMessage id="manage-user.gender" />
+                          </label>
+                          <i className="fa fa-chevron-down position-absolute arrows"></i>
+                          <Select
+                            value={currentGender}
+                            id={`inputGender${key}`}
+                            disabled={isDeleteForm}
+                            name="gender"
+                            onChange={(event) =>
+                              this.handleChangeSelect(event, key, 'genderData')
+                            }
+                            options={listGender}
+                          />
+                        </div>
+                        <div className="form-group col-md-6 col-lg-3 position-relative">
+                          <label htmlFor={`inputPosition${key}`}>
+                            <FormattedMessage id="manage-user.position" />
+                          </label>
+                          <i className="fa fa-chevron-down position-absolute arrows"></i>
+                          <Select
+                            value={currentPosition}
+                            id={`inputPosition${key}`}
+                            disabled={isDeleteForm}
+                            name="positionId"
+                            onChange={(event) =>
+                              this.handleChangeSelect(
+                                event,
+                                key,
+                                'positionData'
+                              )
+                            }
+                            options={listPosition}
+                          />
+                        </div>
+                        <div className="form-group col-md-6 col-lg-3 position-relative">
+                          <label htmlFor={`inputRoleId${key}`}>
+                            <FormattedMessage id="manage-user.role" />
+                          </label>
+                          <i className="fa fa-chevron-down position-absolute arrows"></i>
+                          <Select
+                            value={currentRole}
+                            id={`inputRoleId${key}`}
+                            disabled={isDeleteForm}
+                            name="roleId"
+                            onChange={(event) =>
+                              this.handleChangeSelect(event, key, 'roleData')
+                            }
+                            options={listRole}
+                          />
+                        </div>
+                        <div className="form-group col-md-6 col-lg-3 inputImage-container">
+                          <div className="d-flex">
+                            <label
+                              htmlFor={`inputImage${key}`}
+                              className="btn btn-success mt-4"
+                            >
+                              <FormattedMessage id="manage-user.image" />
+                              <i className="fas fa-upload"></i>
+                            </label>
+                            <input
+                              onChange={(event) =>
+                                this.handleChangeInput(event, key)
+                              }
+                              type="file"
+                              accept="image/*"
+                              className="form-control inputImage"
+                              id={`inputImage${key}`}
+                              value={user.avatar || ''}
+                              name="avatar"
+                              disabled={isDeleteForm}
+                            />
+                            <div
+                              className="preview-image flex-grow-1 mt-4 mx-3"
+                              style={
+                                user.previewImgUrl
+                                  ? {
+                                      background: `url(${user.previewImgUrl}) no-repeat center top / contain`,
+                                      boxShadow: `rgba(0, 0, 0, 0.35) 0px 5px 15px`,
+                                    }
+                                  : imageSrc
+                                  ? {
+                                      background: `url(${imageSrc}) no-repeat center top / contain`,
+                                      boxShadow: `rgba(0, 0, 0, 0.35) 0px 5px 15px`,
+                                    }
+                                  : {}
+                              }
+                              onClick={() => {
+                                if (user.previewImgUrl || imageSrc) {
+                                  this.setState((prevState) => ({
+                                    ...prevState,
+                                    users: {
+                                      ...prevState.users,
+                                      [key]: {
+                                        ...prevState.users[key],
+                                        isOpen: true,
+                                      },
+                                    },
+                                  }));
+                                }
+                              }}
+                            ></div>
+                            {user.isOpen && (
+                              <Lightbox
+                                mainSrc={user.previewImgUrl || imageSrc}
+                                onCloseRequest={() =>
+                                  this.setState((prevState) => ({
+                                    ...prevState,
+                                    users: {
+                                      ...prevState.users,
+                                      [key]: {
+                                        ...prevState.users[key],
+                                        isOpen: false,
+                                      },
+                                    },
+                                  }))
+                                }
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    {!isUpdateForm ? (
+                      <div className="m-auto d-flex">
+                        <button
+                          className="btn d-inline-flex align-items-center btn-success"
+                          onClick={this.handleAddRow}
+                        >
+                          <i className="fas fa-plus-circle text-white" />
+                          <div className="mx-1" />
+                          <FormattedMessage id={'button.addRow'} />
+                        </button>
+                        {index !== 0 ? (
+                          <>
+                            <div className="mx-2" />
+                            <button
+                              className="btn d-inline-flex align-items-center btn-danger"
+                              onClick={() => this.handleRemoveRow(key)}
+                            >
+                              <i className="fas fa-minus-circle text-white" />
+                              <div className="mx-1" />
+                              <FormattedMessage id={'button.removeRow'} />
+                            </button>
+                          </>
+                        ) : (
+                          <></>
                         )}
                       </div>
-                    </div>
-                  </div>
-                </form>
-                {!isUpdateForm ? (
-                  <div className="m-auto d-flex">
-                    <button
-                      className="btn d-inline-flex align-items-center btn-success"
-                      onClick={this.handleAddRow}
-                    >
-                      <i className="fas fa-plus-circle text-white" />
-                      <div className="mx-1" />
-                      <FormattedMessage id={'button.addRow'} />
-                    </button>
-                    {index !== 0 ? (
-                      <>
-                        <div className="mx-2" />
-                        <button
-                          className="btn d-inline-flex align-items-center btn-danger"
-                          onClick={() => this.handleRemoveRow(key)}
-                        >
-                          <i className="fas fa-minus-circle text-white" />
-                          <div className="mx-1" />
-                          <FormattedMessage id={'button.removeRow'} />
-                        </button>
-                      </>
                     ) : (
                       <></>
                     )}
                   </div>
-                ) : (
-                  <></>
-                )}
-              </div>
-            );
-          })}
-        <div className="mt-4 flex-grow-1 d-flex">
-          <button
-            className="btn btn-primary"
-            onClick={(event) => this.submitData(event, isCreateForm)}
-            disabled={isLoadingRequest}
-          >
-            <FormattedMessage id="manage-user.save" />
-          </button>
-          <div className="mx-2" />
-          <button className="btn btn-secondary" onClick={this.goBack}>
-            <FormattedMessage id="button.cancel" />
-          </button>
-        </div>
+                );
+              })}
+            <div className="mt-4 flex-grow-1 d-flex">
+              <button
+                className="btn btn-primary"
+                onClick={(event) => this.submitData(event, isCreateForm)}
+                disabled={isLoadingRequest}
+              >
+                <FormattedMessage id="manage-user.save" />
+              </button>
+              <div className="mx-2" />
+              <button className="btn btn-secondary" onClick={this.goBack}>
+                <FormattedMessage id="button.cancel" />
+              </button>
+            </div>
+          </>
+        ) : (
+          <>Khong co quyen truy cap</>
+        )}
       </>
     );
   }
@@ -1036,6 +1060,8 @@ const mapStateToProps = (state) => {
     isErrorRead: state.admin.isErrorRead,
     isSuccessRead: state.admin.isSuccessRead,
     systemMenuPath: state.app.systemMenuPath,
+
+    userInfo: state.user.userInfo,
   };
 };
 

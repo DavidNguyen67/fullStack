@@ -60,9 +60,7 @@ class DoctorSchedule extends Component {
   fetchSchedule = async (date) => {
     let id = this.props.match.params.id;
     const { doctorId, userInfo } = this.props;
-    console.log('====================================');
-    console.log(userInfo);
-    console.log('====================================');
+
     if (doctorId) id = doctorId;
     if (id && date) {
       const response = await services.getWeekDaysSchedule(id, date);

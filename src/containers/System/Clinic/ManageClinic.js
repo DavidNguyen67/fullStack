@@ -8,6 +8,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import CommonUtils from '../../../utils/CommonUtils';
 import { createClinic } from '../../../services/userService';
 import { toast } from 'react-toastify';
+import { USER_ROLE } from '../../../utils';
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
@@ -130,79 +131,84 @@ class ManageClinic extends Component {
   render() {
     const { name, isLoading, address, contentMarkdown_VI, contentMarkdown_EN } =
       this.state;
+    const { userInfo } = this.props;
 
     return (
       <>
-        <div className="manage-specialty-container">
-          <div className="ms-title">Quan ly chuyen khoa</div>
-          <div className="add-new-specialty">
-            <div className="row">
-              <div className="col-6 col-lg-3 form-group">
-                <label>Chuyen hoa</label>
-                <input
-                  className="form-control"
-                  type="text"
-                  name="name"
-                  value={name}
-                  onChange={this.handleChange.name}
-                />
+        {userInfo.roleId === USER_ROLE.ADMIN ? (
+          <div className="manage-specialty-container">
+            <div className="ms-title">Quan ly chuyen khoa</div>
+            <div className="add-new-specialty">
+              <div className="row">
+                <div className="col-6 col-lg-3 form-group">
+                  <label>Chuyen hoa</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="name"
+                    value={name}
+                    onChange={this.handleChange.name}
+                  />
+                </div>
+                <div className="col-6 col-lg-3 form-group">
+                  <label>Chuyen hoa</label>
+                  <input
+                    className="form-control"
+                    type="file"
+                    accept="image/*"
+                    name="image"
+                    onChange={this.handleChange.img}
+                  />
+                </div>
+                <div className="col-12 col-lg-6 form-group">
+                  <label>Dia chi</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="address"
+                    value={address}
+                    onChange={this.handleChange.address}
+                  />
+                </div>
               </div>
-              <div className="col-6 col-lg-3 form-group">
-                <label>Chuyen hoa</label>
-                <input
-                  className="form-control"
-                  type="file"
-                  accept="image/*"
-                  name="image"
-                  onChange={this.handleChange.img}
-                />
+              <br />
+              <div className="row">
+                <div className="col-12 col-lg-6 form-group">
+                  <label>Vi</label>
+                  <MdEditor
+                    style={{ height: '300px' }}
+                    renderHTML={(text) => mdParser.render(text)}
+                    onChange={this.handleChange.editorVi}
+                    value={contentMarkdown_VI}
+                  />
+                </div>
+                <div className="col-12 col-lg-6 form-group">
+                  <label>En</label>
+                  <MdEditor
+                    style={{ height: '300px' }}
+                    renderHTML={(text) => mdParser.render(text)}
+                    onChange={this.handleChange.editorEn}
+                    value={contentMarkdown_EN}
+                  />
+                </div>
               </div>
-              <div className="col-12 col-lg-6 form-group">
-                <label>Dia chi</label>
-                <input
-                  className="form-control"
-                  type="text"
-                  name="address"
-                  value={address}
-                  onChange={this.handleChange.address}
-                />
-              </div>
-            </div>
-            <br />
-            <div className="row">
-              <div className="col-12 col-lg-6 form-group">
-                <label>Vi</label>
-                <MdEditor
-                  style={{ height: '300px' }}
-                  renderHTML={(text) => mdParser.render(text)}
-                  onChange={this.handleChange.editorVi}
-                  value={contentMarkdown_VI}
-                />
-              </div>
-              <div className="col-12 col-lg-6 form-group">
-                <label>En</label>
-                <MdEditor
-                  style={{ height: '300px' }}
-                  renderHTML={(text) => mdParser.render(text)}
-                  onChange={this.handleChange.editorEn}
-                  value={contentMarkdown_EN}
-                />
-              </div>
-            </div>
-            <br />
-            <div className="row">
-              <div className="col-12">
-                <button
-                  className="btn btn-primary"
-                  onClick={this.submit}
-                  disabled={isLoading}
-                >
-                  Save
-                </button>
+              <br />
+              <div className="row">
+                <div className="col-12">
+                  <button
+                    className="btn btn-primary"
+                    onClick={this.submit}
+                    disabled={isLoading}
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <>Khong co quyen truy cap</>
+        )}
       </>
     );
   }
@@ -213,6 +219,7 @@ const mapStateToProps = (state) => {
     systemMenuPath: state.app.systemMenuPath,
     isLoggedIn: state.user.isLoggedIn,
     lang: state.app.language,
+    userInfo: state.user.userInfo,
   };
 };
 

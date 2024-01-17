@@ -64,7 +64,11 @@
     "removeRow": "Xóa hàng"
   },
   "menu": {
+    "app": {
+      "home": "Tro ve trang chu"
+    },
     "admin": {
+      "home": "Tro ve trang chu",
       "title": "Người dùng",
       "manageUser": "Quản lý Người dùng",
       "manageDoctor": "Quản lý Bác Sỹ",
@@ -77,6 +81,7 @@
       "manageHandbook": "Quản lý Cẩm nang"
     },
     "doctor": {
+      "home": "Tro ve trang chu",
       "manage-schedule": "Quản lý kế hoạch khám bệnh",
       "manage-patient": "Quản lý bệnh nhân",
       "price": "Giá khám bệnh",

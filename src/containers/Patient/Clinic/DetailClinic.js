@@ -38,7 +38,7 @@ class DetailClinic extends Component {
           const data = response.data;
           const doctors =
             data.doctorClinic?.length > 0 &&
-            data.doctorClinic.map((item) => ({
+            data.doctonvrClinic.map((item) => ({
               ...item.doctorInfo,
               priceInfo: item.priceInfo,
             }));
