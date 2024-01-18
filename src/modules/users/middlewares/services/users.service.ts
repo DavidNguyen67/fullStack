@@ -10,9 +10,9 @@ const saltOrRounds = 10;
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async fetchUsers() {
+  async fetchUsers(page?: number) {
     try {
-      const users = await this.prisma.user.findMany({
+      const queryOptions: any = {
         orderBy: {
           id: 'asc',
         },
@@ -39,15 +39,28 @@ export class UsersService {
             },
           },
         },
-      });
-      if (users.length < 1)
-        throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
+      };
 
-      return users.map(
+      if (page) {
+        queryOptions.take = 10;
+        queryOptions.skip = (page - 1) * 10;
+      }
+
+      const [users, totalCount] = await Promise.all([
+        this.prisma.user.findMany(queryOptions),
+        this.prisma.user.count(),
+      ]);
+
+      if (users.length < 1) {
+        throw new HttpException('User(s) not found', HttpStatus.NOT_FOUND);
+      }
+
+      const formattedUsers = users.map(
         (user) =>
           exclude(user, ['password', 'createAt', 'updateAt', 'image']) || user,
       );
-      // return users;
+
+      return { data: formattedUsers, totalCount };
     } catch (error) {
       console.log(error);
       throw error;

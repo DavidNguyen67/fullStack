@@ -16,7 +16,7 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
         const result = value.filter((val) => val.id || val.limit);
         if (result.length > 0) return result;
       }
-      const { id, limit } = value;
+      const { id, limit, page } = value;
       if (id) {
         if (typeof id === 'string') {
           if (id.toLocaleLowerCase().trim() === 'all') {
@@ -31,7 +31,7 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
                 .filter((result) => result),
             ),
           ];
-          return { ...value, id: uniqueValues };
+          return { ...value, id: uniqueValues, page };
         }
       }
       if (limit) {
@@ -51,6 +51,7 @@ export class convertAnyStringArrToNumArrPipe implements PipeTransform {
           return {
             ...value,
             limit: limitRecord,
+            page,
           };
         }
       }

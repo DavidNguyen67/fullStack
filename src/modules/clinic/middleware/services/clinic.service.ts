@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { env } from 'process';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateClinicDTO } from 'src/utils/dto/clinic.dto';
 import { exclude } from 'src/utils/function';
 
 @Injectable()
@@ -26,19 +27,59 @@ export class ClinicService {
     }
   }
 
-  async readClinics() {
+  async readClinics(page?: number) {
     try {
+      const pageSize = +env.MAX_RECORD_LENGTH;
+
+      const skip = page ? (page - 1) * pageSize : 0;
+
       const clinics = await this.prisma.clinic.findMany({
-        take: +env.MAX_RECORD_LENGTH,
+        take: pageSize,
+        skip,
       });
-      const { length } = clinics;
-      if (length < 1) {
-        throw new HttpException('No clinics were found', HttpStatus.NOT_FOUND);
-      }
-      return clinics.map(
-        (clinic) =>
-          exclude(clinic, ['password', 'createAt', 'updateAt']) || clinic,
-      );
+
+      const totalClinics = await this.prisma.clinic.count();
+
+      const result = {
+        totalCount: totalClinics,
+        clinics: clinics.map(
+          (clinic) =>
+            exclude(clinic, ['password', 'createAt', 'updateAt']) || clinic,
+        ),
+      };
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async readClinic(id?: number) {
+    try {
+      const clinics = await this.prisma.clinic.findFirst({
+        where: {
+          id: id,
+        },
+      });
+
+      return clinics;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async deleteClinic(clinicId: number) {
+    try {
+      const clinics = await this.prisma.clinic.delete({
+        where: {
+          id: clinicId,
+        },
+      });
+
+      if (clinics) return clinics;
+      throw new HttpException('Could not find', HttpStatus.NOT_FOUND);
     } catch (error) {
       console.log(error);
       throw error;
@@ -78,6 +119,24 @@ export class ClinicService {
         throw new HttpException('No clinics was found', HttpStatus.NOT_FOUND);
       }
       return clinics;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async updateClinic(payload: UpdateClinicDTO) {
+    try {
+      const { clinicId, ...data } = payload;
+
+      const clinic = await this.prisma.clinic.update({
+        where: {
+          id: +clinicId,
+        },
+        data,
+      });
+      if (clinic) return clinic;
+      throw new HttpException('Unable to update', HttpStatus.BAD_REQUEST);
     } catch (error) {
       console.log(error);
       throw error;

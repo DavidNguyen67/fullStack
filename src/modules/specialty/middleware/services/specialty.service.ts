@@ -26,22 +26,32 @@ export class SpecialtyService {
     }
   }
 
-  async readSpecialties() {
+  async readSpecialties(page?: number) {
     try {
-      const specialties = await this.prisma.specialty.findMany({
-        take: +env.MAX_RECORD_LENGTH,
-      });
-      const { length } = specialties;
-      if (length < 1) {
-        throw new HttpException(
-          'No specialties were found',
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      return specialties.map(
-        (specialty) =>
-          exclude(specialty, ['password', 'createAt', 'updateAt']) || specialty,
-      );
+      const pageSize = +env.MAX_RECORD_LENGTH;
+
+      const skip = page ? (page - 1) * pageSize : 0;
+
+      const specialties = skip
+        ? await this.prisma.specialty.findMany({
+            take: pageSize,
+            skip,
+          })
+        : await this.prisma.specialty.findMany({
+            take: pageSize,
+          });
+
+      const totalSpecialties = await this.prisma.specialty.count();
+
+      const result = {
+        totalCount: totalSpecialties,
+        specialties: specialties.map(
+          (clinic) =>
+            exclude(clinic, ['password', 'createAt', 'updateAt']) || clinic,
+        ),
+      };
+
+      return result;
     } catch (error) {
       console.log(error);
       throw error;
@@ -128,6 +138,40 @@ export class SpecialtyService {
         }
         return exclude(specialty, ['image']);
       }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async deleteSpecialty(specialtyId: number) {
+    try {
+      const specialty = await this.prisma.specialty.delete({
+        where: {
+          id: specialtyId,
+        },
+      });
+
+      if (specialty) return specialty;
+      throw new HttpException('Could not find', HttpStatus.NOT_FOUND);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async updateSpecialty(payload: any) {
+    try {
+      const { specialtyId, ...data } = payload;
+
+      const specialty = await this.prisma.specialty.update({
+        where: {
+          id: +specialtyId,
+        },
+        data,
+      });
+      if (specialty) return specialty;
+      throw new HttpException('Unable to update', HttpStatus.BAD_REQUEST);
     } catch (error) {
       console.log(error);
       throw error;

@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
   Post,
+  Put,
   Query,
   UseGuards,
   UsePipes,
@@ -47,8 +49,14 @@ export class SpecialtyController {
   @Get(routes.readRoute)
   // @UsePipes()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async readSpecialties() {
+  async readSpecialties(@Query() query: any) {
     try {
+      const { page } = query;
+      if (page)
+        return {
+          statusCode: HttpStatus.OK,
+          data: await this.specialtyService.readSpecialties(page),
+        };
       return {
         statusCode: HttpStatus.OK,
         data: await this.specialtyService.readSpecialties(),
@@ -80,6 +88,39 @@ export class SpecialtyController {
           ),
         };
       }
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Delete(routes.deleteRoute)
+  @UseGuards(guards.AdminGuard)
+  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe)
+  async deleteSpecialty(@Query() query: any) {
+    try {
+      const { id } = query;
+      if (id)
+        return {
+          statusCode: HttpStatus.OK,
+          data: await this.specialtyService.deleteSpecialty(+id),
+        };
+      throw new HttpException('Missing id in query', HttpStatus.BAD_REQUEST);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Put(routes.updateRoute)
+  @UseGuards(guards.AdminGuard)
+  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe)
+  async updateSpecialty(@Body() body: any) {
+    try {
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.specialtyService.updateSpecialty(body),
+      };
     } catch (error) {
       console.log(error);
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);

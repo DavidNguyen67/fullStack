@@ -22,7 +22,7 @@ export class DeleteUnconfirmedListener {
       });
 
       if (booking) {
-        console.log('delete');
+        console.log('delete', event);
 
         return booking;
       }

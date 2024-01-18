@@ -8,7 +8,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UploadedFile,
   UseGuards,
   // UploadedFile,
@@ -18,7 +17,7 @@ import {
 } from '@nestjs/common';
 import * as routes from '../../../../utils/routes';
 import { UsersService } from '../services/users.service';
-import { DeleteUserInterface, FetchUserInterface } from 'src/utils/interfaces';
+import { DeleteUserInterface } from 'src/utils/interfaces';
 import { GlobalRes } from 'src/utils/interfaces/response.interface';
 import { CreateUsersDto, UpdateUsersDto } from 'src/utils/dto/User.dto';
 import { processUserData } from 'src/utils/function';
@@ -41,9 +40,10 @@ export class UsersController {
     pipes.IsHasDataInQueryOrBodyPipe,
     pipes.convertAnyStringArrToNumArrPipe,
   )
-  async fetchUsers(@Query() query: FetchUserInterface): Promise<GlobalRes> {
+  async fetchUsers(@Query() query: any) {
     try {
       const id = query?.id;
+      const page = query?.page;
       let data = null;
 
       if (id && id.length > 0) {
@@ -56,9 +56,13 @@ export class UsersController {
         };
       }
       return {
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Missing or invalid query parameters',
+        statusCode: HttpStatus.OK,
+        ...(await this.usersService.fetchUsers(page)),
       };
+      // return {
+      //   statusCode: HttpStatus.NOT_FOUND,
+      //   message: 'Missing or invalid query parameters',
+      // };
     } catch (error) {
       console.log(error);
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -24,9 +24,6 @@ export class BookingService {
   private readonly saltOrRounds = 10;
   private readonly coolDownVerify: number = 30; // 30 minutes
   private deleteUnconfirmedTimeout: NodeJS.Timeout;
-  private capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
 
   private generateInfoLine(
     labelVi: string,
@@ -290,11 +287,8 @@ export class BookingService {
           bookAt =
             lang === constants.LANGUAGES.EN
               ? moment(bookAt).format('h:mm a - ddd - MM/DD/YYYY')
-              : this.capitalizeFirstLetter(
-                  moment(bookAt)
-                    .locale('vi')
-                    .format('h:mm - dddd - DD/MM/YYYY'),
-                );
+              : moment(bookAt).locale('vi').format('h:mm - dddd - DD/MM/YYYY');
+
           const scheduleTime =
             lang === constants.LANGUAGES.EN
               ? dataTime?.valueEn

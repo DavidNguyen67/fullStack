@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
   Post,
+  Put,
   Query,
   UseGuards,
   UsePipes,
@@ -17,6 +19,7 @@ import { IsHasFieldRequiredClinicPipe } from '../pipes/IsHasFieldRequiredSpecial
 import { getMaxElement } from 'src/utils/function';
 import { Public } from 'src/utils/decorators';
 import * as guards from '../../../../utils/guard/index.guard';
+import { UpdateClinicDTO } from 'src/utils/dto/clinic.dto';
 
 @Controller(`${routes.versionApi}/${routes.clinicPath}`)
 export class ClinicController {
@@ -49,12 +52,19 @@ export class ClinicController {
   @Public()
   // @UsePipes()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async readSpecialties() {
+  async readSpecialties(@Query() query: any) {
     try {
-      return {
-        statusCode: HttpStatus.OK,
-        data: await this.clinicService.readClinics(),
-      };
+      const { page } = query;
+      if (page)
+        return {
+          statusCode: HttpStatus.OK,
+          data: await this.clinicService.readClinics(page),
+        };
+      else
+        return {
+          statusCode: HttpStatus.OK,
+          data: await this.clinicService.readClinics(),
+        };
     } catch (error) {
       console.log(error);
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,6 +87,39 @@ export class ClinicController {
       return {
         statusCode: HttpStatus.OK,
         data: await this.clinicService.readDetailClinicById(id),
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Delete(routes.deleteRoute)
+  @UseGuards(guards.AdminGuard)
+  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe)
+  async deleteClinic(@Query() query: any) {
+    try {
+      const { id } = query;
+      if (id)
+        return {
+          statusCode: HttpStatus.OK,
+          data: await this.clinicService.deleteClinic(+id),
+        };
+      throw new HttpException('Missing id in query', HttpStatus.BAD_REQUEST);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Put(routes.updateRoute)
+  @UseGuards(guards.AdminGuard)
+  @UsePipes(pipes.IsHasDataInQueryOrBodyPipe)
+  async updateClinic(@Body() body: UpdateClinicDTO) {
+    try {
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.clinicService.updateClinic(body),
       };
     } catch (error) {
       console.log(error);
