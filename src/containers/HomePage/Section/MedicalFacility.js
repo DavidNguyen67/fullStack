@@ -23,7 +23,7 @@ class MedicalFacility extends Component {
       if (response.statusCode === 200) {
         this.setState((prevState) => ({
           ...prevState,
-          clinics: response.data,
+          clinics: response.data?.clinics,
           isLoading: false,
           isFailed: false,
         }));
@@ -46,7 +46,6 @@ class MedicalFacility extends Component {
 
   render() {
     const { clinics } = this.state;
-
     return (
       <div className="section-share section-medial-facility">
         {typeof clinics !== 'string' && clinics && clinics.length > 0 && (

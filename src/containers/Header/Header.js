@@ -46,7 +46,7 @@ class Header extends Component {
   returnToHome = () => {
     const { history } = this.props;
     if (history) {
-      history.go('/');
+      history.push('/');
     }
   };
 
@@ -57,6 +57,13 @@ class Header extends Component {
     return (
       <div className="header-container">
         {/* thanh navigator */}
+        <div
+          className="my-auto px-4"
+          style={{ cursor: 'pointer' }}
+          onClick={this.returnToHome}
+        >
+          <FormattedMessage id="menu.app.home" />
+        </div>
         <div className="header-tabs-container">
           <Navigator menus={this.state.menuApp} />
         </div>
@@ -68,7 +75,7 @@ class Header extends Component {
         >
           <h3>React</h3>
         </div> */}
-        <div className="languages">
+        <div className="languages ms-auto">
           <span className="welcome">
             <FormattedMessage id={'title.welcome'} />
             {firstName} !

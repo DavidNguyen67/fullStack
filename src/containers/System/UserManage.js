@@ -11,18 +11,14 @@ import { toast } from 'react-toastify';
 import { deleteUsersService } from '../../services/userService';
 import 'react-markdown-editor-lite/lib/index.css';
 import MarkdownIt from 'markdown-it';
-import MdEditor from 'react-markdown-editor-lite';
+import Pagination from 'react-js-pagination';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 const COPY = 'COPY';
 const UPDATE = 'UPDATE';
 const CREATE = 'CREATE';
 const DELETE = 'DELETE';
 const READ = 'READ';
-const mdParser = new MarkdownIt(/* Markdown-it options */);
-
-function handleEditorChange({ html, text }) {
-  console.log(html);
-}
 
 class UserManage extends Component {
   constructor(props) {
@@ -32,16 +28,23 @@ class UserManage extends Component {
       selected: [],
       modal: false,
       typeModal: '',
+      activePage: 1,
     };
   }
 
   async componentDidMount() {
-    const response = await this.props.readUsers(false);
-    this.setState((prevState) => ({
-      ...prevState,
-      response,
-    }));
+    await this.props.readUsers(this.state.activePage);
   }
+
+  // async componentDidUpdate(prevProps, prevState, snapshot) {
+  //   if (prevState.activePage !== this.state.activePage) {
+  //     const response = await this.props.readUsers(false, this.state.activePage);
+  //     this.setState((prevState) => ({
+  //       ...prevState,
+  //       response,
+  //     }));
+  //   }
+  // }
 
   // async componentDidUpdate(prevProps, prevState) {
   //   if (prevProps.users.length !== this.props.users.length)
@@ -70,6 +73,7 @@ class UserManage extends Component {
       };
     });
   };
+
   handleCopyUser = (dataUser) => {
     console.log(dataUser);
   };
@@ -198,6 +202,11 @@ class UserManage extends Component {
       }));
     }
   };
+
+  async handlePageChange(pageNumber) {
+    await this.props.readUsers(pageNumber);
+    this.setState({ activePage: pageNumber });
+  }
 
   render() {
     const { users, isLoadingRead, isErrorRead } = this.props;
@@ -357,12 +366,17 @@ class UserManage extends Component {
                 ))}
             </tbody>
           </table>
-
-          {/* <MdEditor
-            style={{ height: '500px' }}
-            renderHTML={(text) => mdParser.render(text)}
-            onChange={handleEditorChange}
-          /> */}
+        </div>
+        <div className="d-flex justify-content-end mt-3">
+          <Pagination
+            activePage={this.state.activePage}
+            itemsCountPerPage={10}
+            totalItemsCount={this.props.totalRecord}
+            pageRangeDisplayed={5}
+            onChange={this.handlePageChange.bind(this)}
+            itemClass="page-item"
+            linkClass="page-link"
+          />
         </div>
       </div>
     );
@@ -372,6 +386,7 @@ class UserManage extends Component {
 const mapStateToProps = (state) => {
   return {
     users: state.admin.users,
+    totalRecord: state.admin.totalRecord,
 
     isLoadingCreate: state.admin.isLoadingCreate,
     isErrorCreate: state.admin.isErrorCreate,
@@ -389,7 +404,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    readUsers: () => dispatch(actions.readUsers()),
+    readUsers: (page) => dispatch(actions.readUsers(false, page)),
     deleteUsers: (ids) => dispatch(actions.deleteUsers(ids)),
     createNewUser: (payload) => dispatch(actions.createNewUser(payload)),
     updateUsers: (payload) => dispatch(actions.updateUsers(payload)),

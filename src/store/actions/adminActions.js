@@ -283,12 +283,13 @@ export const updateUsers = (payload) => {
   };
 };
 
-export const readUsers = (ids) => {
+export const readUsers = (ids, page) => {
   return async (dispatch, getState) => {
-    const readUsersSuccess = (payload) => {
+    const readUsersSuccess = (payload, totalCount) => {
       return {
         type: actionTypes.READ_USER_SUCCESS,
         payload,
+        totalCount,
       };
     };
     const readUsersFailed = () => ({
@@ -297,10 +298,12 @@ export const readUsers = (ids) => {
 
     try {
       dispatch({ type: actionTypes.READ_USER_START });
-      const response = await getAllUsersService(ids);
+      const response = await getAllUsersService(ids, page);
       return response.data?.error
         ? dispatch(readUsersFailed())
-        : dispatch(readUsersSuccess(response.data || response));
+        : dispatch(
+            readUsersSuccess(response.data || response, response.totalCount)
+          );
     } catch (error) {
       console.log(error);
       dispatch(readUsersFailed());

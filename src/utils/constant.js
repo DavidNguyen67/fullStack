@@ -9,7 +9,6 @@ export const path = {
   DETAIL_CLINIC: '/clinic/detail/:id',
   DOCTOR: '/doctor',
   VERIFY: '/verify',
-  
 };
 
 export const LANGUAGES = {
@@ -88,4 +87,5 @@ export const queryPrefix = {
   date: 'date',
   token: 'token',
   province: 'province',
+  page: 'page',
 };

@@ -11,6 +11,8 @@ import * as actions from '../../../store/actions';
 import * as constant from '../../../utils';
 import { toast } from 'react-toastify';
 import * as services from '../../../services/userService';
+import { withRouter } from 'react-router-dom';
+import NavigatorPage from '../../../components/NavigatorPage/NavigatorPage';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 class ManageDoctor extends Component {
@@ -605,11 +607,11 @@ class ManageDoctor extends Component {
         };
       });
 
-    console.log(userInfo);
     return (
       <>
+        <NavigatorPage onlyShowGoBack={true} />
         {userInfo.roleId === constant.USER_ROLE.ADMIN ? (
-          <div className="manage-doctor-container row">
+          <div className="manage-doctor-container row py-4">
             <div className="manage-doctor-title text-center my-4">
               <FormattedMessage id={'title.doctor.title'} />
             </div>
@@ -819,4 +821,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageDoctor);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(ManageDoctor));

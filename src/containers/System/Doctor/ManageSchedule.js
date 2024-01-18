@@ -13,6 +13,7 @@ import {
   getWeekDaysSchedule,
 } from '../../../services/userService';
 import moment from 'moment';
+import NavigatorPage from '../../../components/NavigatorPage/NavigatorPage';
 
 class ManageSchedule extends Component {
   constructor(props) {
@@ -216,94 +217,100 @@ class ManageSchedule extends Component {
       });
 
     return (
-      <div className="manage-schedule-container row">
-        <div className="col-12">
-          <div className="manage-schedule-title">
-            <FormattedMessage id={'manage-schedule.title'} />
-          </div>
-          <div className="row">
-            {userInfo.roleId === constant.USER_ROLE.ADMIN ? (
-              <>
-                <div className="col-6 form-group">
-                  <label>
-                    <FormattedMessage id={'title.doctor.SelectDoctor'} />
-                  </label>
+      <>
+        <NavigatorPage onlyShowGoBack={true} />
+        <div className="manage-schedule-container row">
+          <div className="col-12">
+            <div className="manage-schedule-title">
+              <FormattedMessage id={'manage-schedule.title'} />
+            </div>
+            <div className="row">
+              {userInfo.roleId === constant.USER_ROLE.ADMIN ? (
+                <>
+                  <div className="col-6 form-group">
+                    <label>
+                      <FormattedMessage id={'title.doctor.SelectDoctor'} />
+                    </label>
 
-                  <Select
-                    value={selectedDoctor}
-                    onChange={this.handleChange}
-                    options={listDoctors}
-                  />
-                </div>
-                <div className="col-6 form-group">
-                  <label>
-                    <FormattedMessage id={'title.doctor.SelectDate'} />
-                  </label>
-                  <DatePicker
-                    onChange={this.handleChangeDatePicker}
-                    value={currentDate}
-                    className="form-control"
-                    minDate={new Date().setDate(new Date().getDate() - 1)}
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="col-3 form-group">
-                  <label>
-                    <FormattedMessage id={'title.doctor.SelectDate'} />
-                  </label>
-                  <DatePicker
-                    onChange={this.handleChangeDatePicker}
-                    value={currentDate}
-                    className="form-control"
-                    minDate={new Date().setDate(new Date().getDate() - 1)}
-                  />
-                </div>
-              </>
-            )}
-          </div>
-          <div className="row mt-2">
-            <label>
-              <FormattedMessage id={'title.doctor.SelectTimeSchedule'} />
-            </label>
-            {timeSchedule.length > 0 &&
-              timeSchedule.map((item) => {
-                return (
-                  <div key={item.id} className="col-12 col-sm-6 col-lg-3 mb-3">
-                    <button
-                      className={
-                        selectedTime.some(
-                          (time) =>
-                            time.timeType === item.keyMap ||
-                            time.keyMap === item.keyMap
-                        )
-                          ? `btn-schedule active w-100`
-                          : `btn-schedule w-100`
-                      }
-                      onClick={() => this.handleSelectTime(item)}
-                    >
-                      {lang === constant.LANGUAGES.VI
-                        ? item.valueVi
-                        : item.valueEn}
-                    </button>
+                    <Select
+                      value={selectedDoctor}
+                      onChange={this.handleChange}
+                      options={listDoctors}
+                    />
                   </div>
-                );
-              })}
-          </div>
-          <div className="row">
-            <div className="col-12">
-              <button
-                className="btn btn-primary"
-                disabled={isLoading}
-                onClick={this.handleSave}
-              >
-                <FormattedMessage id={'button.save'} />
-              </button>
+                  <div className="col-6 form-group">
+                    <label>
+                      <FormattedMessage id={'title.doctor.SelectDate'} />
+                    </label>
+                    <DatePicker
+                      onChange={this.handleChangeDatePicker}
+                      value={currentDate}
+                      className="form-control"
+                      minDate={new Date().setDate(new Date().getDate() - 1)}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="col-3 form-group">
+                    <label>
+                      <FormattedMessage id={'title.doctor.SelectDate'} />
+                    </label>
+                    <DatePicker
+                      onChange={this.handleChangeDatePicker}
+                      value={currentDate}
+                      className="form-control"
+                      minDate={new Date().setDate(new Date().getDate() - 1)}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="row mt-2">
+              <label>
+                <FormattedMessage id={'title.doctor.SelectTimeSchedule'} />
+              </label>
+              {timeSchedule.length > 0 &&
+                timeSchedule.map((item) => {
+                  return (
+                    <div
+                      key={item.id}
+                      className="col-12 col-sm-6 col-lg-3 mb-3"
+                    >
+                      <button
+                        className={
+                          selectedTime.some(
+                            (time) =>
+                              time.timeType === item.keyMap ||
+                              time.keyMap === item.keyMap
+                          )
+                            ? `btn-schedule active w-100`
+                            : `btn-schedule w-100`
+                        }
+                        onClick={() => this.handleSelectTime(item)}
+                      >
+                        {lang === constant.LANGUAGES.VI
+                          ? item.valueVi
+                          : item.valueEn}
+                      </button>
+                    </div>
+                  );
+                })}
+            </div>
+            <div className="row">
+              <div className="col-12">
+                <button
+                  className="btn btn-primary"
+                  disabled={isLoading}
+                  onClick={this.handleSave}
+                >
+                  <FormattedMessage id={'button.save'} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }

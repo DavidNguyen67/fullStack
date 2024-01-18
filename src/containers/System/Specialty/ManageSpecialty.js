@@ -10,6 +10,7 @@ import { createSpecialty } from '../../../services/userService';
 import { LANGUAGES } from '../../../utils';
 import { startLoading, stopLoading } from '../../../store/actions';
 import { toast } from 'react-toastify';
+import NavigatorPage from '../../../components/NavigatorPage/NavigatorPage';
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
@@ -110,6 +111,7 @@ class ManageSpecialty extends Component {
 
     return (
       <>
+        <NavigatorPage />
         <div className="manage-specialty-container">
           <div className="ms-title">Quan ly chuyen khoa</div>
           <div className="add-new-specialty">

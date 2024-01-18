@@ -9,6 +9,7 @@ import ActionUserPage from '../containers/System/Admin/ActionUserPage';
 import ManageDoctor from './../containers/System/Admin/ManageDoctor';
 import ManageSpecialty from './../containers/System/Specialty/ManageSpecialty';
 import ManageClinic from '../containers/System/Clinic/ManageClinic';
+import ClinicHandle from '../containers/System/Clinic/ClinicHandle';
 class System extends Component {
   render() {
     const { systemMenuPath, isLoggedIn } = this.props;
@@ -39,17 +40,23 @@ class System extends Component {
                   component={ProductManage}
                 />
                 <Route path="/system/specialties" component={ManageSpecialty} />
-                <Route path="/system/clinics" component={ManageClinic} />
+                <Route path="/system/clinics" exact component={ManageClinic} />
+                <Route path="/system/clinics/handle" component={ClinicHandle} />
+                <Route
+                  path="/system/clinics/:id"
+                  exact
+                  component={ManageClinic}
+                />
                 <Route
                   path="/system/register-package-group-or-account"
                   component={RegisterPackageGroupOrAcc}
                 />
-                <Route
+                {/* <Route
                   path="*"
                   component={() => {
                     return <Redirect to={systemMenuPath} />;
                   }}
-                />
+                /> */}
               </Switch>
             </div>
           </div>

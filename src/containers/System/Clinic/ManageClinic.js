@@ -6,9 +6,11 @@ import 'react-markdown-editor-lite/lib/index.css';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import CommonUtils from '../../../utils/CommonUtils';
-import { createClinic } from '../../../services/userService';
+import { createClinic, getClinicDetail } from '../../../services/userService';
 import { toast } from 'react-toastify';
 import { USER_ROLE } from '../../../utils';
+import NavigatorPage from '../../../components/NavigatorPage/NavigatorPage';
+import { withRouter } from 'react-router-dom';
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
@@ -128,6 +130,13 @@ class ManageClinic extends Component {
     }
   };
 
+  async componentDidMount() {
+    const { id } = this.props.match?.params;
+    console.log(id);
+    const response = await getClinicDetail(id);
+    console.log(response.data);
+  }
+
   render() {
     const { name, isLoading, address, contentMarkdown_VI, contentMarkdown_EN } =
       this.state;
@@ -135,6 +144,9 @@ class ManageClinic extends Component {
 
     return (
       <>
+        <div className="d-flex">
+          <NavigatorPage />
+        </div>
         {userInfo.roleId === USER_ROLE.ADMIN ? (
           <div className="manage-specialty-container">
             <div className="ms-title">Quan ly chuyen khoa</div>
@@ -227,4 +239,7 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageClinic);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(ManageClinic));

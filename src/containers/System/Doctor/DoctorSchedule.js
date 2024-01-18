@@ -9,6 +9,7 @@ import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
 import * as services from './../../../services';
 import { FormattedMessage } from 'react-intl';
 import BookingModal from '../../Patient/Doctor/Modal/BookingModal';
+import NavigatorPage from '../../../components/NavigatorPage/NavigatorPage';
 class DoctorSchedule extends Component {
   constructor(props) {
     super(props);

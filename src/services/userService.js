@@ -1,9 +1,9 @@
 import instance from '../axios';
 import * as constants from './../utils';
 
-export const getAllUsersService = async (id = 'all') => {
+export const getAllUsersService = async (id = 'all', page) => {
   return await instance.get(
-    `/${constants.crudUserPath}/${constants.readRoute}?${constants.queryPrefix.id}=${id}`
+    `/${constants.crudUserPath}/${constants.readRoute}?${constants.queryPrefix.id}=${id}&${constants.queryPrefix.page}=${page}`
   );
 };
 
@@ -123,8 +123,16 @@ export const readSpecialty = async () => {
   );
 };
 
-export const readClinic = async () => {
-  return await instance.get(`/${constants.clinicPath}/${constants.readRoute}`);
+export const readClinic = async (page = 1) => {
+  return await instance.get(
+    `/${constants.clinicPath}/${constants.readRoute}?${constants.queryPrefix.page}=${page}`
+  );
+};
+
+export const deleteClinic = async (id) => {
+  return await instance.delete(
+    `/${constants.clinicPath}/${constants.deleteRoute}?${constants.queryPrefix.id}=${id}`
+  );
 };
 
 export const createClinic = async (payload) => {

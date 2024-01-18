@@ -2,6 +2,7 @@ import actionTypes from '../actions/actionTypes';
 
 const initialState = {
   users: [],
+  totalRecord: 0,
   topDoctors: [],
   doctors: [],
 
@@ -314,6 +315,7 @@ const appReducer = (state = initialState, action) => {
         statusCode: null,
         message: null,
         isSuccessRead: true,
+        totalRecord: action.totalCount,
       };
 
     case actionTypes.UPDATE_USER_START:

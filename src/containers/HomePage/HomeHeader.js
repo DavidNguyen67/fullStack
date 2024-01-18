@@ -22,7 +22,7 @@ class HomeHeader extends Component {
     const { userInfo, history } = this.props;
     switch (userInfo.roleId) {
       case USER_ROLE.ADMIN:
-        history.push('/system');
+        history.push('/system/users');
         return;
       case USER_ROLE.DOCTOR:
         history.push('/doctor/patient');
@@ -82,16 +82,6 @@ class HomeHeader extends Component {
                   <FormattedMessage id={'home-header.select-doctor'} />
                 </div>
               </div>
-              <div className="child-content">
-                <div>
-                  <b>
-                    <FormattedMessage id={'home-header.fee'} />
-                  </b>
-                </div>
-                <div>
-                  <FormattedMessage id={'home-header.check-health'} />
-                </div>
-              </div>
             </div>
             <div className="right-content">
               <div className="support">
@@ -121,11 +111,12 @@ class HomeHeader extends Component {
                 </div>
               </div>
               {userInfo && (
-                <div className="forwardPage">
-                  <button
-                    className="btn btn-success"
-                    onClick={this.handleForward}
-                  >
+                <div
+                  className="forwardPage"
+                  onClick={this.handleForward}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <button className="btn btn-success">
                     Di toi trang{' '}
                     {userInfo.roleId === USER_ROLE.ADMIN && 'Admin'}
                     {userInfo.roleId === USER_ROLE.DOCTOR && 'Doctor'}
