@@ -31,7 +31,7 @@ class Specialty extends Component {
       if (response.statusCode === 200) {
         this.setState((prevState) => ({
           ...prevState,
-          specialties: response.data,
+          specialties: response.data?.specialties,
         }));
         return;
       } else

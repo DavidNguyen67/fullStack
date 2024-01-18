@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
 
 class NavigatorPage extends Component {
   constructor(props) {
@@ -25,7 +26,7 @@ class NavigatorPage extends Component {
     return (
       <div className="d-flex mt-2">
         <button className="btn btn-warning" onClick={this.goBack}>
-          Go back
+          <FormattedMessage id="button.return" />
         </button>
         {!this.props.onlyShowGoBack && (
           <>
@@ -33,7 +34,7 @@ class NavigatorPage extends Component {
               className="btn btn-danger mx-2"
               onClick={this.navigateToDelete}
             >
-              Handle
+              <FormattedMessage id="button.handle" />
             </button>
           </>
         )}

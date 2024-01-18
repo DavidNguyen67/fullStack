@@ -117,9 +117,22 @@ export const createSpecialty = async (payload) => {
   );
 };
 
-export const readSpecialty = async () => {
+export const readSpecialty = async (page) => {
   return await instance.get(
-    `/${constants.specialtyPath}/${constants.readRoute}`
+    `/${constants.specialtyPath}/${constants.readRoute}?${constants.queryPrefix.page}=${page}`
+  );
+};
+
+export const deleteSpecialty = async (id) => {
+  return await instance.delete(
+    `/${constants.specialtyPath}/${constants.deleteRoute}?${constants.queryPrefix.id}=${id}`
+  );
+};
+
+export const updateSpecialty = async (payload) => {
+  return await instance.put(
+    `/${constants.specialtyPath}/${constants.updateRoute}`,
+    payload
   );
 };
 
@@ -138,6 +151,13 @@ export const deleteClinic = async (id) => {
 export const createClinic = async (payload) => {
   return await instance.post(
     `/${constants.clinicPath}/${constants.createRoute}`,
+    payload
+  );
+};
+
+export const updateClinic = async (payload) => {
+  return await instance.put(
+    `/${constants.clinicPath}/${constants.updateRoute}`,
     payload
   );
 };

@@ -112,7 +112,7 @@ class ModalConfirmPatient extends Component {
           toast.success('oke');
           this.props.toggleModal();
         } else {
-          toast.error('oke');
+          toast.error('no');
         }
 
         return;

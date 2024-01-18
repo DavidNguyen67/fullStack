@@ -51,8 +51,14 @@
       "specialty": "Chọn chuyên khoa"
     }
   },
+  "titleMain": {
+    "clinic": "Tên Phòng khám",
+    "specialty": "Tên Chuyên khoa"
+  },
   "button": {
-    "save": "Lưu",
+    "handle": "Xử lý bản ghi",
+    "return": "Quay lại",
+    "save": "Xác nhận",
     "create": "Thêm",
     "update": "Cập nhật",
     "delete": "Xóa",
@@ -105,7 +111,7 @@
     "position": "Chọn Chức danh",
     "role": "Chọn Vai trò",
     "image": "Ảnh đại diện",
-    "save": "Lưu",
+    "save": "Xác nhận",
     "reason": "Lý do khám bệnh",
     "email": "Địa chỉ Email",
     "emailPlaceholder": "Nhập địa chỉ email",

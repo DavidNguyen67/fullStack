@@ -3,30 +3,31 @@ import { connect } from 'react-redux';
 import NavigatorPage from '../../../components/NavigatorPage/NavigatorPage';
 import { FormattedMessage } from 'react-intl';
 import Pagination from 'react-js-pagination';
-import { deleteClinic, readClinic } from '../../../services/userService';
+import { deleteSpecialty, readSpecialty } from '../../../services/userService';
 import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
-import ModalClinic from '../../Patient/Clinic/ModalClinic';
+import ModalSpecialty from './ModalSpecilty';
 
-class ClinicHandle extends Component {
+class SpecialtyHandle extends Component {
   constructor(props) {
     super(props);
     this.state = {
       activePage: 1,
-      clinics: [],
+      specialties: [],
       totalCount: 0,
-      persistClinic: [],
+      persistSpecialties: [],
 
       isOpenModal: false,
-      clinicId: 0,
+      specialtyId: 0,
     };
   }
   async componentDidMount() {
     const { activePage } = this.state;
-    const response = await readClinic(activePage);
+    const response = await readSpecialty(activePage);
+
     if (response && response.data) {
       this.setState({
-        clinics: response.data?.clinics.map((item) => ({
+        specialties: response?.data?.specialties?.map((item) => ({
           ...item,
           isShow: false,
         })),
@@ -36,11 +37,11 @@ class ClinicHandle extends Component {
   }
   async handlePageChange(pageNumber) {
     let newState = { activePage: pageNumber };
-    const response = await readClinic(pageNumber);
+    const response = await readSpecialty(pageNumber);
     if (response && response.data) {
       newState = {
         ...newState,
-        clinics: response.data?.clinics.map((item) => ({
+        specialties: response.data?.specialties?.map((item) => ({
           ...item,
           isShow: false,
         })),
@@ -55,43 +56,45 @@ class ClinicHandle extends Component {
   }
   handleOpenLightBox = (id) => {
     this.setState((prevState) => {
-      const clinics = prevState.clinics.map((item) =>
+      const specialties = prevState.specialties.map((item) =>
         item.id === id ? { ...item, isShow: true } : { ...item }
       );
       return {
         ...prevState,
-        clinics,
+        specialties,
       };
     });
   };
   handleCloseLightBox = (id) => {
     this.setState((prevState) => {
-      const clinics = prevState.clinics.map((item) =>
+      const specialties = prevState.specialties.map((item) =>
         item.id === id ? { ...item, isShow: false } : { ...item }
       );
       return {
         ...prevState,
-        clinics,
+        specialties,
       };
     });
   };
 
   handleClickDelete = async (id) => {
     let persistIndex = 0;
-    let newClinics = this.state.clinics.filter((item) => item.id !== id);
-    let persistClinic = this.state.clinics.filter((item, index) => {
+    let newSpecialties = this.state.specialties.filter(
+      (item) => item.id !== id
+    );
+    let persistSpecialties = this.state.specialties.filter((item, index) => {
       item.id === id && (persistIndex = index);
       return item.id === id;
     });
     this.setState({
-      clinics: newClinics,
-      persistClinic,
+      specialties: newSpecialties,
+      persistSpecialties,
     });
     const undoJob = setTimeout(async () => {
-      const response = await deleteClinic(id);
+      const response = await deleteSpecialty(id);
       if (response.status === 200) {
         toast.success('oke');
-        persistClinic = [];
+        persistSpecialties = [];
       }
     }, 5000);
     const clear = () => {
@@ -103,14 +106,18 @@ class ClinicHandle extends Component {
       clearTimeout(undoJob);
       this.setState((prevState) => ({
         ...prevState,
-        clinics: insert(newClinics, persistIndex, ...persistClinic),
+        specialties: insert(
+          newSpecialties,
+          persistIndex,
+          ...persistSpecialties
+        ),
       }));
     };
 
     toast.info(
       <>
         Do you wanna undo <button onClick={clear}>Undo</button>
-      </>,
+      </>
     );
   };
 
@@ -120,15 +127,15 @@ class ClinicHandle extends Component {
 
   handleClickUpdate = (id) => {
     this.toggleModal();
-    this.setState({ clinicId: id });
+    this.setState({ specialtyId: id });
   };
   render() {
-    const { clinics, totalCount, isOpenModal, clinicId } = this.state;
+    const { specialties, totalCount, isOpenModal, specialtyId } = this.state;
     return (
       <>
         <NavigatorPage onlyShowGoBack={true} />
         <div className="row">
-          {clinics.length > 0 && (
+          {specialties.length > 0 && (
             <>
               <div className="col-12" key={1}>
                 <table className="table">
@@ -137,12 +144,11 @@ class ClinicHandle extends Component {
                       <th scope="col">#</th>
                       <th scope="col">Image</th>
                       <th scope="col">Name</th>
-                      <th scope="col">Address</th>
                       <th scope="col">Handle</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {clinics.map((item, index) => {
+                    {specialties.map((item, index) => {
                       const base64 = btoa(
                         new Uint8Array(item.image?.data)?.reduce(
                           (data, byte) => data + String.fromCharCode(byte),
@@ -166,7 +172,6 @@ class ClinicHandle extends Component {
                               onClick={() => this.handleOpenLightBox(item.id)}
                             ></th>
                             <th scope="row">{item.name}</th>
-                            <th scope="row">{item.address}</th>
                             <th scope="row">
                               <button
                                 className="btn btn-danger"
@@ -212,10 +217,10 @@ class ClinicHandle extends Component {
             </>
           )}
         </div>
-        <ModalClinic
+        <ModalSpecialty
           isOpenModal={isOpenModal}
           toggleModal={this.toggleModal}
-          clinicId={clinicId}
+          specialtyId={specialtyId}
         />
       </>
     );
@@ -234,4 +239,4 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClinicHandle);
+export default connect(mapStateToProps, mapDispatchToProps)(SpecialtyHandle);

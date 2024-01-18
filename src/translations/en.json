@@ -51,8 +51,14 @@
     "password": "Password",
     "userpass-wrong": "Invalid username or password!"
   },
+  "titleMain": {
+    "clinic": "Clinic Name",
+    "specialty": "Specialty Name"
+  },
   "button": {
-    "save": "Save",
+    "handle": "Handle records",
+    "return": "Return",
+    "save": "Confirm",
     "create": "Add new",
     "update": "Update",
     "delete": "Delete",
@@ -106,7 +112,7 @@
     "reason": "Reason for booking",
     "role": "Choose Role",
     "image": "Avatar",
-    "save": "Save",
+    "save": "Confirm",
     "email": "Email",
     "emailPlaceholder": "Enter email address",
     "passwordPlaceholder": "Enter password",

@@ -11,6 +11,7 @@ import { LANGUAGES } from '../../../utils';
 import { startLoading, stopLoading } from '../../../store/actions';
 import { toast } from 'react-toastify';
 import NavigatorPage from '../../../components/NavigatorPage/NavigatorPage';
+import { FormattedMessage } from 'react-intl';
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
@@ -89,7 +90,7 @@ class ManageSpecialty extends Component {
       this.props.stopLoading();
       if (response) {
         if (response.statusCode === 200) {
-          toast.error('OKe');
+          toast.success('OKe');
           return;
         } else if (
           response.statusCode === 401 ||
@@ -113,11 +114,13 @@ class ManageSpecialty extends Component {
       <>
         <NavigatorPage />
         <div className="manage-specialty-container">
-          <div className="ms-title">Quan ly chuyen khoa</div>
+          <div className="ms-title">
+            <FormattedMessage id="menu.admin.manageSpecialty" />
+          </div>
           <div className="add-new-specialty">
             <div className="row">
               <div className="col-6 form-group">
-                <label>Chuyen hoa</label>
+                <FormattedMessage id="titleMain.specialty" />
                 <input
                   className="form-control"
                   type="text"
@@ -127,7 +130,7 @@ class ManageSpecialty extends Component {
                 />
               </div>
               <div className="col-6 form-group">
-                <label>Chuyen hoa</label>
+                <label>File</label>
                 <input
                   className="form-control"
                   type="file"
