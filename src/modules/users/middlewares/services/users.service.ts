@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserDto } from 'src/utils/dto/User.dto';
 import { exclude } from 'src/utils/function';
@@ -130,12 +129,12 @@ export class UsersService {
     }
   }
 
-  async createUsers(users: User | User[]): Promise<any> {
+  async createUsers(users: any | any[]): Promise<any> {
     try {
       if (!Array.isArray(users)) users = [users];
 
-      let validUsers: User[] = [];
-      let invalidUsers: User[] = [];
+      let validUsers: any[] = [];
+      let invalidUsers: any[] = [];
 
       for (const user of users) {
         const isEmailExists = await this.isExistEmail(user.email);

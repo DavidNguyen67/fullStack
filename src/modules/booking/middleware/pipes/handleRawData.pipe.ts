@@ -4,7 +4,6 @@ import {
   HttpStatus,
   HttpException,
 } from '@nestjs/common';
-import { Booking, User } from '@prisma/client';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
@@ -42,10 +41,10 @@ export class HandleRawDataPipe implements PipeTransform {
         };
       });
 
-      const isValidUserTbl = dataForUserTbl.every((item: User) =>
+      const isValidUserTbl = dataForUserTbl.every((item: any) =>
         this.hasRequiredUserFields(item),
       );
-      const isValidBookingTbl = dataForBookingTbl.every((item: Booking | any) =>
+      const isValidBookingTbl = dataForBookingTbl.every((item: any) =>
         this.hasRequiredBookingFields(item),
       );
 
@@ -72,12 +71,12 @@ export class HandleRawDataPipe implements PipeTransform {
     }
   }
 
-  private hasRequiredUserFields(user: User): boolean {
+  private hasRequiredUserFields(user: any): boolean {
     return (
       !!user.email && !!user.firstName && !!user.lastName && !!user.address
     );
   }
-  private hasRequiredBookingFields(booking: Booking): boolean {
+  private hasRequiredBookingFields(booking: any): boolean {
     return (
       !!booking.DOB &&
       !!booking.doctorId &&

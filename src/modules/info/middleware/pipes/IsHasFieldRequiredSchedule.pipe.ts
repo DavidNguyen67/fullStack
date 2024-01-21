@@ -1,11 +1,9 @@
 import {
   Injectable,
   PipeTransform,
-  InternalServerErrorException,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Doctor_info } from '@prisma/client';
 
 @Injectable()
 export class IsHasFieldRequiredDoctorInfoPipe implements PipeTransform {
@@ -13,7 +11,7 @@ export class IsHasFieldRequiredDoctorInfoPipe implements PipeTransform {
     try {
       const doctorInfos = Array.isArray(value) ? value : [value];
 
-      const isValid = doctorInfos.every((item: Doctor_info) => {
+      const isValid = doctorInfos.every((item: any) => {
         return this.hasRequiredFields(item);
       });
 
@@ -30,7 +28,7 @@ export class IsHasFieldRequiredDoctorInfoPipe implements PipeTransform {
     }
   }
 
-  private hasRequiredFields(schedule: Doctor_info): boolean {
+  private hasRequiredFields(schedule: any): boolean {
     return (
       !!schedule.priceId &&
       !!schedule.provinceId &&

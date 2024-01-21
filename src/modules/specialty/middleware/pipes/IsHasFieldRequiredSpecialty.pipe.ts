@@ -4,14 +4,13 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Specialty } from '@prisma/client';
 
 @Injectable()
 export class IsHasFieldRequiredSpecialtyPipe implements PipeTransform {
   transform(value: any): any {
     try {
       const specialties = Array.isArray(value) ? value : [value];
-      const isValid = specialties.every((item: Specialty) => {
+      const isValid = specialties.every((item: any) => {
         return this.hasRequiredFields(item);
       });
 
@@ -27,7 +26,7 @@ export class IsHasFieldRequiredSpecialtyPipe implements PipeTransform {
     }
   }
 
-  private hasRequiredFields(specialty: Specialty): boolean {
+  private hasRequiredFields(specialty: any): boolean {
     return (
       !!specialty.name &&
       (!!specialty.contentMarkdown_EN || !!specialty.contentMarkdown_VI) &&

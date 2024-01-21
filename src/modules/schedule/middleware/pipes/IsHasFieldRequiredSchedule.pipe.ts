@@ -4,7 +4,6 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Schedule } from '@prisma/client';
 import { env } from 'process';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class IsHasFieldRequiredSchedulePipe implements PipeTransform {
     try {
       const schedules = Array.isArray(value) ? value : [value];
 
-      const isValid = schedules.every((item: Schedule) => {
+      const isValid = schedules.every((item: any) => {
         item.maxNum = item.maxNum ? item.maxNum : +env.MAX_NUMBER_SCHEDULES;
         return this.hasRequiredFields(item);
       });
@@ -31,7 +30,7 @@ export class IsHasFieldRequiredSchedulePipe implements PipeTransform {
     }
   }
 
-  private hasRequiredFields(schedule: Schedule): boolean {
+  private hasRequiredFields(schedule: any): boolean {
     return !!schedule.date && !!schedule.timeType && !!schedule.doctorId;
   }
 }

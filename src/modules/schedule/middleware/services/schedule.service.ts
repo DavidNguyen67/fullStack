@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Schedule } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as _ from 'lodash';
 
@@ -7,7 +6,7 @@ import * as _ from 'lodash';
 export class ScheduleService {
   constructor(private prisma: PrismaService) {}
 
-  async isAvailableSchedule(item: Schedule, payload: Schedule[]): Promise<any> {
+  async isAvailableSchedule(item: any, payload: any[]): Promise<any> {
     try {
       const schedule = await this.prisma.schedule.findMany({
         where: {
