@@ -7,6 +7,8 @@ import { getDoctorDetail } from '../../../services/userService';
 import * as constant from './../../../utils';
 import DoctorSchedule from '../../System/Doctor/DoctorSchedule';
 import ExtraInfo from './ExtraInfo';
+import LikeAndShare from '../SocialPlugin/LikeAndShare';
+import Comment from '../SocialPlugin/Comment';
 
 class DetailDoctor extends Component {
   constructor(props) {
@@ -67,6 +69,8 @@ class DetailDoctor extends Component {
         )
       );
     const imageSrc = base64 ? `data:image/png;base64,${base64}` : '';
+    const dataHref = window.location.href;
+
     return (
       <>
         <HomeHeader isShowBanner={false} />
@@ -95,6 +99,8 @@ class DetailDoctor extends Component {
                     ? doctor.markDown?.description_VI
                     : doctor.markDown?.description_EN}
                 </div>
+                <br />
+                <LikeAndShare dataHref={dataHref} />
               </div>
             </div>
           </div>
@@ -125,7 +131,9 @@ class DetailDoctor extends Component {
               }}
             ></div>
           </div>
-          <div className="comment-doctor"></div>
+          <div className="comment-doctor">
+            <Comment dataHref={dataHref} width={'100%'} />
+          </div>
         </div>
       </>
     );
