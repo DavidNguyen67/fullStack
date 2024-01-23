@@ -1,0 +1,225 @@
+{
+  "home-header": {
+    "specialty": "Medical specialty",
+    "search-doctor": "Find a doctor by specialty",
+    "health-facility": "Health facilities",
+    "select-room": "Select hospital and clinic",
+    "doctor": "Doctor",
+    "select-doctor": "Choose a good doctor",
+    "fee": "Discovery Package",
+    "check-health": "General health check",
+    "support": "Support"
+  },
+  "banner": {
+    "title1": "MEDICAL PLATFORM",
+    "title2": "COMPREHENSIVE HEALTH CARE",
+    "child1": "Specialized examination",
+    "child2": "Remote examination",
+    "child3": "Examination",
+    "child4": "Medical exam",
+    "child5": "Mental health",
+    "child6": "Dental examination"
+  },
+  "search": {
+    "placeholder": "Find a medical specialist"
+  },
+  "title": {
+    "welcome": "Welcome ",
+    "manageUser": "Manage Users",
+    "table": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "address": "Address",
+      "action": "Action"
+    },
+    "doctor": {
+      "introductoryInformation": "Introductory information",
+      "SelectDoctor": "Select a doctor",
+      "SelectDate": "Choose a date",
+      "SelectTimeSchedule": "Choose a time schedule",
+      "title": "CREATE MORE DOCTOR INFORMATION",
+      "price": "Select price",
+      "payment": "Select payment method",
+      "province": "Select province",
+      "clinic": "Select clinic",
+      "specialty": "Select specialty"
+    }
+  },
+  "login": {
+    "login": "Login",
+    "username": "Username",
+    "password": "Password",
+    "userpass-wrong": "Invalid username or password!"
+  },
+  "titleMain": {
+    "clinic": "Clinic Name",
+    "specialty": "Specialty Name"
+  },
+  "button": {
+    "handle": "Handle records",
+    "return": "Return",
+    "save": "Confirm",
+    "create": "Add new",
+    "update": "Update",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "copy": "Copy",
+    "back": "Back",
+    "book": "Book",
+    "addRow": "Add Row",
+    "removeRow": "Remove Row"
+  },
+  "menu": {
+    "app": {
+      "home": "Home"
+    },
+    "admin": {
+      "home": "home",
+      "title": "Users System",
+      "manageUser": "Manage Users",
+      "manageDoctor": "Manage Doctors",
+      "manageAdmin": "Manage Admins",
+      "titleClinic": "Clinics",
+      "manageClinic": "Manage Clinics",
+      "titleSpecialty": "Specialties",
+      "manageSpecialty": "Manage Specialty",
+      "titleHandbook": "Handbooks",
+      "manageHandbook": "Manage Handbooks"
+    },
+    "doctor": {
+      "home": "Home",
+      "manage-schedule": "Manage Appointment Schedule",
+      "manage-patient": "Manage patient",
+      "price": "Appointment Price",
+      "payment": "Payment Method",
+      "province": "Province",
+      "nameClinic": "Clinic Name",
+      "addressClinic": "Clinic Address",
+      "note": "Note"
+    }
+  },
+  "manage-user": {
+    "name": "Full name",
+    "add": "Add User",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "address": "Address",
+    "gender": "Choose Gender",
+    "position": "Choose Position",
+    "dob": "Date of birth",
+    "reason": "Reason for booking",
+    "role": "Choose Role",
+    "image": "Avatar",
+    "save": "Confirm",
+    "email": "Email",
+    "emailPlaceholder": "Enter email address",
+    "passwordPlaceholder": "Enter password",
+    "firstNamePlaceholder": "Enter first name",
+    "lastNamePlaceholder": "Enter last name",
+    "addressPlaceholder": "Enter address",
+    "phoneNumberPlaceholder": "Enter phone number",
+    "nameClinicPlaceholder": "Enter Clinic's name",
+    "addressClinicPlaceholder": "Enter Address Clinic",
+    "notePlaceholder": "Enter Note",
+    "filePlaceholder": "Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
+  },
+  "validate": {
+    "nameRequired": "Name is required",
+    "emailInvalid": "Invalid email",
+    "passwordLength": "Password must be at least 6 characters",
+    "nameCharacters": "First and last names can only contain alphabetical characters",
+    "phoneNumberInvalid": "Invalid phone number",
+    "emailRequired": "Email is required",
+    "addressRequired": "Address is required",
+    "passwordRequired": "Password is required",
+    "firstNameRequired": "FirstName is required",
+    "lastNameRequired": "LastName is required"
+  },
+  "toast": {
+    "successLogin": "Login successful",
+    "failedLogin": "Login failed. <br /> Please check your information",
+    "failedCreateUser": "Failed to create user.",
+    "successCreateUser": "User created successfully",
+    "successCreateAppointment": "Appointment created successfully. Please check your Email",
+    "failedCreateAppointment": "Failed to create appointment.",
+    "errorCreateUser": "Failed to create user",
+    "errorDeleteUser": "Failed to delete user",
+    "successDeleteUser": "User deleted successfully",
+    "errorReadUser": "Failed to fetch user(s)",
+    "errorNotFoundUser": "User(s) not found",
+    "errorUpdateUser": "Failed to update user",
+    "InternalError": "Internal server",
+    "successUpdateDoctor": "Update doctor successfully",
+    "failUpdateDoctor": "Failed to update doctor",
+    "successUpdateUser": "User updated successfully",
+    "selectOneUser": "At least one user must be selected",
+    "confirmDeleteUsers": "Do you want to delete these users?",
+    "confirmDeleteUser": "Do you want to delete this user?",
+    "BadRequest": "Invalid request",
+    "confirmYes": "Yes",
+    "confirmNo": "No",
+    "conflictEmail": "Email is exist!",
+    "cantConnectToServer": "Can not connect to server",
+    "AtLestChoiceOne": "At least a user is selected!",
+    "OverSizeFile": "File is too large!",
+    "NotImageFile": "This is not a valid image",
+    "contentMarkdownRequired": "ContentMarkdown is required!",
+    "contentHTMLRequired": "ContentHTML is required!",
+    "PriceRequired": "Price is required",
+    "PaymentMethodRequired": "PaymentMethod is required",
+    "ProvinceRequired": "Province is required",
+    "selectDoctorIsRequired": "Doctor is missing!",
+    "selectDateIsRequired": "Date is missing",
+    "selectScheduleIsRequired": "Time schedule is missing",
+    "successBookSchedule": "Success to schedule",
+    "errorBookSchedule": "Failed to schedule",
+    "conflictSchedule": "Already scheduled",
+    "wrongInfo": "Wrong user information"
+  },
+  "homePage": {
+    "outStandingDoctor": "Last week top doctors",
+    "moreInfo": "More info"
+  },
+  "confirmDeleteUsers": "Do you wanna delete those users?",
+  "selectOneUserAtLeast": "Must be at least one user selected.",
+
+  "manage-schedule": {
+    "title": "Manage doctor's medical examination"
+  },
+  "scheduleDoctor": {
+    "NoData": "There are no appointments available during this time, please choose another time",
+    "schedule": "medical examination schedule",
+    "bookFree": {
+      "choose": "Choose",
+      "bookFree": "book free"
+    }
+  },
+  "doctor": {
+    "price": "Appointment Price",
+    "payment": "Payment Method",
+    "province": "Province",
+    "nameClinic": "Clinic Name",
+    "addressClinic": "Clinic Address",
+    "note": "Note",
+    "specialty": "Specialty",
+    "clinic": "Clinic"
+  },
+  "clinic": {
+    "address": "EXAMINATION ADDRESS",
+    "cost": "EXAMINATION PRICE",
+    "costInfo": "Examination price includes advance appointment fee (clinic's listed price)",
+    "PaymentMethod": "Patients can pay costs in form",
+    "more": "More",
+    "hide": "Hide",
+    "choose": "Choose province",
+    "all": "All"
+  },
+  "booking": {
+    "title": "Scheduling information"
+  },
+  "profileDoctor": {
+    "free": "Free to book"
+  }
+}

@@ -1,0 +1,24 @@
+.doctor-schedule-container {
+  .all-schedule {
+    select {
+      font-weight: 600;
+      color: #337ab7;
+    }
+    option {
+      cursor: pointer;
+    }
+  }
+  .all-available-time {
+    .text-calendar {
+    }
+    .time-content {
+      button {
+        background-color: #fff04b;
+        &:hover {
+          background-color: #45c3d2;
+          color: white;
+        }
+      }
+    }
+  }
+}

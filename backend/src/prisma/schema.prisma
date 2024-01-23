@@ -1,0 +1,162 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  email        String       @unique
+  password     String
+  firstName    String
+  lastName     String
+  address      String?
+  gender       String       @default("M")
+  roleId       String       @default("R3")
+  phoneNumber  String?
+  positionId   String       @default("P0")
+  image        Bytes?
+  createAt     DateTime?    @default(now())
+  updateAt     DateTime?    @default(now())
+  genderData   AllCode      @relation("Gender", fields: [gender], references: [keyMap])
+  positionData AllCode      @relation("Position", fields: [positionId], references: [keyMap])
+  roleData     AllCode      @relation("Role", fields: [roleId], references: [keyMap])
+  markDown     Markdown?    @relation("Markdown")
+  doctorInfo   Doctor_info? @relation("Info")
+  schedules    Schedule[]   @relation("ScheduleUser")
+  patientInfo  Booking[]    @relation("Booking")
+}
+
+model Markdown {
+  id                 Int       @id @default(autoincrement())
+  contentHTML_VI     Json?
+  contentHTML_EN     Json?
+  contentMarkdown_VI Json?
+  contentMarkdown_EN Json?
+  description_VI     Json?
+  description_EN     Json?
+  doctorId           Int?      @unique
+  specialtyId        Int?
+  clinicId           Int?
+  createAt           DateTime? @default(now())
+  updateAt           DateTime? @default(now())
+  doctorMarkDown     User?     @relation("Markdown", fields: [doctorId], references: [id])
+}
+
+model AllCode {
+  id           Int           @id @default(autoincrement())
+  keyMap       String        @unique
+  type         String
+  valueEn      String
+  valueVi      String
+  createAt     DateTime?     @default(now())
+  updateAt     DateTime?     @default(now())
+  genderUser   User[]        @relation("Gender")
+  positionUser User[]        @relation("Position")
+  roleUser     User[]        @relation("Role")
+  schedule     Schedule[]    @relation("Schedule")
+  priceInfo    Doctor_info[] @relation("PriceInfo")
+  provinceInfo Doctor_info[] @relation("ProvinceInfo")
+  paymentInfo  Doctor_info[] @relation("PaymentInfo")
+  time         Booking[]     @relation("Time to appointment")
+}
+
+model Booking {
+  id              Int       @id @default(autoincrement())
+  statusId        String    @default("S1")
+  doctorId        Int
+  patientId       Int       @unique()
+  DOB             DateTime
+  note            Json?
+  timeType        String
+  DateAppointment DateTime
+  uniqueString    String    @unique()
+  createAt        DateTime? @default(now())
+  updateAt        DateTime? @default(now())
+  patientInfo     User      @relation("Booking", fields: [patientId], references: [id])
+  time            AllCode?  @relation("Time to appointment", fields: [timeType], references: [keyMap])
+}
+
+model Clinic {
+  id                 Int           @id @default(autoincrement())
+  name               String
+  address            Json
+  contentMarkdown_VI Json?
+  contentMarkdown_EN Json?
+  descriptionHTML_VI Json?
+  descriptionHTML_EN Json?
+  image              Bytes?
+  createAt           DateTime?     @default(now())
+  updateAt           DateTime?     @default(now())
+  doctorClinic       Doctor_info[] @relation("Clinic")
+}
+
+model History {
+  id        Int       @id @default(autoincrement())
+  doctorId  Int
+  patientId Int
+  files     Json
+  createAt  DateTime? @default(now())
+  updateAt  DateTime? @default(now())
+}
+
+model Schedule {
+  id         Int       @id @default(autoincrement())
+  currentNum Int?
+  maxNum     Int
+  date       DateTime
+  timeType   String
+  doctorId   Int
+  createAt   DateTime? @default(now())
+  updateAt   DateTime? @default(now())
+  time       AllCode?  @relation("Schedule", fields: [timeType], references: [keyMap])
+  user       User?     @relation("ScheduleUser", fields: [doctorId], references: [id])
+}
+
+model Specialty {
+  id                 Int           @id @default(autoincrement())
+  name               String
+  contentMarkdown_VI Json?
+  contentMarkdown_EN Json?
+  descriptionHTML_VI Json?
+  descriptionHTML_EN Json?
+  image              Bytes?
+  createAt           DateTime?     @default(now())
+  updateAt           DateTime?     @default(now())
+  doctorSpecialty    Doctor_info[] @relation("Specialty")
+}
+
+model doctor_clinic_specialty {
+  id          Int      @id @default(autoincrement())
+  doctorId    Int
+  specialtyId Int
+  clinicId    Int
+  createAt    DateTime @default(now())
+  updateAt    DateTime @default(now())
+}
+
+model Doctor_info {
+  id            Int        @id @default(autoincrement())
+  doctorId      Int        @unique
+  specialtyId   Int?
+  clinicId      Int?
+  priceId       String
+  provinceId    String
+  paymentId     String
+  nameClinic    Json?
+  addressClinic Json?
+  note          String?
+  count         Int        @default(0)
+  createAt      DateTime   @default(now())
+  updateAt      DateTime   @default(now())
+  doctorInfo    User?      @relation("Info", fields: [doctorId], references: [id])
+  priceInfo     AllCode    @relation("PriceInfo", fields: [priceId], references: [keyMap])
+  provinceInfo  AllCode    @relation("ProvinceInfo", fields: [provinceId], references: [keyMap])
+  paymentInfo   AllCode    @relation("PaymentInfo", fields: [paymentId], references: [keyMap])
+  clinicInfo    Clinic?    @relation("Clinic", fields: [clinicId], references: [id])
+  specialtyInfo Specialty? @relation("Specialty", fields: [specialtyId], references: [id])
+}

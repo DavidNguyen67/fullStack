@@ -1,0 +1,227 @@
+{
+  "home-header": {
+    "specialty": "Chuyên khoa",
+    "search-doctor": "Tìm bác sỹ theo chuyên khoa",
+    "health-facility": "Cơ sở y tế",
+    "select-room": "Chọn bệnh viện phòng khám",
+    "doctor": "Bác sĩ",
+    "select-doctor": "Chọn bác sỹ giỏi",
+    "fee": "Gói khám",
+    "check-health": "Khám sức khỏe tổng quát",
+    "support": "Hỗ trợ"
+  },
+  "banner": {
+    "title1": "NỀN TẢNG Y TẾ",
+    "title2": "CHĂM SÓC SỨC KHỎE TOÀN DIỆN",
+    "child1": "Khám chuyên khoa",
+    "child2": "Khám từ xa",
+    "child3": "Khám tổng quát",
+    "child4": "Xét nghiệp y học",
+    "child5": "Sức khỏe tinh thần",
+    "child6": "Khám nha khoa"
+  },
+  "search": {
+    "placeholder": "Tìm chuyên khoa khám bệnh"
+  },
+  "login": {
+    "login": "Đăng nhập",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "userpass-wrong": "Sai tên đăng nhập hoặc mật khẩu!"
+  },
+  "title": {
+    "welcome": "Xin chào ",
+    "manageUser": "Quản lý người dùng",
+    "table": {
+      "firstName": "Tên",
+      "lastName": "Họ",
+      "address": "Địa chỉ",
+      "action": "Hành động"
+    },
+    "doctor": {
+      "introductoryInformation": "Thông tin giới thiệu",
+      "SelectDoctor": "Chọn bác sĩ",
+      "SelectDate": "Chọn ngày",
+      "SelectTimeSchedule": "Chọn giờ khám",
+      "title": "TẠO THÊM THÔNG TÍN BÁC SĨ",
+      "price": "Chọn giá",
+      "payment": "Chọn phương thức thanh toán",
+      "province": "Chọn tỉnh thành",
+      "clinic": "Chọn cơ sở y tế",
+      "specialty": "Chọn chuyên khoa"
+    }
+  },
+  "titleMain": {
+    "clinic": "Tên Phòng khám",
+    "specialty": "Tên Chuyên khoa"
+  },
+  "button": {
+    "handle": "Xử lý bản ghi",
+    "return": "Quay lại",
+    "save": "Xác nhận",
+    "create": "Thêm",
+    "update": "Cập nhật",
+    "delete": "Xóa",
+    "cancel": "Hủy",
+    "copy": "Sao chép",
+    "back": "Quay lại",
+    "book": "Đặt",
+    "addRow": "Thêm hàng",
+    "removeRow": "Xóa hàng"
+  },
+  "menu": {
+    "app": {
+      "home": "Trang chủ"
+    },
+    "admin": {
+      "home": "Tro ve trang chu",
+      "title": "Người dùng",
+      "manageUser": "Quản lý Người dùng",
+      "manageDoctor": "Quản lý Bác Sỹ",
+      "manageAdmin": "Quản lý Admin",
+      "titleClinic": "Phòng khám",
+      "manageClinic": "Quản lý Phòng khám",
+      "titleSpecialty": "Chuyên khoa",
+      "manageSpecialty": "Quản lý chuyên khoa",
+      "titleHandbook": "Cẩm nang",
+      "manageHandbook": "Quản lý Cẩm nang"
+    },
+    "doctor": {
+      "home": "Tro ve trang chu",
+      "manage-schedule": "Quản lý kế hoạch khám bệnh",
+      "manage-patient": "Quản lý bệnh nhân",
+      "price": "Giá khám bệnh",
+      "payment": "Phương thức thanh toán",
+      "province": "Tỉnh thành",
+      "nameClinic": "Tên phòng khám",
+      "addressClinic": "Địa chỉ phòng khám",
+      "note": "Ghi chú"
+    }
+  },
+  "manage-user": {
+    "name": "Họ tên",
+    "add": "Thêm mới",
+    "password": "Mật khẩu",
+    "firstName": "Tên",
+    "lastName": "Họ",
+    "phoneNumber": "Số điện thoại",
+    "address": "Địa chỉ",
+    "dob": "Ngày sinh",
+    "gender": "Chọn Giới tính",
+    "position": "Chọn Chức danh",
+    "role": "Chọn Vai trò",
+    "image": "Ảnh đại diện",
+    "save": "Xác nhận",
+    "reason": "Lý do khám bệnh",
+    "email": "Địa chỉ Email",
+    "emailPlaceholder": "Nhập địa chỉ email",
+    "passwordPlaceholder": "Nhập mật khẩu",
+    "firstNamePlaceholder": "Nhập tên",
+    "lastNamePlaceholder": "Nhập họ",
+    "addressPlaceholder": "Nhập địa chỉ",
+    "nameClinicPlaceholder": "Nhập tên phòng khám",
+    "addressClinicPlaceholder": "Nhập địa chỉ phòng khám",
+    "notePlaceholder": "Nhập ghi chú",
+    "phoneNumberPlaceholder": "Nhập số điện thoại",
+    "filePlaceholder": "Kéo & Thả tệp  hoặc <span class='filepond--label-action'>Duyệt tệp</span>"
+  },
+  "validate": {
+    "nameRequired": "Trường Tên không được bỏ trống",
+    "emailInvalid": "Email không hợp lệ",
+    "passwordLength": "Password phải có ít nhất 6 ký tự",
+    "nameCharacters": "Tên và họ chỉ được chứa các ký tự chữ cái",
+    "phoneNumberInvalid": "Số điện thoại không hợp lệ",
+    "emailRequired": "Trường Email không được bỏ trống",
+    "addressRequired": "Trường Địa chỉ không được bỏ trống",
+    "passwordRequired": "Trường Mật Khẩu không được bỏ trống",
+    "firstNameRequired": "Trường Tên không được bỏ trống",
+    "lastNameRequired": "Trường Họ không được bỏ trống"
+  },
+  "toast": {
+    "successLogin": "Đăng nhập thành công",
+    "failedLogin": "Đăng nhập thất bại. <br /> Vui lòng kiểm tra lại thông tin",
+    "failedCreateUser": "Tạo người dùng thất bại.",
+    "successCreateUser": "Tạo người dùng thành công.",
+    "successCreateAppointment": "Đặt lịch thành công. Vui lòng kiểm tra hôp thư Email",
+    "failedCreateAppointment": "Đặt lịch thất bại.",
+    "errorCreateUser": "Tạo người dùng thất bại",
+    "errorReadUser": "Fetch người dùng thất bại",
+    "errorNotFoundUser": "Người dùng không tồn tại",
+    "errorDeleteUser": "Xóa người dùng thất bại",
+    "successDeleteUser": "Xóa người dùng thành công",
+    "errorUpdateUser": "Cập nhật người dùng thất bại",
+    "successUpdateUser": "Cập nhật người dùng thành công",
+    "successUpdateDoctor": "Cập nhật bác sĩ thành công",
+    "failUpdateDoctor": "Cập nhật bác sĩ thất bại",
+    "selectOneUser": "Cần chọn ít nhất một người dùng",
+    "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này?",
+    "confirmDeleteUser": "Bạn có muốn xóa người dùng này?",
+    "InternalError": "Lỗi nội bộ server",
+    "BadRequest": "Dữ liệu không hợp lệ",
+    "confirmYes": "Có",
+    "confirmNo": "Không",
+    "conflictEmail": "Email đã tồn tại!",
+    "cantConnectToServer": "Không thể kết nối đến với server",
+    "AtLestChoiceOne": "Hãy chọn ít nhất một người",
+    "OverSizeFile": "Kích thước ảnh quá lớn",
+    "NotImageFile": "File ảnh không phù hợp",
+    "contentHTMLRequired": "contentHTML không được bỏ trống",
+    "contentMarkdownRequired": "contentMarkdown không được bỏ trống",
+    "PriceRequired": "Giá khám không được bỏ trống",
+    "PaymentMethodRequired": "Phương thức thanh toán không được bỏ trống",
+    "ProvinceRequired": "Tỉnh thành không được bỏ trống",
+    "selectDoctorIsRequired": "Chưa chọn bác sỹ",
+    "selectDateIsRequired": "Chưa chọn ngày",
+    "selectScheduleIsRequired": "Chưa chọn giờ khám",
+    "successBookSchedule": "Đặt lịch khám thành công",
+    "errorBookSchedule": "Đặt lịch thất bại",
+    "conflictSchedule": "Lịch mới có ít nhất 1 cái trùng lặp",
+    "wrongInfo": "Sai thông tin đăng nhập"
+  },
+  "homePage": {
+    "outStandingDoctor": "Bác sĩ nổi bật tuần qua",
+    "moreInfo": "Xêm thêm"
+  },
+  "confirmDeleteUsers": "Bạn có muốn xóa những người dùng này không?",
+  "selectOneUserAtLeast": "Phải chọn ít nhất một người dùng.",
+  "CancelBtn": "Hủy",
+
+  "manage-schedule": {
+    "title": "Quản lý kế hoạch khám bệnh của bác sỹ"
+  },
+  "scheduleDoctor": {
+    "NoData": "Không có lịch hẹn trong thời gian này, vui lòng chọn thời gian khác",
+    "schedule": "Lịch Khám",
+    "bookFree": {
+      "choose": "Chọn",
+      "bookFree": "và đặt (miễn phí)"
+    },
+    "test": "Chọn <i className='far fa-hand-point-up'></i> và đặt miễn phí"
+  },
+  "doctor": {
+    "price": "Giá khám bệnh",
+    "payment": "Phương thức thanh toán",
+    "province": "Tỉnh thành",
+    "nameClinic": "Tên phòng khám",
+    "addressClinic": "Địa chỉ phòng khám",
+    "note": "Ghi chú",
+    "specialty": "Chuyên khoa",
+    "clinic": "Phòng khám"
+  },
+  "clinic": {
+    "address": "ĐỊA CHỈ KHÁM",
+    "cost": "GIÁ KHÁM",
+    "costInfo": "Giá khám đã bao gồm phí đặt lịch hẹn trước (Giá niêm yết của phòng khám)",
+    "PaymentMethod": "Người bệnh có thể thanh toán chi phí bằng hình thức",
+    "more": "Xem thêm",
+    "hide": "Ẩn",
+    "choose": "Chọn tỉnh thành",
+    "all": "Tất cả"
+  },
+  "booking": {
+    "title": "Thông tin đặt lịch"
+  },
+  "profileDoctor": {
+    "free": "Miễn phí đặt lịch"
+  }
+}

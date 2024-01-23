@@ -1,0 +1,14 @@
+.doctor-extra-info-container {
+  .detail-info {
+    background-color: #f8f8f8;
+    .item {
+      border-top: 2px solid #ddd;
+    }
+  }
+  .short-info {
+    span.toggle {
+      cursor: pointer;
+      color: rgb(38, 160, 231);
+    }
+  }
+}
