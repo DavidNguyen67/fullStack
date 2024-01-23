@@ -22,6 +22,8 @@ services:
       SECRET_KEY: bookingcare
       DATABASE_URL: mysql://root:davidnguyen67dev@host.docker.internal:3307/bookingcare
       PORT: 8080
+      MAX_RECORD_LENGTH: 8
+      MAX_NUMBER_SCHEDULES: 10
     ports:
       - '8080:8080'
     expose:
