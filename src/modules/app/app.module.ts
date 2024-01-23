@@ -15,6 +15,8 @@ import { SpecialtyModule } from '../specialty/specialty.module';
 import { ClinicModule } from '../clinic/clinic.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '../schedule/schedule.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -45,6 +47,7 @@ import { ScheduleModule } from '../schedule/schedule.module';
     ClinicModule,
   ],
   providers: [
+    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
@@ -54,5 +57,6 @@ import { ScheduleModule } from '../schedule/schedule.module';
     //   useClass: AuthGuard,
     // },
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

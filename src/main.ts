@@ -26,7 +26,7 @@ async function bootstrap() {
     app.useGlobalInterceptors(new TimeoutInterceptor());
     app.setGlobalPrefix(routes.GlobalPrefix);
 
-    await app.listen(env.PORT || 3000);
+    await app.listen(env.PORT || 3001);
   } catch (error) {
     console.log(error);
   }
