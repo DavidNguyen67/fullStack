@@ -1,6 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
-import config from './config';
+// import config from './config';
 import axiosRetry from 'axios-retry';
 
 const TIMEOUT = 50000;
