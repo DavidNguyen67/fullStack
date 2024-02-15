@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  nginx:
+  frontend:
     image: nginx:1.23.3
     restart: unless-stopped
     ports:
@@ -9,6 +9,8 @@ services:
     volumes:
       - ../frontend/build:/usr/share/nginx/html
       - ./default.conf:/etc/nginx/conf.d/default.conf
+    environment:
+      REACT_APP_BACKEND_URL: http://222.255.238.167:22/api/v1/
 
   backend:
     image: david-backend-backend
@@ -17,13 +19,18 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      HOST: host.docker.internal
+      HOST: 222.255.238.167
       KEY_COOKIE: jwt
       SECRET_KEY: bookingcare
-      DATABASE_URL: mysql://root:davidnguyen67dev@host.docker.internal:3307/bookingcare
+      DATABASE_URL: mysql://root:davidnguyen67dev@222.255.238.167:3307/bookingcare
       PORT: 8080
       MAX_RECORD_LENGTH: 8
       MAX_NUMBER_SCHEDULES: 10
+      REACT_APP_FACEBOOK_APP_ID: 355646393891134
+      EMAIL_HOST: smtp.gmail.com
+      EMAIL_USERNAME: davidnguyen67dev@gmail.com
+      EMAIL_PASSWORD: zmfu lhij wnhy yjhh
+      FRONTEND_URL: http://222.255.238.167:3000
     ports:
       - '8080:8080'
     expose:
